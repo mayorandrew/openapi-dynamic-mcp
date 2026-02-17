@@ -1,6 +1,6 @@
 {
   "name": "openapi-dynamic-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MCP stdio server for OpenAPI APIs",
   "type": "module",
   "main": "dist/index.js",
@@ -11,6 +11,14 @@
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mayorandrew/openapi-dynamic-mcp.git"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "tsx src/cli.ts",
