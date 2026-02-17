@@ -1,0 +1,13 @@
+version: 1
+apis:
+  - name: pet-api
+    specPath: ./pet-api.yaml
+    timeoutMs: 30000
+    retry429:
+      maxRetries: 2
+      baseDelayMs: 250
+      maxDelayMs: 5000
+      jitterRatio: 0.2
+      respectRetryAfter: true
+    headers:
+      X-Client: openapi-mcp

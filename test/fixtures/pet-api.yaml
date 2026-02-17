@@ -1,0 +1,66 @@
+openapi: 3.0.3
+info:
+  title: Pet API
+  version: 1.0.0
+servers:
+  - url: https://api.example.com/v1
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    QueryKey:
+      type: apiKey
+      in: query
+      name: api_key
+    OAuthCC:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://auth.example.com/oauth/token
+          scopes:
+            read:pets: Read pets
+            write:pets: Write pets
+security:
+  - ApiKeyAuth: []
+paths:
+  /pets:
+    get:
+      operationId: listPets
+      summary: List pets
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: ok
+  /pets/{petId}:
+    get:
+      operationId: getPetById
+      security:
+        - OAuthCC:
+            - read:pets
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ok
+  /combo:
+    get:
+      operationId: comboSecurity
+      security:
+        - ApiKeyAuth: []
+          OAuthCC:
+            - read:pets
+        - QueryKey: []
+      responses:
+        "200":
+          description: ok

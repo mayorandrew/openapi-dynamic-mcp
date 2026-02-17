@@ -1,0 +1,19 @@
+openapi: 3.0.3
+info:
+  title: Duplicate API
+  version: 1.0.0
+servers:
+  - url: https://dup.example.com
+paths:
+  /a:
+    get:
+      operationId: duplicateOp
+      responses:
+        "200":
+          description: ok
+  /b:
+    get:
+      operationId: duplicateOp
+      responses:
+        "200":
+          description: ok

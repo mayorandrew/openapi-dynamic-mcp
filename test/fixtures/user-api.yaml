@@ -1,0 +1,13 @@
+openapi: 3.1.0
+info:
+  title: User API
+  version: 2.0.0
+servers:
+  - url: https://users.example.com
+paths:
+  /users:
+    get:
+      operationId: listUsers
+      responses:
+        "200":
+          description: ok

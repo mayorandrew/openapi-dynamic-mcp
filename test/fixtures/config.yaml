@@ -1,0 +1,16 @@
+version: 1
+apis:
+  - name: pet-api
+    specPath: ./pet-api.yaml
+    headers:
+      X-Static: from-config
+    timeoutMs: 30000
+    retry429:
+      maxRetries: 2
+      baseDelayMs: 100
+      maxDelayMs: 1000
+      jitterRatio: 0.25
+      respectRetryAfter: true
+  - name: user-api
+    specPath: ./user-api.yaml
+    baseUrl: https://override.example.com

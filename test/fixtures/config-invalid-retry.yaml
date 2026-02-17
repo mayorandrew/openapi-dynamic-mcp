@@ -1,0 +1,6 @@
+version: 1
+apis:
+  - name: pet-api
+    specPath: ./pet-api.yaml
+    retry429:
+      maxRetries: -1

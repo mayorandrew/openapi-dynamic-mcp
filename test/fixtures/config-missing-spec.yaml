@@ -1,0 +1,4 @@
+version: 1
+apis:
+  - name: missing
+    specPath: ./does-not-exist.yaml

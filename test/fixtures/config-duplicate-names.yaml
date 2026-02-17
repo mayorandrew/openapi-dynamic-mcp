@@ -1,0 +1,6 @@
+version: 1
+apis:
+  - name: pet-api
+    specPath: ./pet-api.yaml
+  - name: PET API
+    specPath: ./user-api.yaml
