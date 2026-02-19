@@ -24,7 +24,8 @@
     "dev": "tsx src/cli.ts",
     "format": "prettier --write .",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "prepare": "husky"
   },
   "engines": {
     "node": ">=20"
@@ -45,6 +46,8 @@
   },
   "devDependencies": {
     "@types/node": "^22.13.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "nock": "^14.0.10",
     "prettier": "^3.8.1",
     "tsx": "^4.20.5",
