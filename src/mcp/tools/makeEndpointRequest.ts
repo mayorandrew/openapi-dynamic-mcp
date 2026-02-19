@@ -20,6 +20,17 @@ const makeEndpointRequestInputSchema = z
     headers: z.record(z.unknown()).nullable().optional(),
     cookies: z.record(z.unknown()).nullable().optional(),
     body: z.unknown().optional(),
+    files: z
+      .record(
+        z.object({
+          name: z.string().optional(),
+          contentType: z.string().optional(),
+          base64: z.string().optional(),
+          text: z.string().optional(),
+          filePath: z.string().optional(),
+        }),
+      )
+      .optional(),
     contentType: z.string().optional(),
     accept: z.string().optional(),
     timeoutMs: z.number().int().positive().optional(),
@@ -56,6 +67,9 @@ export async function makeEndpointRequestTool(
       headers: toStringMap(input.headers),
       cookies: toStringMap(input.cookies),
       body: input.body,
+      files: input.files as
+        | Record<string, import('../../types.js').McpFileDescriptor>
+        | undefined,
       contentType: input.contentType,
       accept: input.accept,
       timeoutMs: input.timeoutMs,

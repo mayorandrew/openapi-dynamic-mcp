@@ -183,6 +183,67 @@ For each OAuth2 client credentials security scheme defined in the OpenAPI spec, 
 - OAuth scopes: scheme env > config scopes > OpenAPI flow scopes.
 - Headers: config headers + env headers + tool-request headers (later wins), then auth is applied.
 
+## Handling Binary Data and File Uploads
+
+When your LLM needs to send a file to an endpoint (either raw `application/octet-stream`, or inside a `multipart/form-data` payload), MCP passes messages as JSON. To do this, the LLM should format the corresponding file using the **files** parameter mapping.
+
+The `make_endpoint_request` tool intercepts the `files` argument dict and processes each entry natively (e.g., converting to Blobs and FormData for accurate multipart boundary generation).
+
+### MCP File Descriptor format
+
+Each key in the `files` object maps to a form field name, and the value must follow this format:
+
+```json
+{
+  "name": "avatar.png", // (Optional) Explicit file name
+  "contentType": "image/png", // (Optional) Explicit mime type
+
+  // You must provide EXACTLY ONE of the following content fields:
+  "base64": "iVBORw0KGgo...", // Base64 encoded bytes
+  "text": "File contents", // Raw text content
+  "filePath": "/path/to/img" // Local absolute file path to read
+}
+```
+
+### Example: Multipart Form-Data
+
+If an endpoint expects a `profileImage` file and a `description` string via `multipart/form-data`:
+
+```json
+{
+  "apiName": "pet-api",
+  "endpointId": "uploadProfile",
+  "contentType": "multipart/form-data",
+  "body": {
+    "description": "A photo of Fido"
+  },
+  "files": {
+    "profileImage": {
+      "name": "fido.jpg",
+      "contentType": "image/jpeg",
+      "filePath": "/Users/local/images/fido.jpg"
+    }
+  }
+}
+```
+
+### Example: Raw octet stream
+
+If an endpoint expects a raw binary PUT upload lacking form fields:
+
+```json
+{
+  "apiName": "pet-api",
+  "endpointId": "uploadRaw",
+  "contentType": "application/octet-stream",
+  "files": {
+    "body": {
+      "filePath": "/Users/local/data.bin"
+    }
+  }
+}
+```
+
 ## MCP Tools
 
 ### `list_apis`

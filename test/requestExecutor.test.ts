@@ -285,6 +285,90 @@ describe('executeEndpointRequest', () => {
     expect(result.response.status).toBe(200);
     expect(scope.isDone()).toBe(true);
   });
+
+  it('processes application/x-www-form-urlencoded payloads', async () => {
+    const registry = await loadApiRegistry(buildConfig(), {});
+    const api = registry.byName.get('pet-api')!;
+    const endpoint = api.endpointById.get('uploadFormUrlEncoded')!;
+
+    const scope = nock('https://api.example.com')
+      .post('/v1/upload-form', 'name=fido&tags=good&tags=boy')
+      .reply(200, { ok: true }, { 'content-type': 'application/json' });
+
+    const result = await executeEndpointRequest({
+      api,
+      endpoint,
+      oauthClient: new OAuthClient(),
+      env: { PET_API_APIKEYAUTH_API_KEY: 'api-secret' },
+      contentType: 'application/x-www-form-urlencoded',
+      body: {
+        name: 'fido',
+        tags: ['good', 'boy'],
+      },
+    });
+
+    expect(result.response.status).toBe(200);
+    expect(scope.isDone()).toBe(true);
+  });
+
+  it('processes multipart/form-data with file descriptors', async () => {
+    const registry = await loadApiRegistry(buildConfig(), {});
+    const api = registry.byName.get('pet-api')!;
+    const endpoint = api.endpointById.get('uploadMultipart')!;
+
+    // We don't verify the exact nock body for multipart because
+    // fetch will automatically generate a dynamic multipart boundary
+    const scope = nock('https://api.example.com')
+      .post('/v1/upload-multipart')
+      .reply(200, { ok: true }, { 'content-type': 'application/json' });
+
+    const result = await executeEndpointRequest({
+      api,
+      endpoint,
+      oauthClient: new OAuthClient(),
+      env: { PET_API_APIKEYAUTH_API_KEY: 'api-secret' },
+      contentType: 'multipart/form-data',
+      body: {
+        description: 'a test file',
+      },
+      files: {
+        file: {
+          name: 'test.txt',
+          text: 'hello world',
+          contentType: 'text/plain',
+        },
+      },
+    });
+
+    expect(result.response.status).toBe(200);
+    expect(scope.isDone()).toBe(true);
+  });
+
+  it('processes raw binary data with base64 descriptor', async () => {
+    const registry = await loadApiRegistry(buildConfig(), {});
+    const api = registry.byName.get('pet-api')!;
+    const endpoint = api.endpointById.get('uploadRaw')!;
+
+    const scope = nock('https://api.example.com')
+      .put('/v1/upload-raw', Buffer.from('binary-data', 'utf8'))
+      .reply(200, { ok: true }, { 'content-type': 'application/json' });
+
+    const result = await executeEndpointRequest({
+      api,
+      endpoint,
+      oauthClient: new OAuthClient(),
+      env: { PET_API_APIKEYAUTH_API_KEY: 'api-secret' },
+      contentType: 'application/octet-stream',
+      files: {
+        body: {
+          base64: Buffer.from('binary-data', 'utf8').toString('base64'),
+        },
+      },
+    });
+
+    expect(result.response.status).toBe(200);
+    expect(scope.isDone()).toBe(true);
+  });
 });
 
 function buildConfig(): RootConfig {

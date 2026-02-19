@@ -81,7 +81,34 @@ const TOOLS = [
         query: { type: 'object' },
         headers: { type: 'object', additionalProperties: { type: 'string' } },
         cookies: { type: 'object', additionalProperties: { type: 'string' } },
-        body: {},
+        body: {
+          description:
+            'Request body. For file uploads, use the files parameter instead.',
+        },
+        files: {
+          type: 'object',
+          description:
+            'Optional file payload(s) for multipart/form-data or application/octet-stream. Keys represent the form field name. Values must contain EXACTLY ONE of: base64, text, or filePath.',
+          additionalProperties: {
+            type: 'object',
+            properties: {
+              name: {
+                type: 'string',
+                description: 'Optional filename (e.g. avatar.png)',
+              },
+              contentType: {
+                type: 'string',
+                description: 'Optional MIME type (e.g. image/png)',
+              },
+              base64: { type: 'string', description: 'Base64 encoded content' },
+              text: { type: 'string', description: 'Raw text content' },
+              filePath: {
+                type: 'string',
+                description: 'Absolute path to local file',
+              },
+            },
+          },
+        },
         contentType: { type: 'string' },
         accept: { type: 'string' },
         timeoutMs: { type: 'integer', minimum: 1 },

@@ -1,4 +1,5 @@
 import type { OpenAPIV3 } from 'openapi-types';
+import { readFile } from 'node:fs/promises';
 import { readApiExtraHeaders } from '../auth/env.js';
 import { OAuthClient } from '../auth/oauthClient.js';
 import { resolveAuth } from '../auth/resolveAuth.js';
@@ -8,7 +9,9 @@ import type {
   LoadedApi,
   RequestExecutionResult,
   Retry429Config,
+  McpFileDescriptor,
 } from '../types.js';
+import { isMcpFileDescriptor } from '../types.js';
 
 interface RequestExecutorInput {
   api: LoadedApi;
@@ -18,6 +21,7 @@ interface RequestExecutorInput {
   headers?: Record<string, string>;
   cookies?: Record<string, string>;
   body?: unknown;
+  files?: Record<string, McpFileDescriptor>;
   contentType?: string;
   accept?: string;
   timeoutMs?: number;
@@ -119,11 +123,19 @@ export async function executeEndpointRequest(
       .join('; ');
   }
 
-  const { body, inferredContentType } = prepareRequestBody(
+  const { body, inferredContentType, isFormData } = await prepareRequestBody(
     input.body,
+    input.files,
     input.contentType,
   );
-  if (inferredContentType && !hasHeader(mergedHeaders, 'content-type')) {
+  if (isFormData) {
+    // Delete content-type so fetch can set it with the correct multipart boundary
+    for (const key of Object.keys(mergedHeaders)) {
+      if (key.toLowerCase() === 'content-type') {
+        delete mergedHeaders[key];
+      }
+    }
+  } else if (inferredContentType && !hasHeader(mergedHeaders, 'content-type')) {
     mergedHeaders['content-type'] = inferredContentType;
   }
 
@@ -376,10 +388,122 @@ function serializeQueryValue(
   searchParams.append(key, String(value));
 }
 
-function prepareRequestBody(
+async function resolveFileContent(
+  descriptor: McpFileDescriptor,
+): Promise<{ blob: Blob; filename?: string }> {
+  let buffer: Buffer;
+  if ('base64' in descriptor) {
+    buffer = Buffer.from(descriptor.base64, 'base64');
+  } else if ('text' in descriptor) {
+    buffer = Buffer.from(descriptor.text, 'utf-8');
+  } else if ('filePath' in descriptor) {
+    buffer = await readFile(descriptor.filePath);
+  } else {
+    throw new OpenApiMcpError(
+      'REQUEST_ERROR',
+      'File descriptor must have base64, text, or filePath',
+    );
+  }
+  const type = descriptor.contentType ?? 'application/octet-stream';
+  return {
+    blob: new Blob([buffer], { type }),
+    filename: descriptor.name,
+  };
+}
+
+async function appendFormData(
+  formData: FormData,
+  key: string,
+  value: unknown,
+): Promise<void> {
+  if (value === undefined || value === null) return;
+
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      await appendFormData(formData, key, item);
+    }
+    return;
+  }
+
+  if (isMcpFileDescriptor(value)) {
+    const { blob, filename } = await resolveFileContent(value);
+    if (filename) {
+      formData.append(key, blob, filename);
+    } else {
+      formData.append(key, blob);
+    }
+    return;
+  }
+
+  if (isPlainObject(value)) {
+    formData.append(key, JSON.stringify(value));
+    return;
+  }
+
+  formData.append(key, String(value));
+}
+
+async function prepareRequestBody(
   rawBody: unknown,
+  files?: Record<string, McpFileDescriptor>,
   contentTypeOverride?: string,
-): { body: string | Uint8Array | undefined; inferredContentType?: string } {
+): Promise<{ body: any; inferredContentType?: string; isFormData?: boolean }> {
+  const contentType = (contentTypeOverride ?? '').toLowerCase();
+
+  if (contentType.includes('multipart/form-data')) {
+    const formData = new FormData();
+    if (isPlainObject(rawBody)) {
+      for (const [key, value] of Object.entries(rawBody)) {
+        await appendFormData(formData, key, value);
+      }
+    }
+    if (files) {
+      for (const [key, value] of Object.entries(files)) {
+        await appendFormData(formData, key, value);
+      }
+    }
+    return { body: formData, isFormData: true };
+  }
+
+  if (contentType.includes('application/x-www-form-urlencoded')) {
+    const searchParams = new URLSearchParams();
+    if (isPlainObject(rawBody)) {
+      for (const [key, value] of Object.entries(rawBody)) {
+        if (value === undefined || value === null) continue;
+        if (Array.isArray(value)) {
+          for (const item of value) searchParams.append(key, String(item));
+        } else if (isPlainObject(value)) {
+          searchParams.append(key, JSON.stringify(value));
+        } else {
+          searchParams.append(key, String(value));
+        }
+      }
+    }
+    return {
+      body: searchParams,
+      inferredContentType: 'application/x-www-form-urlencoded',
+    };
+  }
+
+  if ((rawBody === undefined || rawBody === null) && files) {
+    const fileValues = Object.values(files);
+    if (fileValues.length === 1) {
+      const fileContent = await resolveFileContent(fileValues[0]);
+      return {
+        body: fileContent.blob,
+        inferredContentType:
+          contentTypeOverride ??
+          fileValues[0].contentType ??
+          'application/octet-stream',
+      };
+    } else if (fileValues.length > 1) {
+      throw new OpenApiMcpError(
+        'REQUEST_ERROR',
+        'Multiple files provided but expected a single raw binary body',
+      );
+    }
+  }
+
   if (rawBody === undefined || rawBody === null) {
     return { body: undefined, inferredContentType: undefined };
   }
@@ -391,7 +515,7 @@ function prepareRequestBody(
     };
   }
 
-  if (rawBody instanceof Uint8Array) {
+  if (rawBody instanceof Uint8Array || Buffer.isBuffer(rawBody)) {
     return {
       body: rawBody,
       inferredContentType: contentTypeOverride ?? 'application/octet-stream',

@@ -79,3 +79,50 @@ paths:
       responses:
         '200':
           description: ok
+  /upload-multipart:
+    post:
+      operationId: uploadMultipart
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                description:
+                  type: string
+      responses:
+        '200':
+          description: ok
+  /upload-form:
+    post:
+      operationId: uploadFormUrlEncoded
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                tags:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: ok
+  /upload-raw:
+    put:
+      operationId: uploadRaw
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: ok

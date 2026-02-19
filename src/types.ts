@@ -1,5 +1,24 @@
 import type { OpenAPIV3 } from 'openapi-types';
 
+export type McpFileDescriptor = {
+  name?: string;
+  contentType?: string;
+} & ({ base64: string } | { text: string } | { filePath: string });
+
+export function isMcpFileDescriptor(
+  value: unknown,
+): value is McpFileDescriptor {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  const obj = value as Record<string, unknown>;
+  return (
+    typeof obj.base64 === 'string' ||
+    typeof obj.text === 'string' ||
+    typeof obj.filePath === 'string'
+  );
+}
+
 export interface ApiOauth2Config {
   tokenUrlOverride?: string;
   scopes?: string[];
