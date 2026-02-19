@@ -1,4 +1,5 @@
 import SwaggerParser from '@apidevtools/swagger-parser';
+import * as swagger2openapi from 'swagger2openapi';
 import type { OpenAPIV3 } from 'openapi-types';
 import { readApiBaseUrl } from '../auth/env.js';
 import { OpenApiMcpError } from '../errors.js';
@@ -57,19 +58,51 @@ async function loadSingleApi(
   api: ApiConfig,
   env: NodeJS.ProcessEnv,
 ): Promise<LoadedApi> {
+  const specSource = api.specUrl ?? api.specPath;
+  if (!specSource) {
+    throw new OpenApiMcpError(
+      'CONFIG_ERROR',
+      `No spec path or URL provided for API '${api.name}'`,
+    );
+  }
+
   let parsed: unknown;
   try {
-    parsed = await SwaggerParser.dereference(api.specPath);
+    parsed = await SwaggerParser.dereference(specSource);
   } catch (error) {
     throw new OpenApiMcpError(
       'SCHEMA_ERROR',
       `Failed to parse OpenAPI schema for '${api.name}'`,
       {
         apiName: api.name,
-        specPath: api.specPath,
+        specSource,
         cause: error instanceof Error ? error.message : String(error),
       },
     );
+  }
+
+  if (
+    parsed &&
+    typeof parsed === 'object' &&
+    'swagger' in parsed &&
+    (parsed as Record<string, unknown>).swagger === '2.0'
+  ) {
+    try {
+      const converted = await swagger2openapi.convertObj(parsed, {
+        patch: true,
+        warnOnly: true,
+      });
+      parsed = converted.openapi;
+    } catch (error) {
+      throw new OpenApiMcpError(
+        'SCHEMA_ERROR',
+        `Failed to convert Swagger 2.0 to OpenAPI 3.0 for '${api.name}'`,
+        {
+          apiName: api.name,
+          cause: error instanceof Error ? error.message : String(error),
+        },
+      );
+    }
   }
 
   const document = parsed as OpenAPIV3.Document;
@@ -97,7 +130,7 @@ async function loadSingleApi(
 
   return {
     config: api,
-    schemaPath: api.specPath,
+    schemaPath: specSource,
     schema: document,
     baseUrl,
     endpoints,

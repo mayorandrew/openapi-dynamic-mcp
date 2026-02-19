@@ -5,7 +5,8 @@ TypeScript MCP stdio server that loads one or more OpenAPI 3.x specs from YAML c
 ## What It Does
 
 - Runs as a single MCP stdio server for multiple APIs.
-- Supports OpenAPI `3.x` local spec files.
+- Supports OpenAPI `3.x` and Swagger `2.0` specifications.
+- Supports local spec files via `specPath` or remote URL specs via `specUrl`.
 - Exposes generic MCP tools:
   - `list_apis`
   - `list_api_endpoints`
@@ -89,8 +90,10 @@ version: 1
 apis:
   # Unique ID for this API
   - name: pet-api
-    # Path to local OpenAPI spec
+    # Path to local OpenAPI spec (use specUrl for remote definitions)
     specPath: ./pet-api.yaml
+    # Alternative: remote OpenAPI spec URL
+    # specUrl: https://api.example.com/openapi.yaml
     # Base URL override
     baseUrl: https://api.example.com/v1
     # Request timeout in milliseconds
@@ -125,8 +128,8 @@ apis:
 ### Validation Rules
 
 - `apis[].name` must be unique (case-insensitive after normalization).
-- `apis[].specPath` must point to a readable local file.
-- OpenAPI version must be `3.x`.
+- Exactly one of `apis[].specPath` (local file) or `apis[].specUrl` (remote URL) must be provided.
+- Supported specifications: OpenAPI `3.x` and Swagger `2.0`.
 - Base URL resolution order: env -> config -> `openapi.servers[0].url`.
 
 ## Environment Variables
@@ -307,6 +310,6 @@ npm run build
 
 ## Notes
 
-- Supports local OpenAPI files only.
+- Supports both local files and remote URLs, including automatic conversion of Swagger 2.0 specs to OpenAPI 3.0.x in-memory.
 - 429 retries are supported and disabled by default (`maxRetries: 0`).
 - JSON responses are parsed first; non-JSON is returned as text or base64 binary.

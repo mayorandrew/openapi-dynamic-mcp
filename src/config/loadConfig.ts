@@ -14,23 +14,31 @@ const retry429Schema = z.object({
   respectRetryAfter: z.boolean().optional(),
 });
 
-const apiSchema = z.object({
-  name: z.string().min(1),
-  specPath: z.string().min(1),
-  baseUrl: z.string().url().optional(),
-  timeoutMs: z.number().int().positive().optional(),
-  headers: z.record(z.string()).optional(),
-  oauth2: z
-    .object({
-      tokenUrlOverride: z.string().url().optional(),
-      scopes: z.array(z.string().min(1)).optional(),
-      tokenEndpointAuthMethod: z
-        .enum(['client_secret_basic', 'client_secret_post'])
-        .optional(),
-    })
-    .optional(),
-  retry429: retry429Schema.optional(),
-});
+const apiSchema = z
+  .object({
+    name: z.string().min(1),
+    specPath: z.string().min(1).optional(),
+    specUrl: z.string().url().optional(),
+    baseUrl: z.string().url().optional(),
+    timeoutMs: z.number().int().positive().optional(),
+    headers: z.record(z.string()).optional(),
+    oauth2: z
+      .object({
+        tokenUrlOverride: z.string().url().optional(),
+        scopes: z.array(z.string().min(1)).optional(),
+        tokenEndpointAuthMethod: z
+          .enum(['client_secret_basic', 'client_secret_post'])
+          .optional(),
+      })
+      .optional(),
+    retry429: retry429Schema.optional(),
+  })
+  .refine(
+    (data) =>
+      (data.specPath !== undefined && data.specUrl === undefined) ||
+      (data.specPath === undefined && data.specUrl !== undefined),
+    { message: 'Exactly one of specPath or specUrl must be provided' },
+  );
 
 const rootSchema = z.object({
   version: z.literal(1),
@@ -85,24 +93,31 @@ export async function loadConfig(configPath: string): Promise<RootConfig> {
     }
     seenNames.add(normalized);
 
-    const resolvedSpecPath = path.resolve(configDir, api.specPath);
-    try {
-      await access(resolvedSpecPath);
-    } catch {
-      throw new OpenApiMcpError(
-        'CONFIG_ERROR',
-        `OpenAPI schema file not found: ${resolvedSpecPath}`,
-        {
-          apiName: api.name,
-        },
-      );
-    }
+    if (api.specPath !== undefined) {
+      const resolvedSpecPath = path.resolve(configDir, api.specPath);
+      try {
+        await access(resolvedSpecPath);
+      } catch {
+        throw new OpenApiMcpError(
+          'CONFIG_ERROR',
+          `OpenAPI schema file not found: ${resolvedSpecPath}`,
+          {
+            apiName: api.name,
+          },
+        );
+      }
 
-    resolvedApis.push({
-      ...api,
-      specPath: resolvedSpecPath,
-      timeoutMs: api.timeoutMs ?? 30000,
-    });
+      resolvedApis.push({
+        ...api,
+        specPath: resolvedSpecPath,
+        timeoutMs: api.timeoutMs ?? 30000,
+      });
+    } else {
+      resolvedApis.push({
+        ...api,
+        timeoutMs: api.timeoutMs ?? 30000,
+      });
+    }
   }
 
   return {

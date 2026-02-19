@@ -35,7 +35,8 @@ export interface Retry429Config {
 
 export interface ApiConfig {
   name: string;
-  specPath: string;
+  specPath?: string;
+  specUrl?: string;
   baseUrl?: string;
   timeoutMs?: number;
   headers?: Record<string, string>;

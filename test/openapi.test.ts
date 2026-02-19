@@ -43,7 +43,7 @@ describe('OpenAPI loading/index', () => {
     expect(api?.endpointById.has('GET /b')).toBe(true);
   });
 
-  it('rejects OpenAPI 2.0', async () => {
+  it('accepts and converts Swagger 2.0', async () => {
     const config: RootConfig = {
       version: 1,
       apis: [
@@ -54,8 +54,11 @@ describe('OpenAPI loading/index', () => {
       ],
     };
 
-    await expect(loadApiRegistry(config, {})).rejects.toMatchObject({
-      code: 'SCHEMA_ERROR',
-    });
+    const registry = await loadApiRegistry(config, {});
+    const api = registry.byName.get('old-api');
+
+    expect(api).toBeDefined();
+    expect(api?.endpoints.length).toBeGreaterThan(0);
+    expect(api?.schema.openapi.startsWith('3.0')).toBe(true);
   });
 });
