@@ -1,12 +1,6 @@
 import type { ToolContext } from "../context.js";
 import { z } from "zod";
-import {
-  fail,
-  ok,
-  parseInput,
-  requireApi,
-  type ToolResult
-} from "./common.js";
+import { fail, ok, parseInput, requireApi, type ToolResult } from "./common.js";
 
 const listApiEndpointsInputSchema = z
   .object({
@@ -14,15 +8,15 @@ const listApiEndpointsInputSchema = z
     method: z.string().optional(),
     tag: z.string().optional(),
     pathContains: z.string().optional(),
-    search: z.string().optional(),
+    search: z.array(z.string()).optional(),
     limit: z.number().int().positive().optional(),
-    cursor: z.string().optional()
+    cursor: z.string().optional(),
   })
   .strict();
 
 export async function listApiEndpointsTool(
   context: ToolContext,
-  args: unknown
+  args: unknown,
 ): Promise<ToolResult> {
   try {
     const input = parseInput(args, listApiEndpointsInputSchema);
@@ -31,7 +25,7 @@ export async function listApiEndpointsTool(
     const methodFilter = input.method?.toLowerCase();
     const tagFilter = input.tag;
     const pathContains = input.pathContains;
-    const search = input.search?.trim().toLowerCase();
+    const searchTerms = input.search?.map((s) => s.trim().toLowerCase()) ?? [];
     const limit = Math.min(input.limit ?? 50, 200);
     const offset =
       typeof input.cursor === "string" && input.cursor.trim()
@@ -51,7 +45,7 @@ export async function listApiEndpointsTool(
         return false;
       }
 
-      if (search) {
+      if (searchTerms.length > 0) {
         const haystack = [
           endpoint.endpointId,
           endpoint.method,
@@ -59,12 +53,17 @@ export async function listApiEndpointsTool(
           endpoint.operationId,
           endpoint.summary,
           endpoint.description,
-          ...(endpoint.tags ?? [])
+          ...(endpoint.tags ?? []),
         ]
           .filter((value): value is string => typeof value === "string")
           .map((value) => value.toLowerCase());
 
-        if (!haystack.some((value) => value.includes(search))) {
+        // Check if ANY search term matches any field in the haystack (OR logic)
+        const matchesAnyTerm = searchTerms.some((term) =>
+          haystack.some((value) => value.includes(term)),
+        );
+
+        if (!matchesAnyTerm) {
           return false;
         }
       }
@@ -83,9 +82,9 @@ export async function listApiEndpointsTool(
         path: endpoint.path,
         operationId: endpoint.operationId,
         summary: endpoint.summary,
-        tags: endpoint.tags ?? []
+        tags: endpoint.tags ?? [],
       })),
-      nextCursor: nextOffset < filtered.length ? String(nextOffset) : undefined
+      nextCursor: nextOffset < filtered.length ? String(nextOffset) : undefined,
     });
   } catch (error) {
     return fail(error);
