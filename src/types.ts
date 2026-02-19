@@ -65,7 +65,19 @@ export interface ResolvedOAuth2Auth {
   token: string;
 }
 
-export type ResolvedAuthScheme = ResolvedApiKeyAuth | ResolvedOAuth2Auth;
+export interface ResolvedHttpAuth {
+  type: "http";
+  schemeName: string;
+  scheme: "bearer" | "basic";
+  token?: string;
+  username?: string;
+  password?: string;
+}
+
+export type ResolvedAuthScheme =
+  | ResolvedApiKeyAuth
+  | ResolvedOAuth2Auth
+  | ResolvedHttpAuth;
 
 export interface ResolvedAuthResult {
   authUsed: string[];

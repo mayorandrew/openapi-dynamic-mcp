@@ -8,6 +8,12 @@ export interface OAuthClientCredentialsFromEnv {
   tokenAuthMethod?: "client_secret_basic" | "client_secret_post";
 }
 
+export interface HttpAuthCredentialsFromEnv {
+  token?: string;
+  username?: string;
+  password?: string;
+}
+
 export function normalizeEnvSegment(value: string): string {
   return value
     .toUpperCase()
@@ -24,13 +30,16 @@ export function schemePrefix(apiName: string, schemeName: string): string {
   return `${apiPrefix(apiName)}_${normalizeEnvSegment(schemeName)}`;
 }
 
-export function readApiBaseUrl(apiName: string, env: NodeJS.ProcessEnv = process.env): string | undefined {
+export function readApiBaseUrl(
+  apiName: string,
+  env: NodeJS.ProcessEnv = process.env,
+): string | undefined {
   return env[`${apiPrefix(apiName)}_BASE_URL`];
 }
 
 export function readApiExtraHeaders(
   apiName: string,
-  env: NodeJS.ProcessEnv = process.env
+  env: NodeJS.ProcessEnv = process.env,
 ): Record<string, string> {
   const raw = env[`${apiPrefix(apiName)}_HEADERS`];
   if (!raw) {
@@ -44,14 +53,14 @@ export function readApiExtraHeaders(
     throw new OpenApiMcpError(
       "CONFIG_ERROR",
       `Invalid JSON in ${apiPrefix(apiName)}_HEADERS`,
-      { value: raw }
+      { value: raw },
     );
   }
 
   if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
     throw new OpenApiMcpError(
       "CONFIG_ERROR",
-      `${apiPrefix(apiName)}_HEADERS must be a JSON object`
+      `${apiPrefix(apiName)}_HEADERS must be a JSON object`,
     );
   }
 
@@ -61,7 +70,7 @@ export function readApiExtraHeaders(
       throw new OpenApiMcpError(
         "CONFIG_ERROR",
         `${apiPrefix(apiName)}_HEADERS values must be strings`,
-        { key }
+        { key },
       );
     }
     out[key] = value;
@@ -73,7 +82,7 @@ export function readApiExtraHeaders(
 export function readApiKeyValue(
   apiName: string,
   schemeName: string,
-  env: NodeJS.ProcessEnv = process.env
+  env: NodeJS.ProcessEnv = process.env,
 ): string | undefined {
   return env[`${schemePrefix(apiName, schemeName)}_API_KEY`];
 }
@@ -81,19 +90,22 @@ export function readApiKeyValue(
 export function readOAuthClientCredentials(
   apiName: string,
   schemeName: string,
-  env: NodeJS.ProcessEnv = process.env
+  env: NodeJS.ProcessEnv = process.env,
 ): OAuthClientCredentialsFromEnv {
   const prefix = schemePrefix(apiName, schemeName);
   const scopesRaw = env[`${prefix}_SCOPES`];
   const tokenAuthMethodRaw = env[`${prefix}_TOKEN_AUTH_METHOD`];
   let tokenAuthMethod: "client_secret_basic" | "client_secret_post" | undefined;
-  if (tokenAuthMethodRaw === "client_secret_basic" || tokenAuthMethodRaw === "client_secret_post") {
+  if (
+    tokenAuthMethodRaw === "client_secret_basic" ||
+    tokenAuthMethodRaw === "client_secret_post"
+  ) {
     tokenAuthMethod = tokenAuthMethodRaw;
   } else if (tokenAuthMethodRaw) {
     throw new OpenApiMcpError(
       "CONFIG_ERROR",
       `Invalid ${prefix}_TOKEN_AUTH_METHOD value`,
-      { value: tokenAuthMethodRaw }
+      { value: tokenAuthMethodRaw },
     );
   }
 
@@ -102,6 +114,19 @@ export function readOAuthClientCredentials(
     clientSecret: env[`${prefix}_CLIENT_SECRET`],
     tokenUrl: env[`${prefix}_TOKEN_URL`],
     scopes: scopesRaw ? scopesRaw.split(/\s+/).filter(Boolean) : undefined,
-    tokenAuthMethod
+    tokenAuthMethod,
+  };
+}
+
+export function readHttpAuthCredentials(
+  apiName: string,
+  schemeName: string,
+  env: NodeJS.ProcessEnv = process.env,
+): HttpAuthCredentialsFromEnv {
+  const prefix = schemePrefix(apiName, schemeName);
+  return {
+    token: env[`${prefix}_TOKEN`],
+    username: env[`${prefix}_USERNAME`],
+    password: env[`${prefix}_PASSWORD`],
   };
 }

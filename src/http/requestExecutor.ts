@@ -7,7 +7,7 @@ import type {
   EndpointDefinition,
   LoadedApi,
   RequestExecutionResult,
-  Retry429Config
+  Retry429Config,
 } from "../types.js";
 
 interface RequestExecutorInput {
@@ -38,18 +38,18 @@ const TEXT_CONTENT_TYPE_PATTERNS = [
   /^text\//i,
   /^application\/xml/i,
   /^application\/x-www-form-urlencoded/i,
-  /^application\/graphql/i
+  /^application\/graphql/i,
 ];
 const DEFAULT_RETRY_429_OPTIONS: ResolvedRetry429Options = {
   maxRetries: 0,
   baseDelayMs: 250,
   maxDelayMs: 5000,
   jitterRatio: 0.2,
-  respectRetryAfter: true
+  respectRetryAfter: true,
 };
 
 export async function executeEndpointRequest(
-  input: RequestExecutorInput
+  input: RequestExecutorInput,
 ): Promise<RequestExecutionResult> {
   const env = input.env ?? process.env;
   const start = Date.now();
@@ -57,16 +57,21 @@ export async function executeEndpointRequest(
     api: input.api,
     endpoint: input.endpoint,
     oauthClient: input.oauthClient,
-    env
+    env,
   });
 
-  const url = new URL(joinBaseAndPath(input.api.baseUrl, expandPath(input.endpoint.path, input.pathParams)));
+  const url = new URL(
+    joinBaseAndPath(
+      input.api.baseUrl,
+      expandPath(input.endpoint.path, input.pathParams),
+    ),
+  );
   appendQueryParams(url.searchParams, input.endpoint, input.query ?? {});
 
   const mergedHeaders: Record<string, string> = {
     ...(input.api.config.headers ?? {}),
     ...readApiExtraHeaders(input.api.config.name, env),
-    ...(input.headers ?? {})
+    ...(input.headers ?? {}),
   };
 
   if (input.accept) {
@@ -87,22 +92,46 @@ export async function executeEndpointRequest(
       continue;
     }
 
-    mergedHeaders.authorization = `Bearer ${scheme.token}`;
+    if (scheme.type === "http") {
+      if (scheme.scheme === "bearer") {
+        mergedHeaders.authorization = `Bearer ${scheme.token}`;
+      } else if (scheme.scheme === "basic") {
+        const credentials = Buffer.from(
+          `${scheme.username}:${scheme.password}`,
+        ).toString("base64");
+        mergedHeaders.authorization = `Basic ${credentials}`;
+      }
+      continue;
+    }
+
+    if (scheme.type === "oauth2") {
+      mergedHeaders.authorization = `Bearer ${scheme.token}`;
+      continue;
+    }
   }
 
   if (Object.keys(cookieMap).length > 0) {
     mergedHeaders.cookie = Object.entries(cookieMap)
-      .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+      .map(
+        ([key, value]) =>
+          `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
+      )
       .join("; ");
   }
 
-  const { body, inferredContentType } = prepareRequestBody(input.body, input.contentType);
+  const { body, inferredContentType } = prepareRequestBody(
+    input.body,
+    input.contentType,
+  );
   if (inferredContentType && !hasHeader(mergedHeaders, "content-type")) {
     mergedHeaders["content-type"] = inferredContentType;
   }
 
   const timeoutMs = input.timeoutMs ?? input.api.config.timeoutMs ?? 30000;
-  const retry429 = resolveRetry429Options(input.api.config.retry429, input.retry429);
+  const retry429 = resolveRetry429Options(
+    input.api.config.retry429,
+    input.retry429,
+  );
 
   let response: Response | undefined;
   for (let attempt = 0; attempt <= retry429.maxRetries; attempt++) {
@@ -113,20 +142,24 @@ export async function executeEndpointRequest(
         method: input.endpoint.method.toUpperCase(),
         headers: mergedHeaders,
         body,
-        signal: controller.signal
+        signal: controller.signal,
       });
     } catch (error) {
       if (error instanceof Error && error.name === "AbortError") {
-        throw new OpenApiMcpError("REQUEST_ERROR", `Request timed out after ${timeoutMs}ms`, {
-          apiName: input.api.config.name,
-          endpointId: input.endpoint.endpointId
-        });
+        throw new OpenApiMcpError(
+          "REQUEST_ERROR",
+          `Request timed out after ${timeoutMs}ms`,
+          {
+            apiName: input.api.config.name,
+            endpointId: input.endpoint.endpointId,
+          },
+        );
       }
 
       throw new OpenApiMcpError("REQUEST_ERROR", "Request failed", {
         cause: error instanceof Error ? error.message : String(error),
         apiName: input.api.config.name,
-        endpointId: input.endpoint.endpointId
+        endpointId: input.endpoint.endpointId,
       });
     } finally {
       clearTimeout(timeout);
@@ -139,7 +172,7 @@ export async function executeEndpointRequest(
     const delayMs = computeRetryDelayMs(
       response.headers.get("retry-after"),
       attempt,
-      retry429
+      retry429,
     );
     if (delayMs > 0) {
       await sleep(delayMs);
@@ -149,7 +182,7 @@ export async function executeEndpointRequest(
   if (!response) {
     throw new OpenApiMcpError("REQUEST_ERROR", "Request failed", {
       apiName: input.api.config.name,
-      endpointId: input.endpoint.endpointId
+      endpointId: input.endpoint.endpointId,
     });
   }
 
@@ -161,30 +194,38 @@ export async function executeEndpointRequest(
       url: url.toString(),
       method: input.endpoint.method.toUpperCase(),
       headersRedacted: redactHeaders(mergedHeaders),
-      endpointId: input.endpoint.endpointId
+      endpointId: input.endpoint.endpointId,
     },
     response: {
       status: response.status,
       headers: responseHeaders,
-      ...responseBody
+      ...responseBody,
     },
     timingMs: Date.now() - start,
-    authUsed: auth.authUsed
+    authUsed: auth.authUsed,
   };
 }
 
 function resolveRetry429Options(
   configOptions: Retry429Config | undefined,
-  inputOptions: Retry429Config | undefined
+  inputOptions: Retry429Config | undefined,
 ): ResolvedRetry429Options {
   const maxRetries =
-    inputOptions?.maxRetries ?? configOptions?.maxRetries ?? DEFAULT_RETRY_429_OPTIONS.maxRetries;
+    inputOptions?.maxRetries ??
+    configOptions?.maxRetries ??
+    DEFAULT_RETRY_429_OPTIONS.maxRetries;
   const baseDelayMs =
-    inputOptions?.baseDelayMs ?? configOptions?.baseDelayMs ?? DEFAULT_RETRY_429_OPTIONS.baseDelayMs;
+    inputOptions?.baseDelayMs ??
+    configOptions?.baseDelayMs ??
+    DEFAULT_RETRY_429_OPTIONS.baseDelayMs;
   const maxDelayMs =
-    inputOptions?.maxDelayMs ?? configOptions?.maxDelayMs ?? DEFAULT_RETRY_429_OPTIONS.maxDelayMs;
+    inputOptions?.maxDelayMs ??
+    configOptions?.maxDelayMs ??
+    DEFAULT_RETRY_429_OPTIONS.maxDelayMs;
   const jitterRatio =
-    inputOptions?.jitterRatio ?? configOptions?.jitterRatio ?? DEFAULT_RETRY_429_OPTIONS.jitterRatio;
+    inputOptions?.jitterRatio ??
+    configOptions?.jitterRatio ??
+    DEFAULT_RETRY_429_OPTIONS.jitterRatio;
   const respectRetryAfter =
     inputOptions?.respectRetryAfter ??
     configOptions?.respectRetryAfter ??
@@ -195,14 +236,14 @@ function resolveRetry429Options(
     baseDelayMs: Math.max(1, Math.floor(baseDelayMs)),
     maxDelayMs: Math.max(1, Math.floor(maxDelayMs)),
     jitterRatio: Math.min(1, Math.max(0, jitterRatio)),
-    respectRetryAfter
+    respectRetryAfter,
   };
 }
 
 function computeRetryDelayMs(
   retryAfterHeader: string | null,
   retryIndex: number,
-  options: ResolvedRetry429Options
+  options: ResolvedRetry429Options,
 ): number {
   if (options.respectRetryAfter) {
     const retryAfterMs = parseRetryAfterMs(retryAfterHeader);
@@ -255,11 +296,11 @@ async function sleep(ms: number): Promise<void> {
 function appendQueryParams(
   searchParams: URLSearchParams,
   endpoint: EndpointDefinition,
-  query: Record<string, unknown>
+  query: Record<string, unknown>,
 ): void {
   const definedParams = collectParameters(endpoint).filter(
     (param): param is OpenAPIV3.ParameterObject =>
-      !isReference(param) && param.in === "query"
+      !isReference(param) && param.in === "query",
   );
 
   const byName = new Map<string, OpenAPIV3.ParameterObject>();
@@ -274,7 +315,13 @@ function appendQueryParams(
 
     const param = byName.get(key);
     if (param) {
-      serializeQueryValue(searchParams, key, value, param.style ?? "form", param.explode ?? true);
+      serializeQueryValue(
+        searchParams,
+        key,
+        value,
+        param.style ?? "form",
+        param.explode ?? true,
+      );
       continue;
     }
 
@@ -287,7 +334,7 @@ function serializeQueryValue(
   key: string,
   value: unknown,
   style: OpenAPIV3.ParameterObject["style"],
-  explode: boolean
+  explode: boolean,
 ): void {
   if (style === "deepObject" && isPlainObject(value)) {
     for (const [nestedKey, nestedValue] of Object.entries(value)) {
@@ -331,7 +378,7 @@ function serializeQueryValue(
 
 function prepareRequestBody(
   rawBody: unknown,
-  contentTypeOverride?: string
+  contentTypeOverride?: string,
 ): { body: string | Uint8Array | undefined; inferredContentType?: string } {
   if (rawBody === undefined || rawBody === null) {
     return { body: undefined, inferredContentType: undefined };
@@ -340,28 +387,34 @@ function prepareRequestBody(
   if (typeof rawBody === "string") {
     return {
       body: rawBody,
-      inferredContentType: contentTypeOverride ?? "text/plain"
+      inferredContentType: contentTypeOverride ?? "text/plain",
     };
   }
 
   if (rawBody instanceof Uint8Array) {
     return {
       body: rawBody,
-      inferredContentType: contentTypeOverride ?? "application/octet-stream"
+      inferredContentType: contentTypeOverride ?? "application/octet-stream",
     };
   }
 
   return {
     body: JSON.stringify(rawBody),
-    inferredContentType: contentTypeOverride ?? "application/json"
+    inferredContentType: contentTypeOverride ?? "application/json",
   };
 }
 
-function expandPath(pathTemplate: string, pathParams: Record<string, unknown> | undefined): string {
+function expandPath(
+  pathTemplate: string,
+  pathParams: Record<string, unknown> | undefined,
+): string {
   return pathTemplate.replace(/\{([^}]+)\}/g, (_match, group: string) => {
     const value = pathParams?.[group];
     if (value === undefined || value === null) {
-      throw new OpenApiMcpError("REQUEST_ERROR", `Missing path parameter '${group}'`);
+      throw new OpenApiMcpError(
+        "REQUEST_ERROR",
+        `Missing path parameter '${group}'`,
+      );
     }
 
     if (Array.isArray(value)) {
@@ -380,7 +433,9 @@ function expandPath(pathTemplate: string, pathParams: Record<string, unknown> | 
   });
 }
 
-async function decodeResponseBody(response: Response): Promise<
+async function decodeResponseBody(
+  response: Response,
+): Promise<
   | { bodyType: "empty" }
   | { bodyType: "json"; bodyJson: unknown }
   | { bodyType: "text"; bodyText: string }
@@ -401,20 +456,23 @@ async function decodeResponseBody(response: Response): Promise<
     try {
       return {
         bodyType: "json",
-        bodyJson: JSON.parse(text)
+        bodyJson: JSON.parse(text),
       };
     } catch {
       return {
         bodyType: "text",
-        bodyText: text
+        bodyText: text,
       };
     }
   }
 
-  if (TEXT_CONTENT_TYPE_PATTERNS.some((pattern) => pattern.test(contentType)) || /charset=/i.test(contentType)) {
+  if (
+    TEXT_CONTENT_TYPE_PATTERNS.some((pattern) => pattern.test(contentType)) ||
+    /charset=/i.test(contentType)
+  ) {
     return {
       bodyType: "text",
-      bodyText: await response.text()
+      bodyText: await response.text(),
     };
   }
 
@@ -425,20 +483,22 @@ async function decodeResponseBody(response: Response): Promise<
 
   return {
     bodyType: "binary",
-    bodyBase64: Buffer.from(bytes).toString("base64")
+    bodyBase64: Buffer.from(bytes).toString("base64"),
   };
 }
 
-function collectParameters(endpoint: EndpointDefinition): OpenAPIV3.ParameterObject[] {
+function collectParameters(
+  endpoint: EndpointDefinition,
+): OpenAPIV3.ParameterObject[] {
   const pathParams = endpoint.pathItem.parameters ?? [];
   const operationParams = endpoint.operation.parameters ?? [];
   return [...pathParams, ...operationParams].filter(
-    (param): param is OpenAPIV3.ParameterObject => !isReference(param)
+    (param): param is OpenAPIV3.ParameterObject => !isReference(param),
   );
 }
 
 function isReference(
-  value: OpenAPIV3.ReferenceObject | OpenAPIV3.ParameterObject
+  value: OpenAPIV3.ReferenceObject | OpenAPIV3.ParameterObject,
 ): value is OpenAPIV3.ReferenceObject {
   return "$ref" in value;
 }
@@ -450,14 +510,22 @@ function joinBaseAndPath(baseUrl: string, apiPath: string): string {
 }
 
 function hasHeader(headers: Record<string, string>, name: string): boolean {
-  return Object.keys(headers).some((key) => key.toLowerCase() === name.toLowerCase());
+  return Object.keys(headers).some(
+    (key) => key.toLowerCase() === name.toLowerCase(),
+  );
 }
 
-function redactHeaders(headers: Record<string, string>): Record<string, string> {
+function redactHeaders(
+  headers: Record<string, string>,
+): Record<string, string> {
   const result: Record<string, string> = {};
   for (const [key, value] of Object.entries(headers)) {
     const lower = key.toLowerCase();
-    if (lower === "authorization" || lower.includes("api-key") || lower === "cookie") {
+    if (
+      lower === "authorization" ||
+      lower.includes("api-key") ||
+      lower === "cookie"
+    ) {
       result[key] = "<redacted>";
       continue;
     }

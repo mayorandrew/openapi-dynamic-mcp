@@ -12,15 +12,15 @@ describe("OpenAPI loading/index", () => {
       apis: [
         {
           name: "pet-api",
-          specPath: path.join(fixturesDir, "pet-api.yaml")
-        }
-      ]
+          specPath: path.join(fixturesDir, "pet-api.yaml"),
+        },
+      ],
     };
 
     const registry = await loadApiRegistry(config, {});
     const api = registry.byName.get("pet-api");
     expect(api).toBeDefined();
-    expect(api?.endpoints.length).toBe(3);
+    expect(api?.endpoints.length).toBe(4);
     expect(api?.endpointById.has("listPets")).toBe(true);
     expect(api?.baseUrl).toBe("https://api.example.com/v1");
   });
@@ -31,9 +31,9 @@ describe("OpenAPI loading/index", () => {
       apis: [
         {
           name: "dup-api",
-          specPath: path.join(fixturesDir, "duplicate-opid.yaml")
-        }
-      ]
+          specPath: path.join(fixturesDir, "duplicate-opid.yaml"),
+        },
+      ],
     };
 
     const registry = await loadApiRegistry(config, {});
@@ -49,13 +49,13 @@ describe("OpenAPI loading/index", () => {
       apis: [
         {
           name: "old-api",
-          specPath: path.join(fixturesDir, "openapi-2.0.yaml")
-        }
-      ]
+          specPath: path.join(fixturesDir, "openapi-2.0.yaml"),
+        },
+      ],
     };
 
     await expect(loadApiRegistry(config, {})).rejects.toMatchObject({
-      code: "SCHEMA_ERROR"
+      code: "SCHEMA_ERROR",
     });
   });
 });

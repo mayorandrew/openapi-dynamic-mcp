@@ -22,6 +22,12 @@ components:
           scopes:
             read:pets: Read pets
             write:pets: Write pets
+    BasicAuth:
+      type: http
+      scheme: basic
+    BearerAuth:
+      type: http
+      scheme: bearer
 security:
   - ApiKeyAuth: []
 paths:
@@ -61,6 +67,15 @@ paths:
           OAuthCC:
             - read:pets
         - QueryKey: []
+      responses:
+        "200":
+          description: ok
+  /http-auth:
+    get:
+      operationId: httpAuthSecurity
+      security:
+        - BasicAuth: []
+        - BearerAuth: []
       responses:
         "200":
           description: ok

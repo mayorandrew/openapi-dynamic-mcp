@@ -14,6 +14,7 @@ TypeScript MCP stdio server that loads one or more OpenAPI 3.x specs from YAML c
   - `make_endpoint_request`
 - Supports auth:
   - `apiKey`
+  - HTTP `bearer` and `basic` (`http`)
   - OAuth2 client credentials (`oauth2`)
   - combined OpenAPI security requirements (AND inside object, OR across array)
 - Supports per-API environment overrides for:
@@ -156,6 +157,14 @@ Examples:
 For each API key security scheme defined in the OpenAPI spec, the following environment variables can be set:
 
 - `<API>_<SCHEME>_API_KEY` - The API key value for the specified security scheme.
+
+### HTTP Authentication Variables
+
+For each HTTP Bearer or Basic security scheme defined in the OpenAPI spec:
+
+- `<API>_<SCHEME>_TOKEN` - The Bearer token value.
+- `<API>_<SCHEME>_USERNAME` - The Basic auth username.
+- `<API>_<SCHEME>_PASSWORD` - The Basic auth password.
 
 ### OAuth2 Client Credentials Variables
 
