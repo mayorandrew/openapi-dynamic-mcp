@@ -1,10 +1,10 @@
 export type ErrorCode =
-  | "CONFIG_ERROR"
-  | "API_NOT_FOUND"
-  | "ENDPOINT_NOT_FOUND"
-  | "AUTH_ERROR"
-  | "REQUEST_ERROR"
-  | "SCHEMA_ERROR";
+  | 'CONFIG_ERROR'
+  | 'API_NOT_FOUND'
+  | 'ENDPOINT_NOT_FOUND'
+  | 'AUTH_ERROR'
+  | 'REQUEST_ERROR'
+  | 'SCHEMA_ERROR';
 
 export class OpenApiMcpError extends Error {
   public readonly code: ErrorCode;
@@ -12,7 +12,7 @@ export class OpenApiMcpError extends Error {
 
   constructor(code: ErrorCode, message: string, details?: unknown) {
     super(message);
-    this.name = "OpenApiMcpError";
+    this.name = 'OpenApiMcpError';
     this.code = code;
     this.details = details;
   }
@@ -27,20 +27,20 @@ export function asErrorResponse(error: unknown): {
     return {
       code: error.code,
       message: error.message,
-      details: error.details
+      details: error.details,
     };
   }
 
   if (error instanceof Error) {
     return {
-      code: "REQUEST_ERROR",
-      message: error.message
+      code: 'REQUEST_ERROR',
+      message: error.message,
     };
   }
 
   return {
-    code: "REQUEST_ERROR",
-    message: "Unknown error",
-    details: error
+    code: 'REQUEST_ERROR',
+    message: 'Unknown error',
+    details: error,
   };
 }

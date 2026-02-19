@@ -1,9 +1,9 @@
-import type { OpenAPIV3 } from "openapi-types";
+import type { OpenAPIV3 } from 'openapi-types';
 
 export interface ApiOauth2Config {
   tokenUrlOverride?: string;
   scopes?: string[];
-  tokenEndpointAuthMethod?: "client_secret_basic" | "client_secret_post";
+  tokenEndpointAuthMethod?: 'client_secret_basic' | 'client_secret_post';
 }
 
 export interface Retry429Config {
@@ -30,14 +30,14 @@ export interface RootConfig {
 }
 
 export type HttpMethod =
-  | "get"
-  | "put"
-  | "post"
-  | "delete"
-  | "options"
-  | "head"
-  | "patch"
-  | "trace";
+  | 'get'
+  | 'put'
+  | 'post'
+  | 'delete'
+  | 'options'
+  | 'head'
+  | 'patch'
+  | 'trace';
 
 export interface EndpointDefinition {
   endpointId: string;
@@ -52,23 +52,23 @@ export interface EndpointDefinition {
 }
 
 export interface ResolvedApiKeyAuth {
-  type: "apiKey";
+  type: 'apiKey';
   schemeName: string;
-  in: "query" | "header" | "cookie";
+  in: 'query' | 'header' | 'cookie';
   name: string;
   value: string;
 }
 
 export interface ResolvedOAuth2Auth {
-  type: "oauth2";
+  type: 'oauth2';
   schemeName: string;
   token: string;
 }
 
 export interface ResolvedHttpAuth {
-  type: "http";
+  type: 'http';
   schemeName: string;
-  scheme: "bearer" | "basic";
+  scheme: 'bearer' | 'basic';
   token?: string;
   username?: string;
   password?: string;
@@ -122,7 +122,7 @@ export interface RequestExecutionResult {
   response: {
     status: number;
     headers: Record<string, string>;
-    bodyType: "json" | "text" | "binary" | "empty";
+    bodyType: 'json' | 'text' | 'binary' | 'empty';
     bodyJson?: unknown;
     bodyText?: string;
     bodyBase64?: string;

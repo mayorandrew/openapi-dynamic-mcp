@@ -3,15 +3,15 @@ import {
   readHttpAuthCredentials,
   readOAuthClientCredentials,
   schemePrefix,
-} from "./env.js";
-import { OAuthClient } from "./oauthClient.js";
-import { OpenApiMcpError } from "../errors.js";
+} from './env.js';
+import { OAuthClient } from './oauthClient.js';
+import { OpenApiMcpError } from '../errors.js';
 import type {
   EndpointDefinition,
   LoadedApi,
   ResolvedAuthResult,
   ResolvedAuthScheme,
-} from "../types.js";
+} from '../types.js';
 
 interface ResolveAuthInput {
   api: LoadedApi;
@@ -53,12 +53,12 @@ export async function resolveAuth({
       requirementObject,
     )) {
       const scheme = securitySchemes[schemeName];
-      if (!scheme || "$ref" in scheme) {
+      if (!scheme || '$ref' in scheme) {
         failedReason = `Security scheme '${schemeName}' not found or unresolved`;
         break;
       }
 
-      if (scheme.type === "apiKey") {
+      if (scheme.type === 'apiKey') {
         const value = readApiKeyValue(api.config.name, schemeName, env);
         if (!value) {
           missingEnv.add(
@@ -69,16 +69,16 @@ export async function resolveAuth({
         }
 
         resolved.push({
-          type: "apiKey",
+          type: 'apiKey',
           schemeName,
-          in: scheme.in as "query" | "header" | "cookie",
+          in: scheme.in as 'query' | 'header' | 'cookie',
           name: scheme.name,
           value,
         });
         continue;
       }
 
-      if (scheme.type === "oauth2") {
+      if (scheme.type === 'oauth2') {
         const flow = scheme.flows.clientCredentials;
         if (!flow) {
           failedReason = `Scheme '${schemeName}' does not support clientCredentials flow`;
@@ -115,7 +115,7 @@ export async function resolveAuth({
         const tokenEndpointAuthMethod =
           fromEnv.tokenAuthMethod ??
           api.config.oauth2?.tokenEndpointAuthMethod ??
-          "client_secret_basic";
+          'client_secret_basic';
 
         const scopes = resolveScopes(
           requestedScopes,
@@ -129,8 +129,8 @@ export async function resolveAuth({
           clientId,
           tokenUrl,
           tokenEndpointAuthMethod,
-          scopes.sort().join(","),
-        ].join("|");
+          scopes.sort().join(','),
+        ].join('|');
 
         const token = await oauthClient.getClientCredentialsToken({
           cacheKey,
@@ -142,16 +142,16 @@ export async function resolveAuth({
         });
 
         resolved.push({
-          type: "oauth2",
+          type: 'oauth2',
           schemeName,
           token,
         });
         continue;
       }
 
-      if (scheme.type === "http") {
+      if (scheme.type === 'http') {
         const schemeLower = scheme.scheme.toLowerCase();
-        if (schemeLower !== "bearer" && schemeLower !== "basic") {
+        if (schemeLower !== 'bearer' && schemeLower !== 'basic') {
           failedReason = `HTTP auth scheme '${schemeLower}' is not supported`;
           break;
         }
@@ -161,7 +161,7 @@ export async function resolveAuth({
           schemeName,
           env,
         );
-        if (schemeLower === "bearer") {
+        if (schemeLower === 'bearer') {
           if (!fromEnv.token) {
             missingEnv.add(
               `${schemePrefix(api.config.name, schemeName)}_TOKEN`,
@@ -170,12 +170,12 @@ export async function resolveAuth({
             break;
           }
           resolved.push({
-            type: "http",
+            type: 'http',
             schemeName,
-            scheme: "bearer",
+            scheme: 'bearer',
             token: fromEnv.token,
           });
-        } else if (schemeLower === "basic") {
+        } else if (schemeLower === 'basic') {
           if (!fromEnv.username || !fromEnv.password) {
             missingEnv.add(
               `${schemePrefix(api.config.name, schemeName)}_USERNAME`,
@@ -187,9 +187,9 @@ export async function resolveAuth({
             break;
           }
           resolved.push({
-            type: "http",
+            type: 'http',
             schemeName,
-            scheme: "basic",
+            scheme: 'basic',
             username: fromEnv.username,
             password: fromEnv.password,
           });
@@ -216,7 +216,7 @@ export async function resolveAuth({
   }
 
   throw new OpenApiMcpError(
-    "AUTH_ERROR",
+    'AUTH_ERROR',
     `Could not resolve authentication for '${api.config.name}'`,
     {
       endpointId: endpoint.endpointId,

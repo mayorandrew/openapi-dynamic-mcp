@@ -1,103 +1,103 @@
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
-} from "@modelcontextprotocol/sdk/types.js";
-import type { ToolContext } from "./context.js";
+} from '@modelcontextprotocol/sdk/types.js';
+import type { ToolContext } from './context.js';
 import {
   getApiEndpointTool,
   getApiSchemaTool,
   listApiEndpointsTool,
   listApisTool,
   makeEndpointRequestTool,
-} from "./tools/index.js";
-import { fail } from "./tools/common.js";
+} from './tools/index.js';
+import { fail } from './tools/common.js';
 
 const TOOLS = [
   {
-    name: "list_apis",
-    description: "List configured APIs loaded from the YAML configuration.",
+    name: 'list_apis',
+    description: 'List configured APIs loaded from the YAML configuration.',
     inputSchema: {
-      type: "object",
+      type: 'object',
       properties: {},
       additionalProperties: false,
     },
   },
   {
-    name: "list_api_endpoints",
-    description: "List endpoints from a specific API with optional filters.",
+    name: 'list_api_endpoints',
+    description: 'List endpoints from a specific API with optional filters.',
     inputSchema: {
-      type: "object",
+      type: 'object',
       properties: {
-        apiName: { type: "string" },
-        method: { type: "string" },
-        tag: { type: "string" },
-        pathContains: { type: "string" },
-        search: { type: "array", items: { type: "string" } },
-        limit: { type: "integer", minimum: 1 },
-        cursor: { type: "string" },
+        apiName: { type: 'string' },
+        method: { type: 'string' },
+        tag: { type: 'string' },
+        pathContains: { type: 'string' },
+        search: { type: 'array', items: { type: 'string' } },
+        limit: { type: 'integer', minimum: 1 },
+        cursor: { type: 'string' },
       },
-      required: ["apiName"],
+      required: ['apiName'],
       additionalProperties: false,
     },
   },
   {
-    name: "get_api_endpoint",
-    description: "Get details for one endpoint in a specific API.",
+    name: 'get_api_endpoint',
+    description: 'Get details for one endpoint in a specific API.',
     inputSchema: {
-      type: "object",
+      type: 'object',
       properties: {
-        apiName: { type: "string" },
-        endpointId: { type: "string" },
+        apiName: { type: 'string' },
+        endpointId: { type: 'string' },
       },
-      required: ["apiName", "endpointId"],
+      required: ['apiName', 'endpointId'],
       additionalProperties: false,
     },
   },
   {
-    name: "get_api_schema",
+    name: 'get_api_schema',
     description:
-      "Get the full dereferenced API schema or a JSON pointer fragment.",
+      'Get the full dereferenced API schema or a JSON pointer fragment.',
     inputSchema: {
-      type: "object",
+      type: 'object',
       properties: {
-        apiName: { type: "string" },
-        pointer: { type: "string" },
+        apiName: { type: 'string' },
+        pointer: { type: 'string' },
       },
-      required: ["apiName"],
+      required: ['apiName'],
       additionalProperties: false,
     },
   },
   {
-    name: "make_endpoint_request",
-    description: "Execute an HTTP request for an endpoint by endpointId.",
+    name: 'make_endpoint_request',
+    description: 'Execute an HTTP request for an endpoint by endpointId.',
     inputSchema: {
-      type: "object",
+      type: 'object',
       properties: {
-        apiName: { type: "string" },
-        endpointId: { type: "string" },
-        pathParams: { type: "object" },
-        query: { type: "object" },
-        headers: { type: "object", additionalProperties: { type: "string" } },
-        cookies: { type: "object", additionalProperties: { type: "string" } },
+        apiName: { type: 'string' },
+        endpointId: { type: 'string' },
+        pathParams: { type: 'object' },
+        query: { type: 'object' },
+        headers: { type: 'object', additionalProperties: { type: 'string' } },
+        cookies: { type: 'object', additionalProperties: { type: 'string' } },
         body: {},
-        contentType: { type: "string" },
-        accept: { type: "string" },
-        timeoutMs: { type: "integer", minimum: 1 },
+        contentType: { type: 'string' },
+        accept: { type: 'string' },
+        timeoutMs: { type: 'integer', minimum: 1 },
         retry429: {
-          type: "object",
+          type: 'object',
           properties: {
-            maxRetries: { type: "integer", minimum: 0 },
-            baseDelayMs: { type: "integer", minimum: 1 },
-            maxDelayMs: { type: "integer", minimum: 1 },
-            jitterRatio: { type: "number", minimum: 0, maximum: 1 },
-            respectRetryAfter: { type: "boolean" },
+            maxRetries: { type: 'integer', minimum: 0 },
+            baseDelayMs: { type: 'integer', minimum: 1 },
+            maxDelayMs: { type: 'integer', minimum: 1 },
+            jitterRatio: { type: 'number', minimum: 0, maximum: 1 },
+            respectRetryAfter: { type: 'boolean' },
           },
           additionalProperties: false,
         },
       },
-      required: ["apiName", "endpointId"],
+      required: ['apiName', 'endpointId'],
       additionalProperties: false,
     },
   },
@@ -106,8 +106,8 @@ const TOOLS = [
 export async function startMcpServer(context: ToolContext): Promise<void> {
   const server = new Server(
     {
-      name: "openapi-mcp",
-      version: "0.1.0",
+      name: 'openapi-mcp',
+      version: '0.1.0',
     },
     {
       capabilities: {
@@ -127,15 +127,15 @@ export async function startMcpServer(context: ToolContext): Promise<void> {
       const args = request.params.arguments ?? {};
 
       switch (toolName) {
-        case "list_apis":
+        case 'list_apis':
           return listApisTool(context);
-        case "list_api_endpoints":
+        case 'list_api_endpoints':
           return listApiEndpointsTool(context, args);
-        case "get_api_endpoint":
+        case 'get_api_endpoint':
           return getApiEndpointTool(context, args);
-        case "get_api_schema":
+        case 'get_api_schema':
           return getApiSchemaTool(context, args);
-        case "make_endpoint_request":
+        case 'make_endpoint_request':
           return makeEndpointRequestTool(context, args);
         default:
           return fail(new Error(`Unknown tool: ${toolName}`));

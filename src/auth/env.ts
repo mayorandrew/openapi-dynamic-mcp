@@ -1,11 +1,11 @@
-import { OpenApiMcpError } from "../errors.js";
+import { OpenApiMcpError } from '../errors.js';
 
 export interface OAuthClientCredentialsFromEnv {
   clientId?: string;
   clientSecret?: string;
   tokenUrl?: string;
   scopes?: string[];
-  tokenAuthMethod?: "client_secret_basic" | "client_secret_post";
+  tokenAuthMethod?: 'client_secret_basic' | 'client_secret_post';
 }
 
 export interface HttpAuthCredentialsFromEnv {
@@ -17,9 +17,9 @@ export interface HttpAuthCredentialsFromEnv {
 export function normalizeEnvSegment(value: string): string {
   return value
     .toUpperCase()
-    .replace(/[^A-Z0-9]+/g, "_")
-    .replace(/_+/g, "_")
-    .replace(/^_+|_+$/g, "");
+    .replace(/[^A-Z0-9]+/g, '_')
+    .replace(/_+/g, '_')
+    .replace(/^_+|_+$/g, '');
 }
 
 export function apiPrefix(apiName: string): string {
@@ -51,24 +51,26 @@ export function readApiExtraHeaders(
     parsed = JSON.parse(raw);
   } catch {
     throw new OpenApiMcpError(
-      "CONFIG_ERROR",
+      'CONFIG_ERROR',
       `Invalid JSON in ${apiPrefix(apiName)}_HEADERS`,
-      { value: raw },
+      {
+        value: raw,
+      },
     );
   }
 
-  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
     throw new OpenApiMcpError(
-      "CONFIG_ERROR",
+      'CONFIG_ERROR',
       `${apiPrefix(apiName)}_HEADERS must be a JSON object`,
     );
   }
 
   const out: Record<string, string> = {};
   for (const [key, value] of Object.entries(parsed)) {
-    if (typeof value !== "string") {
+    if (typeof value !== 'string') {
       throw new OpenApiMcpError(
-        "CONFIG_ERROR",
+        'CONFIG_ERROR',
         `${apiPrefix(apiName)}_HEADERS values must be strings`,
         { key },
       );
@@ -95,17 +97,19 @@ export function readOAuthClientCredentials(
   const prefix = schemePrefix(apiName, schemeName);
   const scopesRaw = env[`${prefix}_SCOPES`];
   const tokenAuthMethodRaw = env[`${prefix}_TOKEN_AUTH_METHOD`];
-  let tokenAuthMethod: "client_secret_basic" | "client_secret_post" | undefined;
+  let tokenAuthMethod: 'client_secret_basic' | 'client_secret_post' | undefined;
   if (
-    tokenAuthMethodRaw === "client_secret_basic" ||
-    tokenAuthMethodRaw === "client_secret_post"
+    tokenAuthMethodRaw === 'client_secret_basic' ||
+    tokenAuthMethodRaw === 'client_secret_post'
   ) {
     tokenAuthMethod = tokenAuthMethodRaw;
   } else if (tokenAuthMethodRaw) {
     throw new OpenApiMcpError(
-      "CONFIG_ERROR",
+      'CONFIG_ERROR',
       `Invalid ${prefix}_TOKEN_AUTH_METHOD value`,
-      { value: tokenAuthMethodRaw },
+      {
+        value: tokenAuthMethodRaw,
+      },
     );
   }
 

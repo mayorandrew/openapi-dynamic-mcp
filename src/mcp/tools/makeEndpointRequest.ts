@@ -1,7 +1,7 @@
-import { executeEndpointRequest } from "../../http/requestExecutor.js";
-import { OpenApiMcpError } from "../../errors.js";
-import type { ToolContext } from "../context.js";
-import { z } from "zod";
+import { executeEndpointRequest } from '../../http/requestExecutor.js';
+import { OpenApiMcpError } from '../../errors.js';
+import type { ToolContext } from '../context.js';
+import { z } from 'zod';
 import {
   fail,
   ok,
@@ -9,7 +9,7 @@ import {
   requireApi,
   toStringMap,
   type ToolResult,
-} from "./common.js";
+} from './common.js';
 
 const makeEndpointRequestInputSchema = z
   .object({
@@ -40,7 +40,7 @@ export async function makeEndpointRequestTool(
     const endpoint = api.endpointById.get(endpointId);
     if (!endpoint) {
       throw new OpenApiMcpError(
-        "ENDPOINT_NOT_FOUND",
+        'ENDPOINT_NOT_FOUND',
         `Unknown endpoint '${endpointId}'`,
         {
           apiName,

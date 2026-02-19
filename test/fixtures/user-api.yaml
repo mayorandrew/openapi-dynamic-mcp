@@ -9,5 +9,5 @@ paths:
     get:
       operationId: listUsers
       responses:
-        "200":
+        '200':
           description: ok

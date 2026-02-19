@@ -1,20 +1,20 @@
-import type { OpenAPIV3 } from "openapi-types";
-import { OpenApiMcpError } from "../errors.js";
-import type { EndpointDefinition, HttpMethod } from "../types.js";
+import type { OpenAPIV3 } from 'openapi-types';
+import { OpenApiMcpError } from '../errors.js';
+import type { EndpointDefinition, HttpMethod } from '../types.js';
 
 const METHODS: HttpMethod[] = [
-  "get",
-  "put",
-  "post",
-  "delete",
-  "options",
-  "head",
-  "patch",
-  "trace"
+  'get',
+  'put',
+  'post',
+  'delete',
+  'options',
+  'head',
+  'patch',
+  'trace',
 ];
 
 function normalizePathForId(path: string): string {
-  return path.replace(/\s+/g, "").replace(/\/+$/, "") || "/";
+  return path.replace(/\s+/g, '').replace(/\/+$/, '') || '/';
 }
 
 export function buildEndpointIndex(document: OpenAPIV3.Document): {
@@ -32,7 +32,10 @@ export function buildEndpointIndex(document: OpenAPIV3.Document): {
     for (const method of METHODS) {
       const op = item[method];
       if (op?.operationId) {
-        opIdCounts.set(op.operationId, (opIdCounts.get(op.operationId) ?? 0) + 1);
+        opIdCounts.set(
+          op.operationId,
+          (opIdCounts.get(op.operationId) ?? 0) + 1,
+        );
       }
     }
   }
@@ -56,7 +59,8 @@ export function buildEndpointIndex(document: OpenAPIV3.Document): {
         operation.operationId && opIdCounts.get(operation.operationId) === 1
           ? operation.operationId
           : undefined;
-      const endpointId = uniqueOpId ?? `${method.toUpperCase()} ${normalizePathForId(path)}`;
+      const endpointId =
+        uniqueOpId ?? `${method.toUpperCase()} ${normalizePathForId(path)}`;
 
       const endpoint: EndpointDefinition = {
         endpointId,
@@ -67,14 +71,18 @@ export function buildEndpointIndex(document: OpenAPIV3.Document): {
         description: operation.description,
         tags: operation.tags,
         operation,
-        pathItem: pathItem as OpenAPIV3.PathItemObject
+        pathItem: pathItem as OpenAPIV3.PathItemObject,
       };
 
       if (endpointById.has(endpointId)) {
-        throw new OpenApiMcpError("SCHEMA_ERROR", `Endpoint ID collision for '${endpointId}'`, {
-          path,
-          method
-        });
+        throw new OpenApiMcpError(
+          'SCHEMA_ERROR',
+          `Endpoint ID collision for '${endpointId}'`,
+          {
+            path,
+            method,
+          },
+        );
       }
 
       endpointById.set(endpointId, endpoint);

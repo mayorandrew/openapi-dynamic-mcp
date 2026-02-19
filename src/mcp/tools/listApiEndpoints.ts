@@ -1,6 +1,6 @@
-import type { ToolContext } from "../context.js";
-import { z } from "zod";
-import { fail, ok, parseInput, requireApi, type ToolResult } from "./common.js";
+import type { ToolContext } from '../context.js';
+import { z } from 'zod';
+import { fail, ok, parseInput, requireApi, type ToolResult } from './common.js';
 
 const listApiEndpointsInputSchema = z
   .object({
@@ -28,7 +28,7 @@ export async function listApiEndpointsTool(
     const searchTerms = input.search?.map((s) => s.trim().toLowerCase()) ?? [];
     const limit = Math.min(input.limit ?? 50, 200);
     const offset =
-      typeof input.cursor === "string" && input.cursor.trim()
+      typeof input.cursor === 'string' && input.cursor.trim()
         ? Number.parseInt(input.cursor, 10)
         : 0;
 
@@ -55,7 +55,7 @@ export async function listApiEndpointsTool(
           endpoint.description,
           ...(endpoint.tags ?? []),
         ]
-          .filter((value): value is string => typeof value === "string")
+          .filter((value): value is string => typeof value === 'string')
           .map((value) => value.toLowerCase());
 
         // Check if ANY search term matches any field in the haystack (OR logic)

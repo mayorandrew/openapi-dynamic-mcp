@@ -1,14 +1,14 @@
-import type { OpenAPIV3 } from "openapi-types";
-import { readApiExtraHeaders } from "../auth/env.js";
-import { OAuthClient } from "../auth/oauthClient.js";
-import { resolveAuth } from "../auth/resolveAuth.js";
-import { OpenApiMcpError } from "../errors.js";
+import type { OpenAPIV3 } from 'openapi-types';
+import { readApiExtraHeaders } from '../auth/env.js';
+import { OAuthClient } from '../auth/oauthClient.js';
+import { resolveAuth } from '../auth/resolveAuth.js';
+import { OpenApiMcpError } from '../errors.js';
 import type {
   EndpointDefinition,
   LoadedApi,
   RequestExecutionResult,
   Retry429Config,
-} from "../types.js";
+} from '../types.js';
 
 interface RequestExecutorInput {
   api: LoadedApi;
@@ -81,10 +81,10 @@ export async function executeEndpointRequest(
   const cookieMap: Record<string, string> = { ...(input.cookies ?? {}) };
 
   for (const scheme of auth.schemes) {
-    if (scheme.type === "apiKey") {
-      if (scheme.in === "header") {
+    if (scheme.type === 'apiKey') {
+      if (scheme.in === 'header') {
         mergedHeaders[scheme.name] = scheme.value;
-      } else if (scheme.in === "query") {
+      } else if (scheme.in === 'query') {
         url.searchParams.set(scheme.name, scheme.value);
       } else {
         cookieMap[scheme.name] = scheme.value;
@@ -92,19 +92,19 @@ export async function executeEndpointRequest(
       continue;
     }
 
-    if (scheme.type === "http") {
-      if (scheme.scheme === "bearer") {
+    if (scheme.type === 'http') {
+      if (scheme.scheme === 'bearer') {
         mergedHeaders.authorization = `Bearer ${scheme.token}`;
-      } else if (scheme.scheme === "basic") {
+      } else if (scheme.scheme === 'basic') {
         const credentials = Buffer.from(
           `${scheme.username}:${scheme.password}`,
-        ).toString("base64");
+        ).toString('base64');
         mergedHeaders.authorization = `Basic ${credentials}`;
       }
       continue;
     }
 
-    if (scheme.type === "oauth2") {
+    if (scheme.type === 'oauth2') {
       mergedHeaders.authorization = `Bearer ${scheme.token}`;
       continue;
     }
@@ -116,15 +116,15 @@ export async function executeEndpointRequest(
         ([key, value]) =>
           `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
       )
-      .join("; ");
+      .join('; ');
   }
 
   const { body, inferredContentType } = prepareRequestBody(
     input.body,
     input.contentType,
   );
-  if (inferredContentType && !hasHeader(mergedHeaders, "content-type")) {
-    mergedHeaders["content-type"] = inferredContentType;
+  if (inferredContentType && !hasHeader(mergedHeaders, 'content-type')) {
+    mergedHeaders['content-type'] = inferredContentType;
   }
 
   const timeoutMs = input.timeoutMs ?? input.api.config.timeoutMs ?? 30000;
@@ -145,9 +145,9 @@ export async function executeEndpointRequest(
         signal: controller.signal,
       });
     } catch (error) {
-      if (error instanceof Error && error.name === "AbortError") {
+      if (error instanceof Error && error.name === 'AbortError') {
         throw new OpenApiMcpError(
-          "REQUEST_ERROR",
+          'REQUEST_ERROR',
           `Request timed out after ${timeoutMs}ms`,
           {
             apiName: input.api.config.name,
@@ -156,7 +156,7 @@ export async function executeEndpointRequest(
         );
       }
 
-      throw new OpenApiMcpError("REQUEST_ERROR", "Request failed", {
+      throw new OpenApiMcpError('REQUEST_ERROR', 'Request failed', {
         cause: error instanceof Error ? error.message : String(error),
         apiName: input.api.config.name,
         endpointId: input.endpoint.endpointId,
@@ -170,7 +170,7 @@ export async function executeEndpointRequest(
     }
 
     const delayMs = computeRetryDelayMs(
-      response.headers.get("retry-after"),
+      response.headers.get('retry-after'),
       attempt,
       retry429,
     );
@@ -180,7 +180,7 @@ export async function executeEndpointRequest(
   }
 
   if (!response) {
-    throw new OpenApiMcpError("REQUEST_ERROR", "Request failed", {
+    throw new OpenApiMcpError('REQUEST_ERROR', 'Request failed', {
       apiName: input.api.config.name,
       endpointId: input.endpoint.endpointId,
     });
@@ -300,7 +300,7 @@ function appendQueryParams(
 ): void {
   const definedParams = collectParameters(endpoint).filter(
     (param): param is OpenAPIV3.ParameterObject =>
-      !isReference(param) && param.in === "query",
+      !isReference(param) && param.in === 'query',
   );
 
   const byName = new Map<string, OpenAPIV3.ParameterObject>();
@@ -319,13 +319,13 @@ function appendQueryParams(
         searchParams,
         key,
         value,
-        param.style ?? "form",
+        param.style ?? 'form',
         param.explode ?? true,
       );
       continue;
     }
 
-    serializeQueryValue(searchParams, key, value, "form", true);
+    serializeQueryValue(searchParams, key, value, 'form', true);
   }
 }
 
@@ -333,10 +333,10 @@ function serializeQueryValue(
   searchParams: URLSearchParams,
   key: string,
   value: unknown,
-  style: OpenAPIV3.ParameterObject["style"],
+  style: OpenAPIV3.ParameterObject['style'],
   explode: boolean,
 ): void {
-  if (style === "deepObject" && isPlainObject(value)) {
+  if (style === 'deepObject' && isPlainObject(value)) {
     for (const [nestedKey, nestedValue] of Object.entries(value)) {
       if (nestedValue !== undefined && nestedValue !== null) {
         searchParams.append(`${key}[${nestedKey}]`, String(nestedValue));
@@ -353,7 +353,7 @@ function serializeQueryValue(
       return;
     }
 
-    searchParams.append(key, value.map((item) => String(item)).join(","));
+    searchParams.append(key, value.map((item) => String(item)).join(','));
     return;
   }
 
@@ -369,7 +369,7 @@ function serializeQueryValue(
     for (const [itemKey, itemValue] of Object.entries(value)) {
       flat.push(itemKey, String(itemValue));
     }
-    searchParams.append(key, flat.join(","));
+    searchParams.append(key, flat.join(','));
     return;
   }
 
@@ -384,23 +384,23 @@ function prepareRequestBody(
     return { body: undefined, inferredContentType: undefined };
   }
 
-  if (typeof rawBody === "string") {
+  if (typeof rawBody === 'string') {
     return {
       body: rawBody,
-      inferredContentType: contentTypeOverride ?? "text/plain",
+      inferredContentType: contentTypeOverride ?? 'text/plain',
     };
   }
 
   if (rawBody instanceof Uint8Array) {
     return {
       body: rawBody,
-      inferredContentType: contentTypeOverride ?? "application/octet-stream",
+      inferredContentType: contentTypeOverride ?? 'application/octet-stream',
     };
   }
 
   return {
     body: JSON.stringify(rawBody),
-    inferredContentType: contentTypeOverride ?? "application/json",
+    inferredContentType: contentTypeOverride ?? 'application/json',
   };
 }
 
@@ -412,13 +412,13 @@ function expandPath(
     const value = pathParams?.[group];
     if (value === undefined || value === null) {
       throw new OpenApiMcpError(
-        "REQUEST_ERROR",
+        'REQUEST_ERROR',
         `Missing path parameter '${group}'`,
       );
     }
 
     if (Array.isArray(value)) {
-      return value.map((item) => encodeURIComponent(String(item))).join(",");
+      return value.map((item) => encodeURIComponent(String(item))).join(',');
     }
 
     if (isPlainObject(value)) {
@@ -426,7 +426,7 @@ function expandPath(
       for (const [k, v] of Object.entries(value)) {
         flat.push(k, String(v));
       }
-      return encodeURIComponent(flat.join(","));
+      return encodeURIComponent(flat.join(','));
     }
 
     return encodeURIComponent(String(value));
@@ -436,31 +436,31 @@ function expandPath(
 async function decodeResponseBody(
   response: Response,
 ): Promise<
-  | { bodyType: "empty" }
-  | { bodyType: "json"; bodyJson: unknown }
-  | { bodyType: "text"; bodyText: string }
-  | { bodyType: "binary"; bodyBase64: string }
+  | { bodyType: 'empty' }
+  | { bodyType: 'json'; bodyJson: unknown }
+  | { bodyType: 'text'; bodyText: string }
+  | { bodyType: 'binary'; bodyBase64: string }
 > {
   if (response.status === 204 || response.status === 205) {
-    return { bodyType: "empty" };
+    return { bodyType: 'empty' };
   }
 
-  const contentType = response.headers.get("content-type") ?? "";
+  const contentType = response.headers.get('content-type') ?? '';
 
-  if (contentType.toLowerCase().includes("json")) {
+  if (contentType.toLowerCase().includes('json')) {
     const text = await response.text();
     if (!text) {
-      return { bodyType: "empty" };
+      return { bodyType: 'empty' };
     }
 
     try {
       return {
-        bodyType: "json",
+        bodyType: 'json',
         bodyJson: JSON.parse(text),
       };
     } catch {
       return {
-        bodyType: "text",
+        bodyType: 'text',
         bodyText: text,
       };
     }
@@ -471,19 +471,19 @@ async function decodeResponseBody(
     /charset=/i.test(contentType)
   ) {
     return {
-      bodyType: "text",
+      bodyType: 'text',
       bodyText: await response.text(),
     };
   }
 
   const bytes = new Uint8Array(await response.arrayBuffer());
   if (bytes.length === 0) {
-    return { bodyType: "empty" };
+    return { bodyType: 'empty' };
   }
 
   return {
-    bodyType: "binary",
-    bodyBase64: Buffer.from(bytes).toString("base64"),
+    bodyType: 'binary',
+    bodyBase64: Buffer.from(bytes).toString('base64'),
   };
 }
 
@@ -500,12 +500,12 @@ function collectParameters(
 function isReference(
   value: OpenAPIV3.ReferenceObject | OpenAPIV3.ParameterObject,
 ): value is OpenAPIV3.ReferenceObject {
-  return "$ref" in value;
+  return '$ref' in value;
 }
 
 function joinBaseAndPath(baseUrl: string, apiPath: string): string {
-  const trimmedBase = baseUrl.replace(/\/+$/, "");
-  const trimmedPath = apiPath.startsWith("/") ? apiPath : `/${apiPath}`;
+  const trimmedBase = baseUrl.replace(/\/+$/, '');
+  const trimmedPath = apiPath.startsWith('/') ? apiPath : `/${apiPath}`;
   return `${trimmedBase}${trimmedPath}`;
 }
 
@@ -522,11 +522,11 @@ function redactHeaders(
   for (const [key, value] of Object.entries(headers)) {
     const lower = key.toLowerCase();
     if (
-      lower === "authorization" ||
-      lower.includes("api-key") ||
-      lower === "cookie"
+      lower === 'authorization' ||
+      lower.includes('api-key') ||
+      lower === 'cookie'
     ) {
-      result[key] = "<redacted>";
+      result[key] = '<redacted>';
       continue;
     }
     result[key] = value;
@@ -535,5 +535,5 @@ function redactHeaders(
 }
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 }

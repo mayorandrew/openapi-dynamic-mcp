@@ -1,22 +1,25 @@
 #!/usr/bin/env node
-import { loadConfig } from "./config/loadConfig.js";
-import { OAuthClient } from "./auth/oauthClient.js";
-import { OpenApiMcpError } from "./errors.js";
-import { startMcpServer } from "./mcp/server.js";
-import { loadApiRegistry } from "./openapi/loadSpec.js";
+import { loadConfig } from './config/loadConfig.js';
+import { OAuthClient } from './auth/oauthClient.js';
+import { OpenApiMcpError } from './errors.js';
+import { startMcpServer } from './mcp/server.js';
+import { loadApiRegistry } from './openapi/loadSpec.js';
 
 function parseConfigPath(argv: string[]): string {
   for (let i = 0; i < argv.length; i += 1) {
-    if (argv[i] === "--config") {
+    if (argv[i] === '--config') {
       const value = argv[i + 1];
       if (!value) {
-        throw new OpenApiMcpError("CONFIG_ERROR", "Missing value for --config");
+        throw new OpenApiMcpError('CONFIG_ERROR', 'Missing value for --config');
       }
       return value;
     }
   }
 
-  throw new OpenApiMcpError("CONFIG_ERROR", "Missing required argument --config");
+  throw new OpenApiMcpError(
+    'CONFIG_ERROR',
+    'Missing required argument --config',
+  );
 }
 
 export async function runCli(argv = process.argv.slice(2)): Promise<void> {
@@ -27,14 +30,14 @@ export async function runCli(argv = process.argv.slice(2)): Promise<void> {
   console.error(`[openapi-mcp] loaded ${registry.byName.size} API(s)`);
   for (const api of registry.byName.values()) {
     console.error(
-      `[openapi-mcp] api=${api.config.name} endpoints=${api.endpoints.length} authSchemes=${api.authSchemeNames.join(",")}`
+      `[openapi-mcp] api=${api.config.name} endpoints=${api.endpoints.length} authSchemes=${api.authSchemeNames.join(',')}`,
     );
   }
 
   await startMcpServer({
     registry,
     oauthClient: new OAuthClient(),
-    env: process.env
+    env: process.env,
   });
 }
 
@@ -45,11 +48,11 @@ runCli().catch((error: unknown) => {
         {
           code: error.code,
           message: error.message,
-          details: error.details
+          details: error.details,
         },
         null,
-        2
-      )
+        2,
+      ),
     );
     process.exit(1);
   }

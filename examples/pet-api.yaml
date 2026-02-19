@@ -16,5 +16,5 @@ paths:
       operationId: listPets
       summary: List pets
       responses:
-        "200":
+        '200':
           description: ok

@@ -1,22 +1,22 @@
-import path from "node:path";
-import nock from "nock";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { OAuthClient } from "../src/auth/oauthClient.js";
-import { loadApiRegistry } from "../src/openapi/loadSpec.js";
-import type { RootConfig } from "../src/types.js";
-import type { ToolContext } from "../src/mcp/context.js";
-import { getApiSchemaTool } from "../src/mcp/tools/getApiSchema.js";
-import { listApiEndpointsTool } from "../src/mcp/tools/listApiEndpoints.js";
-import { listApisTool } from "../src/mcp/tools/listApis.js";
-import { makeEndpointRequestTool } from "../src/mcp/tools/makeEndpointRequest.js";
+import path from 'node:path';
+import nock from 'nock';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { OAuthClient } from '../src/auth/oauthClient.js';
+import { loadApiRegistry } from '../src/openapi/loadSpec.js';
+import type { RootConfig } from '../src/types.js';
+import type { ToolContext } from '../src/mcp/context.js';
+import { getApiSchemaTool } from '../src/mcp/tools/getApiSchema.js';
+import { listApiEndpointsTool } from '../src/mcp/tools/listApiEndpoints.js';
+import { listApisTool } from '../src/mcp/tools/listApis.js';
+import { makeEndpointRequestTool } from '../src/mcp/tools/makeEndpointRequest.js';
 
-const fixturesDir = path.resolve("test/fixtures");
+const fixturesDir = path.resolve('test/fixtures');
 
 let context: ToolContext;
 
 beforeEach(async () => {
   const env: NodeJS.ProcessEnv = {
-    PET_API_APIKEYAUTH_API_KEY: "key",
+    PET_API_APIKEYAUTH_API_KEY: 'key',
   };
   const registry = await loadApiRegistry(buildConfig(), env);
   context = {
@@ -30,19 +30,19 @@ afterEach(() => {
   nock.cleanAll();
 });
 
-describe("MCP tools", () => {
-  it("lists APIs", async () => {
+describe('MCP tools', () => {
+  it('lists APIs', async () => {
     const result = await listApisTool(context);
     expect(result.isError).toBeUndefined();
     const content = result.structuredContent as {
       apis: Array<{ name: string }>;
     };
-    expect(content.apis.map((api) => api.name)).toEqual(["pet-api"]);
+    expect(content.apis.map((api) => api.name)).toEqual(['pet-api']);
   });
 
-  it("lists endpoints with cursor", async () => {
+  it('lists endpoints with cursor', async () => {
     const first = await listApiEndpointsTool(context, {
-      apiName: "pet-api",
+      apiName: 'pet-api',
       limit: 1,
     });
 
@@ -54,7 +54,7 @@ describe("MCP tools", () => {
     expect(firstPayload.nextCursor).toBeTruthy();
 
     const second = await listApiEndpointsTool(context, {
-      apiName: "pet-api",
+      apiName: 'pet-api',
       limit: 2,
       cursor: firstPayload.nextCursor,
     });
@@ -64,10 +64,10 @@ describe("MCP tools", () => {
     expect(secondPayload.endpoints.length).toBeGreaterThan(0);
   });
 
-  it("filters endpoints by search", async () => {
+  it('filters endpoints by search', async () => {
     const result = await listApiEndpointsTool(context, {
-      apiName: "pet-api",
-      search: ["listpets"],
+      apiName: 'pet-api',
+      search: ['listpets'],
     });
 
     expect(result.isError).toBeUndefined();
@@ -75,13 +75,13 @@ describe("MCP tools", () => {
       endpoints: Array<{ endpointId: string }>;
     };
     expect(payload.endpoints).toHaveLength(1);
-    expect(payload.endpoints[0]?.endpointId).toBe("listPets");
+    expect(payload.endpoints[0]?.endpointId).toBe('listPets');
   });
 
-  it("filters endpoints by multiple search terms (OR logic)", async () => {
+  it('filters endpoints by multiple search terms (OR logic)', async () => {
     const result = await listApiEndpointsTool(context, {
-      apiName: "pet-api",
-      search: ["pets", "store"], // "pets" matches listPets, "store" matches nothing or something else
+      apiName: 'pet-api',
+      search: ['pets', 'store'], // "pets" matches listPets, "store" matches nothing or something else
     });
 
     expect(result.isError).toBeUndefined();
@@ -103,36 +103,36 @@ describe("MCP tools", () => {
     expect(payload.endpoints.length).toBeGreaterThanOrEqual(1);
   });
 
-  it("reads schema pointer", async () => {
+  it('reads schema pointer', async () => {
     const result = await getApiSchemaTool(context, {
-      apiName: "pet-api",
-      pointer: "/info/title",
+      apiName: 'pet-api',
+      pointer: '/info/title',
     });
     const payload = result.structuredContent as {
       schema: string;
     };
-    expect(payload.schema).toBe("Pet API");
+    expect(payload.schema).toBe('Pet API');
   });
 
-  it("returns structured error payload for unknown endpoint", async () => {
+  it('returns structured error payload for unknown endpoint', async () => {
     const result = await makeEndpointRequestTool(context, {
-      apiName: "pet-api",
-      endpointId: "missing",
+      apiName: 'pet-api',
+      endpointId: 'missing',
     });
     expect(result.isError).toBe(true);
     const payload = result.structuredContent as { code: string };
-    expect(payload.code).toBe("ENDPOINT_NOT_FOUND");
+    expect(payload.code).toBe('ENDPOINT_NOT_FOUND');
   });
 
-  it("executes make_endpoint_request", async () => {
-    nock("https://api.example.com")
-      .get("/v1/pets")
+  it('executes make_endpoint_request', async () => {
+    nock('https://api.example.com')
+      .get('/v1/pets')
       .query(true)
-      .reply(200, { ok: true }, { "content-type": "application/json" });
+      .reply(200, { ok: true }, { 'content-type': 'application/json' });
 
     const result = await makeEndpointRequestTool(context, {
-      apiName: "pet-api",
-      endpointId: "listPets",
+      apiName: 'pet-api',
+      endpointId: 'listPets',
     });
 
     expect(result.isError).toBeUndefined();
@@ -140,25 +140,25 @@ describe("MCP tools", () => {
       response: { status: number; bodyType: string };
     };
     expect(payload.response.status).toBe(200);
-    expect(payload.response.bodyType).toBe("json");
+    expect(payload.response.bodyType).toBe('json');
   });
 
-  it("supports maxRetries429 overrides on make_endpoint_request", async () => {
-    const scope = nock("https://api.example.com")
-      .get("/v1/pets")
+  it('supports maxRetries429 overrides on make_endpoint_request', async () => {
+    const scope = nock('https://api.example.com')
+      .get('/v1/pets')
       .query(true)
       .reply(
         429,
-        { error: "rate_limited" },
-        { "content-type": "application/json" },
+        { error: 'rate_limited' },
+        { 'content-type': 'application/json' },
       )
-      .get("/v1/pets")
+      .get('/v1/pets')
       .query(true)
-      .reply(200, { ok: true }, { "content-type": "application/json" });
+      .reply(200, { ok: true }, { 'content-type': 'application/json' });
 
     const result = await makeEndpointRequestTool(context, {
-      apiName: "pet-api",
-      endpointId: "listPets",
+      apiName: 'pet-api',
+      endpointId: 'listPets',
       maxRetries429: 1,
     });
 
@@ -170,16 +170,16 @@ describe("MCP tools", () => {
     expect(scope.isDone()).toBe(true);
   });
 
-  it("validates maxRetries429 override shape", async () => {
+  it('validates maxRetries429 override shape', async () => {
     const result = await makeEndpointRequestTool(context, {
-      apiName: "pet-api",
-      endpointId: "listPets",
+      apiName: 'pet-api',
+      endpointId: 'listPets',
       maxRetries429: -1,
     });
 
     expect(result.isError).toBe(true);
     const payload = result.structuredContent as { code: string };
-    expect(payload.code).toBe("REQUEST_ERROR");
+    expect(payload.code).toBe('REQUEST_ERROR');
   });
 });
 
@@ -188,8 +188,8 @@ function buildConfig(): RootConfig {
     version: 1,
     apis: [
       {
-        name: "pet-api",
-        specPath: path.join(fixturesDir, "pet-api.yaml"),
+        name: 'pet-api',
+        specPath: path.join(fixturesDir, 'pet-api.yaml'),
       },
     ],
   };
