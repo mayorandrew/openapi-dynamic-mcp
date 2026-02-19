@@ -219,12 +219,7 @@ Input fields:
 - `contentType`
 - `accept`
 - `timeoutMs`
-- `retry429` object
-  - `maxRetries`
-  - `baseDelayMs`
-  - `maxDelayMs`
-  - `jitterRatio` (0..1)
-  - `respectRetryAfter`
+- `maxRetries429`
 
 Output includes:
 

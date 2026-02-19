@@ -143,7 +143,7 @@ describe("MCP tools", () => {
     expect(payload.response.bodyType).toBe("json");
   });
 
-  it("supports retry429 overrides on make_endpoint_request", async () => {
+  it("supports maxRetries429 overrides on make_endpoint_request", async () => {
     const scope = nock("https://api.example.com")
       .get("/v1/pets")
       .query(true)
@@ -159,12 +159,7 @@ describe("MCP tools", () => {
     const result = await makeEndpointRequestTool(context, {
       apiName: "pet-api",
       endpointId: "listPets",
-      retry429: {
-        maxRetries: 1,
-        baseDelayMs: 1,
-        maxDelayMs: 5,
-        jitterRatio: 0,
-      },
+      maxRetries429: 1,
     });
 
     expect(result.isError).toBeUndefined();
@@ -175,13 +170,11 @@ describe("MCP tools", () => {
     expect(scope.isDone()).toBe(true);
   });
 
-  it("validates retry429 override shape", async () => {
+  it("validates maxRetries429 override shape", async () => {
     const result = await makeEndpointRequestTool(context, {
       apiName: "pet-api",
       endpointId: "listPets",
-      retry429: {
-        jitterRatio: 2,
-      },
+      maxRetries429: -1,
     });
 
     expect(result.isError).toBe(true);

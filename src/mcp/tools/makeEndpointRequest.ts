@@ -2,7 +2,14 @@ import { executeEndpointRequest } from "../../http/requestExecutor.js";
 import { OpenApiMcpError } from "../../errors.js";
 import type { ToolContext } from "../context.js";
 import { z } from "zod";
-import { fail, ok, parseInput, requireApi, toStringMap, type ToolResult } from "./common.js";
+import {
+  fail,
+  ok,
+  parseInput,
+  requireApi,
+  toStringMap,
+  type ToolResult,
+} from "./common.js";
 
 const makeEndpointRequestInputSchema = z
   .object({
@@ -16,23 +23,13 @@ const makeEndpointRequestInputSchema = z
     contentType: z.string().optional(),
     accept: z.string().optional(),
     timeoutMs: z.number().int().positive().optional(),
-    retry429: z
-      .object({
-        maxRetries: z.number().int().nonnegative().optional(),
-        baseDelayMs: z.number().int().positive().optional(),
-        maxDelayMs: z.number().int().positive().optional(),
-        jitterRatio: z.number().min(0).max(1).optional(),
-        respectRetryAfter: z.boolean().optional()
-      })
-      .strict()
-      .nullable()
-      .optional()
+    maxRetries429: z.number().int().nonnegative().optional(),
   })
   .strict();
 
 export async function makeEndpointRequestTool(
   context: ToolContext,
-  args: unknown
+  args: unknown,
 ): Promise<ToolResult> {
   try {
     const input = parseInput(args, makeEndpointRequestInputSchema);
@@ -42,9 +39,13 @@ export async function makeEndpointRequestTool(
 
     const endpoint = api.endpointById.get(endpointId);
     if (!endpoint) {
-      throw new OpenApiMcpError("ENDPOINT_NOT_FOUND", `Unknown endpoint '${endpointId}'`, {
-        apiName
-      });
+      throw new OpenApiMcpError(
+        "ENDPOINT_NOT_FOUND",
+        `Unknown endpoint '${endpointId}'`,
+        {
+          apiName,
+        },
+      );
     }
 
     const result = await executeEndpointRequest({
@@ -58,9 +59,12 @@ export async function makeEndpointRequestTool(
       contentType: input.contentType,
       accept: input.accept,
       timeoutMs: input.timeoutMs,
-      retry429: input.retry429 ?? undefined,
+      retry429:
+        input.maxRetries429 !== undefined
+          ? { maxRetries: input.maxRetries429 }
+          : undefined,
       oauthClient: context.oauthClient,
-      env: context.env
+      env: context.env,
     });
 
     return ok(result);
