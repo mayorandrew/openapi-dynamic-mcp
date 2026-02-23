@@ -6,6 +6,7 @@ TypeScript MCP stdio server that loads one or more OpenAPI 3.x specs from YAML c
 
 - Runs as a single MCP stdio server for multiple APIs.
 - Supports OpenAPI `3.x` and Swagger `2.0` specifications.
+- Continuously tested against real APIs
 - Supports local spec files via `specPath` or remote URL specs via `specUrl`.
 - Exposes generic MCP tools:
   - `list_apis`
