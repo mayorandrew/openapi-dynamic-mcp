@@ -9,7 +9,7 @@ describe('E2E MCP Server Test', () => {
   beforeAll(async () => {
     transport = new StdioClientTransport({
       command: 'npx',
-      args: ['tsx', 'src/cli.ts', '--config', 'test-apis.yaml'],
+      args: ['tsx', 'src/cli.ts', '--config', 'test/fixtures/config.yaml'],
     });
     client = new Client(
       { name: 'test-client', version: '1.0.0' },
@@ -33,38 +33,72 @@ describe('E2E MCP Server Test', () => {
 
   it('lists expected standard tools', async () => {
     const result = await client.listTools();
-    expect(result.tools).toBeDefined();
-
-    const toolNames = result.tools.map((t) => t.name);
-    // Ensure standard dynamically generated tools are present
-    expect(toolNames).toContain('list_api_endpoints');
-    expect(toolNames).toContain('get_api_endpoint');
-    expect(toolNames).toContain('get_api_schema');
-    expect(toolNames).toContain('make_endpoint_request');
-    expect(toolNames).toContain('list_apis');
+    expect(result.tools).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: 'list_api_endpoints' }),
+        expect.objectContaining({ name: 'get_api_endpoint' }),
+        expect.objectContaining({ name: 'get_api_schema' }),
+        expect.objectContaining({ name: 'make_endpoint_request' }),
+        expect.objectContaining({ name: 'list_apis' }),
+      ]),
+    );
   });
 
   it('can execute list_api_endpoints tool', async () => {
     const endpointsResult = await client.callTool({
       name: 'list_api_endpoints',
-      arguments: { apiName: 'oneforge' }, // oneforge is in test-apis.yaml
+      arguments: { apiName: 'pet-api' },
     });
 
-    const content = endpointsResult.content as Array<{
-      type: string;
-      text?: string;
-    }>;
+    expect(endpointsResult.content).toEqual([
+      {
+        type: 'text',
+        text: expect.stringContaining('get'),
+      },
+    ]);
+  });
 
-    expect(content).toBeDefined();
-    expect(content.length).toBeGreaterThan(0);
-    expect(content[0].type).toBe('text');
+  it('can execute list_apis tool', async () => {
+    const listApisResult = await client.callTool({
+      name: 'list_apis',
+      arguments: {},
+    });
 
-    const textContent = content[0].text;
-    expect(typeof textContent).toBe('string');
-    if (textContent) {
-      expect(textContent.length).toBeGreaterThan(0);
-      // Verify it lists some sensible HTTP methods
-      expect(textContent).toContain('GET');
-    }
+    expect(listApisResult.content).toEqual([
+      {
+        type: 'text',
+        text: expect.stringMatching(
+          /pet-api[\s\S]*user-api|user-api[\s\S]*pet-api/,
+        ),
+      },
+    ]);
+  });
+
+  it('can execute get_api_endpoint tool', async () => {
+    const endpointResult = await client.callTool({
+      name: 'get_api_endpoint',
+      arguments: { apiName: 'pet-api', endpointId: 'listPets' },
+    });
+
+    expect(endpointResult.content).toEqual([
+      {
+        type: 'text',
+        text: expect.stringContaining('/pets'),
+      },
+    ]);
+  });
+
+  it('can execute get_api_schema tool', async () => {
+    const schemaResult = await client.callTool({
+      name: 'get_api_schema',
+      arguments: { apiName: 'pet-api' },
+    });
+
+    expect(schemaResult.content).toEqual([
+      {
+        type: 'text',
+        text: expect.stringContaining('openapi'),
+      },
+    ]);
   });
 });
