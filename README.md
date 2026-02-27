@@ -218,7 +218,7 @@ When your AI needs to send a file to an endpoint (either raw `application/octet-
 
 Each key in the `files` object maps to a form field name. You must provide exactly one of `base64`, `text`, or `filePath`:
 
-```json
+```jsonc
 {
   "name": "avatar.png", // (Optional) Explicit file name
   "contentType": "image/png", // (Optional) Explicit mime type
@@ -226,7 +226,7 @@ Each key in the `files` object maps to a form field name. You must provide exact
   // Choose EXACTLY ONE content source:
   "base64": "iVBORw0KGgo...", // Base64 encoded bytes
   "text": "File contents", // Raw text content
-  "filePath": "/path/to/img" // Local absolute file path to read
+  "filePath": "/path/to/img", // Local absolute file path to read
 }
 ```
 
