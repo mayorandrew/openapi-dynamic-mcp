@@ -35,7 +35,7 @@ describe('MCP tools', () => {
     const result = await listApisTool(context);
     expect(result.isError).toBeUndefined();
     const content = result.structuredContent as {
-      apis: Array<{ name: string }>;
+      apis: { name: string }[];
     };
     expect(content.apis.map((api) => api.name)).toEqual(['pet-api']);
   });
@@ -47,7 +47,7 @@ describe('MCP tools', () => {
     });
 
     const firstPayload = first.structuredContent as {
-      endpoints: Array<{ endpointId: string }>;
+      endpoints: { endpointId: string }[];
       nextCursor?: string;
     };
     expect(firstPayload.endpoints).toHaveLength(1);
@@ -59,7 +59,7 @@ describe('MCP tools', () => {
       cursor: firstPayload.nextCursor,
     });
     const secondPayload = second.structuredContent as {
-      endpoints: Array<{ endpointId: string }>;
+      endpoints: { endpointId: string }[];
     };
     expect(secondPayload.endpoints.length).toBeGreaterThan(0);
   });
@@ -72,7 +72,7 @@ describe('MCP tools', () => {
 
     expect(result.isError).toBeUndefined();
     const payload = result.structuredContent as {
-      endpoints: Array<{ endpointId: string }>;
+      endpoints: { endpointId: string }[];
     };
     expect(payload.endpoints).toHaveLength(1);
     expect(payload.endpoints[0]?.endpointId).toBe('listPets');
@@ -86,7 +86,7 @@ describe('MCP tools', () => {
 
     expect(result.isError).toBeUndefined();
     const payload = result.structuredContent as {
-      endpoints: Array<{ endpointId: string }>;
+      endpoints: { endpointId: string }[];
     };
     // strictly, listPets matches "pets".
     // "store" might match nothing in the fixture pet-api.yaml.

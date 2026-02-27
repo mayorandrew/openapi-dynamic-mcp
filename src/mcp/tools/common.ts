@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 export interface ToolResult {
   isError?: boolean;
-  content: Array<{ type: 'text'; text: string }>;
+  content: { type: 'text'; text: string }[];
   structuredContent?: unknown;
 }
 
@@ -49,6 +49,7 @@ export function parseInput<T extends z.ZodTypeAny>(
 ): z.infer<T> {
   const parsed = schema.safeParse(args ?? {});
   if (parsed.success) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return parsed.data;
   }
 
@@ -74,7 +75,7 @@ export function toStringMap(
     if (item === undefined || item === null) {
       continue;
     }
-    out[key] = String(item);
+    out[key] = String(item as string | number | boolean);
   }
   return out;
 }

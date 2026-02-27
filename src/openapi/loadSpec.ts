@@ -88,10 +88,12 @@ async function loadSingleApi(
     (parsed as Record<string, unknown>).swagger === '2.0'
   ) {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       const converted = await swagger2openapi.convertObj(parsed, {
         patch: true,
         warnOnly: true,
       });
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       parsed = converted.openapi;
     } catch (error) {
       throw new OpenApiMcpError(

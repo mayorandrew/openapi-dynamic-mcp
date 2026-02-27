@@ -351,7 +351,10 @@ function serializeQueryValue(
   if (style === 'deepObject' && isPlainObject(value)) {
     for (const [nestedKey, nestedValue] of Object.entries(value)) {
       if (nestedValue !== undefined && nestedValue !== null) {
-        searchParams.append(`${key}[${nestedKey}]`, String(nestedValue));
+        searchParams.append(
+          `${key}[${nestedKey}]`,
+          String(nestedValue as string | number | boolean),
+        );
       }
     }
     return;
@@ -360,32 +363,38 @@ function serializeQueryValue(
   if (Array.isArray(value)) {
     if (explode) {
       for (const item of value) {
-        searchParams.append(key, String(item));
+        searchParams.append(key, String(item as string | number | boolean));
       }
       return;
     }
 
-    searchParams.append(key, value.map((item) => String(item)).join(','));
+    searchParams.append(
+      key,
+      value.map((item) => String(item as string | number | boolean)).join(','),
+    );
     return;
   }
 
   if (isPlainObject(value)) {
     if (explode) {
       for (const [itemKey, itemValue] of Object.entries(value)) {
-        searchParams.append(itemKey, String(itemValue));
+        searchParams.append(
+          itemKey,
+          String(itemValue as string | number | boolean),
+        );
       }
       return;
     }
 
     const flat: string[] = [];
     for (const [itemKey, itemValue] of Object.entries(value)) {
-      flat.push(itemKey, String(itemValue));
+      flat.push(itemKey, String(itemValue as string | number | boolean));
     }
     searchParams.append(key, flat.join(','));
     return;
   }
 
-  searchParams.append(key, String(value));
+  searchParams.append(key, String(value as string | number | boolean));
 }
 
 async function resolveFileContent(
@@ -440,14 +449,18 @@ async function appendFormData(
     return;
   }
 
-  formData.append(key, String(value));
+  formData.append(key, String(value as string | number | boolean));
 }
 
 async function prepareRequestBody(
   rawBody: unknown,
   files?: Record<string, McpFileDescriptor>,
   contentTypeOverride?: string,
-): Promise<{ body: any; inferredContentType?: string; isFormData?: boolean }> {
+): Promise<{
+  body: any;
+  inferredContentType?: string;
+  isFormData?: boolean;
+}> {
   const contentType = (contentTypeOverride ?? '').toLowerCase();
 
   if (contentType.includes('multipart/form-data')) {
@@ -471,11 +484,12 @@ async function prepareRequestBody(
       for (const [key, value] of Object.entries(rawBody)) {
         if (value === undefined || value === null) continue;
         if (Array.isArray(value)) {
-          for (const item of value) searchParams.append(key, String(item));
+          for (const item of value)
+            searchParams.append(key, String(item as string | number | boolean));
         } else if (isPlainObject(value)) {
           searchParams.append(key, JSON.stringify(value));
         } else {
-          searchParams.append(key, String(value));
+          searchParams.append(key, String(value as string | number | boolean));
         }
       }
     }
@@ -542,18 +556,22 @@ function expandPath(
     }
 
     if (Array.isArray(value)) {
-      return value.map((item) => encodeURIComponent(String(item))).join(',');
+      return value
+        .map((item) =>
+          encodeURIComponent(String(item as string | number | boolean)),
+        )
+        .join(',');
     }
 
     if (isPlainObject(value)) {
       const flat: string[] = [];
       for (const [k, v] of Object.entries(value)) {
-        flat.push(k, String(v));
+        flat.push(k, String(v as string | number | boolean));
       }
       return encodeURIComponent(flat.join(','));
     }
 
-    return encodeURIComponent(String(value));
+    return encodeURIComponent(String(value as string | number | boolean));
   });
 }
 

@@ -149,6 +149,7 @@ export async function startMcpServer(context: ToolContext): Promise<void> {
 
   server.setRequestHandler(
     CallToolRequestSchema,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async (request): Promise<any> => {
       const toolName = request.params.name;
       const args = request.params.arguments ?? {};
