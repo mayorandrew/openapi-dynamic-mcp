@@ -457,7 +457,7 @@ async function prepareRequestBody(
   files?: Record<string, McpFileDescriptor>,
   contentTypeOverride?: string,
 ): Promise<{
-  body: any;
+  body: RequestInit['body'];
   inferredContentType?: string;
   isFormData?: boolean;
 }> {

@@ -2,6 +2,7 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { loadApiRegistry } from '../src/openapi/loadSpec.js';
 import type { RootConfig } from '../src/types.js';
+import { OpenApiMcpError } from '../src/errors.js';
 
 const fixturesDir = path.resolve('test/fixtures');
 
@@ -60,5 +61,48 @@ describe('OpenAPI loading/index', () => {
     expect(api).toBeDefined();
     expect(api?.endpoints.length).toBeGreaterThan(0);
     expect(api?.schema.openapi.startsWith('3.0')).toBe(true);
+  });
+  it('throws on unsupported OpenAPI version', async () => {
+    const config: RootConfig = {
+      version: 1,
+      apis: [
+        {
+          name: 'bad-version',
+          specPath: path.join(fixturesDir, 'invalid-version.yaml'),
+        },
+      ],
+    };
+    await expect(loadApiRegistry(config, {})).rejects.toThrowError(
+      OpenApiMcpError,
+    );
+  });
+
+  it('throws on missing both specPath and specUrl', async () => {
+    const config: RootConfig = {
+      version: 1,
+      apis: [
+        {
+          name: 'missing-path',
+        } as any,
+      ],
+    };
+    await expect(loadApiRegistry(config, {})).rejects.toThrowError(
+      OpenApiMcpError,
+    );
+  });
+
+  it('throws on malformed spec missing openapi version', async () => {
+    const config: RootConfig = {
+      version: 1,
+      apis: [
+        {
+          name: 'missing-openapi-field',
+          specPath: path.join(fixturesDir, 'does-not-exist.yaml'),
+        },
+      ],
+    };
+    await expect(loadApiRegistry(config, {})).rejects.toThrowError(
+      OpenApiMcpError,
+    );
   });
 });

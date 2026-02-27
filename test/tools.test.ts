@@ -143,6 +143,33 @@ describe('MCP tools', () => {
     expect(payload.response.bodyType).toBe('json');
   });
 
+  it('translates MCP arguments to HTTP request elements correctly', async () => {
+    // listPets expects a query parameter limit and we can pass headers too
+    const scope = nock('https://api.example.com')
+      .get('/v1/pets')
+      .query({ limit: '10' })
+      .matchHeader('X-Custom-Header', 'test-value')
+      .reply(200, { items: [] }, { 'content-type': 'application/json' });
+
+    const result = await makeEndpointRequestTool(context, {
+      apiName: 'pet-api',
+      endpointId: 'listPets',
+      query: { limit: 10 },
+      headers: { 'X-Custom-Header': 'test-value' },
+    });
+
+    if (result.isError) {
+      console.error(result.structuredContent);
+    }
+    expect(result.isError).toBeUndefined();
+    expect(scope.isDone()).toBe(true);
+    const payload = result.structuredContent as {
+      response: { status: number; bodyJson: unknown };
+    };
+    expect(payload.response.status).toBe(200);
+    expect(payload.response.bodyJson).toEqual({ items: [] });
+  });
+
   it('supports maxRetries429 overrides on make_endpoint_request', async () => {
     const scope = nock('https://api.example.com')
       .get('/v1/pets')
