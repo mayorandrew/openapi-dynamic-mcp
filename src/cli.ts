@@ -1,29 +1,12 @@
 #!/usr/bin/env node
+import { command, option, run, string } from 'cmd-ts';
 import { loadConfig } from './config/loadConfig.js';
 import { OAuthClient } from './auth/oauthClient.js';
 import { OpenApiMcpError } from './errors.js';
-import { startMcpServer } from './mcp/server.js';
+import { startMcpServer, version } from './mcp/server.js';
 import { loadApiRegistry } from './openapi/loadSpec.js';
 
-function parseConfigPath(argv: string[]): string {
-  for (let i = 0; i < argv.length; i += 1) {
-    if (argv[i] === '--config') {
-      const value = argv[i + 1];
-      if (!value) {
-        throw new OpenApiMcpError('CONFIG_ERROR', 'Missing value for --config');
-      }
-      return value;
-    }
-  }
-
-  throw new OpenApiMcpError(
-    'CONFIG_ERROR',
-    'Missing required argument --config',
-  );
-}
-
-export async function runCli(argv = process.argv.slice(2)): Promise<void> {
-  const configPath = parseConfigPath(argv);
+export async function runServer(configPath: string): Promise<void> {
   const config = await loadConfig(configPath);
   const registry = await loadApiRegistry(config, process.env);
 
@@ -41,7 +24,22 @@ export async function runCli(argv = process.argv.slice(2)): Promise<void> {
   });
 }
 
-runCli().catch((error: unknown) => {
+const cmd = command({
+  name: 'openapi-dynamic-mcp',
+  description: 'MCP stdio server for OpenAPI APIs',
+  version,
+  args: {
+    config: option({
+      type: string,
+      long: 'config',
+      short: 'c',
+      description: 'Path to YAML configuration file',
+    }),
+  },
+  handler: ({ config }) => runServer(config),
+});
+
+run(cmd, process.argv.slice(2)).catch((error: unknown) => {
   if (error instanceof OpenApiMcpError) {
     console.error(
       JSON.stringify(
