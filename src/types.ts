@@ -154,6 +154,7 @@ export interface RequestExecutionResult {
     headersRedacted: Record<string, string>;
     endpointId: string;
   };
+  requestBodyPreview?: RequestBodyPreview;
   response: {
     status: number;
     headers: Record<string, string>;
@@ -164,4 +165,24 @@ export interface RequestExecutionResult {
   };
   timingMs: number;
   authUsed: string[];
+}
+
+export type RequestBodyPreview =
+  | { bodyType: 'empty' }
+  | { bodyType: 'json'; bodyJson: unknown }
+  | { bodyType: 'text'; bodyText: string }
+  | { bodyType: 'binary'; bodyBase64?: string }
+  | {
+      bodyType: 'form-data';
+      fields: FormDataPreviewField[];
+    };
+
+export interface FormDataPreviewField {
+  name: string;
+  valueType: 'text' | 'json' | 'file';
+  valueText?: string;
+  valueJson?: unknown;
+  fileName?: string;
+  contentType?: string;
+  sizeBytes?: number;
 }

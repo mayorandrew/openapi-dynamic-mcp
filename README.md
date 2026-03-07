@@ -2,7 +2,7 @@
   <h1>openapi-dynamic-mcp</h1>
 
   <p>
-    <strong>A TypeScript MCP stdio server that seamlessly loads multiple OpenAPI 2.x, 3.0, and 3.1 specifications and exposes powerful, generic tools for AI agents.</strong>
+    <strong>Connect AI clients to OpenAPI APIs quickly, with one MCP server, direct CLI access, and built-in auth support.</strong>
   </p>
 
   <p>
@@ -14,34 +14,45 @@
 
 ## Table of Contents
 
-- [What It Does](#what-it-does)
+- [Overview](#overview)
+- [Highlights](#highlights)
 - [Requirements](#requirements)
 - [Quick Start](#quick-start)
-- [CLI Usage](#cli-usage)
-- [Client Configuration](#client-configuration)
-  - [Claude Desktop / Claude Code](#claude-desktop--claude-code)
-  - [Cursor](#cursor)
 - [Configuration](#configuration)
-  - [Per-Scheme OAuth2 Configuration](#per-scheme-oauth2-configuration)
+- [Client Setup](#client-setup)
+- [CLI](#cli)
+- [Authentication](#authentication)
 - [Environment Variables](#environment-variables)
-  - [OAuth2 Flows](#oauth2-flows)
-- [Advanced Features](#advanced-features)
-  - [File Uploads and Binary Data](#file-uploads-and-binary-data)
-- [Available MCP Tools](#available-mcp-tools)
+- [Working with Responses](#working-with-responses)
+- [Files and Binary Data](#files-and-binary-data)
+- [MCP Tools](#mcp-tools)
 - [Development](#development)
 - [License](#license)
 
-## What It Does
+## Overview
 
-`openapi-dynamic-mcp` runs as a single Model Context Protocol (MCP) server over `stdio` for multiple APIs. It acts as a bridge between your LLMs and your API, taking care of parsing, request execution, authentication, and error handling.
+`openapi-dynamic-mcp` lets MCP clients and shell users work with OpenAPI APIs without writing custom glue code for each service. Point it at one or more OpenAPI specs, then list APIs, inspect endpoints, authenticate, and make requests through a consistent interface.
 
-- **Multi-API Support**: Run a single server for any number of APIs simultaneously.
-- **Specification Compatibility**: Supports OpenAPI `3.0`, `3.1`, and Swagger `2.0` specifications.
-- **Dynamic Resolution**: Supports local spec files via `specPath` or remote URL specs via `specUrl`.
-- **Robust Authentication**: Handles API Keys, HTTP `bearer`/`basic`, and OAuth2 (client credentials, password, device code, authorization code with PKCE). Supports complex OpenAPI security requirements (AND/OR logic).
-- **Environment Overrides**: Easily override base URLs, tokens, and extra headers per API.
-- **Resilience**: Configurable exponential retries on `429 Too Many Requests` responses.
-- **Tested**: Continuously tested against real-world APIs.
+It is designed for common user workflows:
+
+- Connect multiple APIs through one MCP server
+- Use local specs or hosted `specUrl` definitions
+- Work with OpenAPI `3.0`, `3.1`, and Swagger `2.0`
+- Handle API key, bearer, basic, and OAuth2 auth
+- Reuse stored tokens across sessions
+- Filter large responses down to the fields you need
+- Preview requests safely before sending them
+
+## Highlights
+
+- **Get from spec to usable tools fast**: start from a YAML config and immediately browse endpoints or call them from MCP or the CLI.
+- **Authenticate the way your API expects**: supports API keys, bearer/basic auth, and OAuth2 client credentials, password, device code, and auth code with PKCE.
+- **Avoid repeated sign-in work**: store tokens once and reuse them later.
+- **Handle interactive OAuth cleanly**: device-code and browser-based auth return instructions an agent can present to the user.
+- **Keep responses focused**: project large outputs with JSONPath selectors.
+- **Inspect before you send**: use dry runs to preview request shape without network I/O.
+- **Upload files when needed**: supports multipart form uploads and raw binary bodies.
+- **Stay resilient against rate limits**: configurable retries for `429 Too Many Requests`.
 
 ## Requirements
 
@@ -49,56 +60,90 @@
 
 ## Quick Start
 
-Run the server directly using `npx`:
+Run the MCP server directly:
 
 ```bash
 npx -y openapi-dynamic-mcp@latest --config ./config.yaml
 ```
 
-## CLI Usage
+Minimal config:
 
-```
-openapi-dynamic-mcp --config <path>
-
-Options:
-  --config, -c    Path to YAML configuration file (required)
-  --help, -h      Show help
-  --version, -v   Show version number
+```yaml
+version: 1
+apis:
+  - name: pet-api
+    specPath: ./pet-api.yaml
 ```
 
-## Client Configuration
+You can also point at a remote spec:
 
-To use this with your favorite MCP-compatible client, add it to their respective config files.
+```yaml
+version: 1
+apis:
+  - name: pet-api
+    specUrl: https://api.example.com/openapi.json
+```
+
+## Configuration
+
+Add each API you want to use under `apis`. Each entry can point to a local spec file or a remote spec URL.
+
+```yaml
+version: 1
+
+apis:
+  - name: pet-api
+    specPath: ./pet-api.yaml
+    # specUrl: https://api.example.com/openapi.yaml
+    baseUrl: https://api.example.com/v1
+    timeoutMs: 30000
+    headers:
+      X-Client: openapi-dynamic-mcp
+    retry429:
+      maxRetries: 2
+      baseDelayMs: 250
+      maxDelayMs: 5000
+      jitterRatio: 0.2
+      respectRetryAfter: true
+    oauth2Schemes:
+      OAuthCC:
+        tokenUrl: https://auth.example.com/oauth2/token
+        scopes: [read:pets, write:pets]
+        tokenEndpointAuthMethod: client_secret_basic
+      UserAuth:
+        authMethod: device_code
+        deviceAuthorizationEndpoint: https://auth.example.com/oauth/device
+        pkce: true
+```
+
+Common options:
+
+- `name`: the API name shown in MCP and CLI commands
+- `specPath` or `specUrl`: where to load the OpenAPI spec from
+- `baseUrl`: override the server URL from the spec
+- `headers`: headers to send on every request
+- `timeoutMs`: default request timeout
+- `retry429`: retry behavior for rate-limited APIs
+- `oauth2Schemes`: per-scheme OAuth settings when the spec defines OAuth security
+
+### Per-Scheme OAuth2 Configuration
+
+Use `oauth2Schemes` when an API defines one or more OAuth2 security schemes and you want to set token URLs, scopes, or interactive auth preferences for a specific scheme.
+
+The scheme name must match the name in the OpenAPI spec. Common options are:
+
+- `tokenUrl`
+- `scopes`
+- `tokenEndpointAuthMethod`
+- `authMethod`
+- `deviceAuthorizationEndpoint`
+- `pkce`
+
+If you only need credentials, environment variables are often enough. Use `oauth2Schemes` when you want reusable config checked into the project.
+
+## Client Setup
 
 ### Claude Desktop / Claude Code
-
-Add the following to your `claude_desktop_config.json` or equivalent:
-
-```json
-{
-  "mcpServers": {
-    "openapi": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "openapi-dynamic-mcp@latest",
-        "--config",
-        "/absolute/path/to/config.yaml"
-      ],
-      "env": {
-        "PET_API_BASE_URL": "http://localhost:3000",
-        "PET_API_APIKEY_API_KEY": "secret",
-        "PET_API_OAUTH2_CLIENT_ID": "client_id",
-        "PET_API_OAUTH2_CLIENT_SECRET": "client_secret"
-      }
-    }
-  }
-}
-```
-
-### Cursor
-
-Add to your MCP servers in Cursor settings:
 
 ```json
 {
@@ -119,161 +164,101 @@ Add to your MCP servers in Cursor settings:
 }
 ```
 
-## Configuration
+### Cursor
 
-Create a YAML configuration file to define your APIs.
-
-```yaml
-# Config file version
-version: 1
-
-apis:
-  # Unique ID for this API
-  - name: pet-api
-    # Path to local OpenAPI spec (use specUrl for remote definitions)
-    specPath: ./pet-api.yaml
-    # Alternative: remote OpenAPI spec URL
-    # specUrl: https://api.example.com/openapi.yaml
-    # Base URL override
-    baseUrl: https://api.example.com/v1
-    # Request timeout in milliseconds
-    timeoutMs: 30000
-    headers:
-      # Custom headers for all requests
-      X-Client: openapi-dynamic-mcp
-    # Configuration for exponential retries on 429 Too Many Requests responses
-    retry429:
-      # Maximum number of retries
-      maxRetries: 2
-      # Initial retry delay in milliseconds
-      baseDelayMs: 250
-      # Maximum retry delay in milliseconds
-      maxDelayMs: 5000
-      # Jitter factor (0-1)
-      jitterRatio: 0.2
-      # Respect Retry-After header
-      respectRetryAfter: true
-    # Per-scheme OAuth2 configuration (see below)
-    oauth2Schemes:
-      MyOAuth:
-        tokenUrl: https://auth.example.com/oauth2/token
-        scopes: [read:pets, write:pets]
-        tokenEndpointAuthMethod: client_secret_basic
+```json
+{
+  "mcpServers": {
+    "openapi": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "openapi-dynamic-mcp@latest",
+        "--config",
+        "/absolute/path/to/config.yaml"
+      ]
+    }
+  }
+}
 ```
 
-### Validation Rules
+## CLI
 
-- `apis[].name` must be unique (case-insensitive after normalization).
-- Exactly one of `apis[].specPath` (local file) or `apis[].specUrl` (remote URL) must be provided.
-- Supported specifications: OpenAPI `3.0`, `3.1`, and Swagger `2.0`.
-- Base URL resolution order: env > config > `openapi.servers[0].url`.
+Server mode is available as either the root command or the explicit `serve` subcommand:
 
-### Per-Scheme OAuth2 Configuration
-
-> **Breaking change in v1.0.0:** The `oauth2` config key has been replaced by `oauth2Schemes`, which is keyed by security scheme name instead of being a flat per-API object.
-
-The `oauth2Schemes` config key allows fine-grained configuration per OAuth2 security scheme defined in your OpenAPI spec:
-
-```yaml
-oauth2Schemes:
-  # Key must match the security scheme name in the OpenAPI spec
-  MyOAuth:
-    # Override the token endpoint URL
-    tokenUrl: https://auth.example.com/oauth2/token
-    # Scopes to request
-    scopes: [read, write]
-    # How to send client credentials: client_secret_basic (default) or client_secret_post
-    tokenEndpointAuthMethod: client_secret_basic
-    # For authorizationCode flows: device_code or authorization_code
-    authMethod: device_code
-    # Device authorization endpoint (required for device_code method)
-    deviceAuthorizationEndpoint: https://auth.example.com/device
-    # Enable/disable PKCE for authorization_code method (default: true)
-    pkce: true
-  AnotherOAuth:
-    tokenUrl: https://other.example.com/token
-    authMethod: authorization_code
+```bash
+openapi-dynamic-mcp --config ./config.yaml
+openapi-dynamic-mcp serve --config ./config.yaml
 ```
 
-All fields are optional. Values from env vars take precedence over config values, which take precedence over values from the OpenAPI spec.
+Use the CLI when you want the same API access outside your MCP client, for scripting, debugging, or auth setup.
 
-## Environment Variables
+### Tool Commands
 
-Environment variables allow specifying sensitive or environment-specific configuration for APIs. Variables are defined for each API separately.
+Every MCP tool is also available as a CLI subcommand that accepts one JSON object and emits JSON output:
 
-### Name Normalization
+```bash
+openapi-dynamic-mcp list_apis --config ./config.yaml --input '{}'
+openapi-dynamic-mcp list_api_endpoints --config ./config.yaml --input '{"apiName":"pet-api"}'
+openapi-dynamic-mcp get_api_endpoint --config ./config.yaml --input '{"apiName":"pet-api","endpointId":"listPets"}'
+openapi-dynamic-mcp get_api_schema --config ./config.yaml --input '{"apiName":"pet-api","pointer":"/info"}'
+openapi-dynamic-mcp make_endpoint_request --config ./config.yaml --input '{"apiName":"pet-api","endpointId":"listPets","dryRun":true}'
+```
 
-API and auth scheme names are normalized automatically:
+Shared flags:
 
-- Uppercase
-- Non-alphanumeric -> `_`
-- Repeated `_` collapsed
-- Leading/trailing `_` removed
+- `--input <json>`: JSON object with command arguments
+- `--fields <jsonpath>`: repeatable selector for filtering successful output
+- `--describe`: print the command schema and help metadata
+- `--auth-file <path>`: override the auth-store path
 
-_Examples:_
+### Auth Command
 
-- `pet-api` -> `PET_API`
-- `OAuth2` -> `OAUTH2`
+Use `auth` to pre-authenticate one configured security scheme and persist its token for later MCP or CLI calls:
 
-### API-Level Variables
+```bash
+openapi-dynamic-mcp auth --config ./config.yaml --api pet-api --scheme OAuthCC
+openapi-dynamic-mcp auth --config ./config.yaml --api pet-api --scheme ApiKeyAuth --token secret
+```
 
-- `<API>_BASE_URL` - Overrides the API's base URL.
-- `<API>_HEADERS` (JSON object string) - Adds custom headers to all requests.
+For API key and bearer auth, `--token` provides the secret directly. For OAuth2, the command uses your configured credentials, completes the flow, and stores the result for later use.
 
-### Authentication Variables
+## Authentication
 
-**API Key** (`<API>_<SCHEME>_API_KEY`)
+Supported authentication types:
 
-- The API key value for the specified security scheme.
+- API key
+- HTTP bearer
+- HTTP basic
+- OAuth2 client credentials
+- OAuth2 password grant (ROPC)
+- OAuth2 device code
+- OAuth2 authorization code with PKCE
 
-**HTTP Authentication**
+Typical auth flow:
 
-- `<API>_<SCHEME>_TOKEN` - Bearer token value.
-- `<API>_<SCHEME>_USERNAME` - Basic auth username.
-- `<API>_<SCHEME>_PASSWORD` - Basic auth password.
+1. Provide credentials through environment variables or config
+2. Run `auth` once if the scheme needs a stored token
+3. Reuse that token from MCP or the CLI until it expires or changes
 
-**OAuth2 (all flows)**
+### Auth Store
 
-- `<API>_<SCHEME>_ACCESS_TOKEN` - Pre-obtained access token. When set, skips all grant flows entirely. Works for any OAuth2 flow type.
-- `<API>_<SCHEME>_CLIENT_ID` - Client ID.
-- `<API>_<SCHEME>_CLIENT_SECRET` - Client secret.
-- `<API>_<SCHEME>_TOKEN_URL` - Token endpoint URL override.
-- `<API>_<SCHEME>_SCOPES` (space-delimited) - Scopes to request.
-- `<API>_<SCHEME>_TOKEN_AUTH_METHOD` (`client_secret_basic` or `client_secret_post`) - Auth method for the token endpoint.
+By default, tokens are stored beside your config file in:
 
-**OAuth2 Password (ROPC) flow** (additional)
+```text
+.openapi-dynamic-mcp-auth.json
+```
 
-- `<API>_<SCHEME>_USERNAME` - Resource owner username.
-- `<API>_<SCHEME>_PASSWORD` - Resource owner password.
+You can override that path with either:
 
-**OAuth2 Interactive flows** (additional)
+- `--auth-file`
+- `OPENAPI_DYNAMIC_MCP_AUTH_FILE`
 
-- `<API>_<SCHEME>_AUTH_METHOD` (`device_code` or `authorization_code`) - Choose the interactive method. Auto-detected if not set.
-- `<API>_<SCHEME>_DEVICE_AUTHORIZATION_ENDPOINT` - Device authorization endpoint URL (required for `device_code`).
-- `<API>_<SCHEME>_REDIRECT_PORT` - Pin the local callback port for `authorization_code` flow.
-- `<API>_<SCHEME>_PKCE` (`true` or `false`) - Enable/disable PKCE for `authorization_code` (default: `true`).
+This makes repeated API use much smoother, especially for MCP clients that need to reconnect often.
 
-_Precedence Rules:_
+### Interactive OAuth2 Flows
 
-- **Base URL:** env > config > OpenAPI servers.
-- **OAuth token URL:** scheme env > config override > OpenAPI flow `tokenUrl`.
-- **OAuth scopes:** scheme env > config scopes > OpenAPI flow scopes.
-- **OAuth auth method:** env `_AUTH_METHOD` > config `authMethod` > auto-detect.
-- **Headers:** config headers + env headers + tool-request headers (later wins), then auth is applied.
-
-### OAuth2 Flows
-
-| Flow               | Method               | How it works                                                                              | Required env vars                                                |
-| ------------------ | -------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| Client Credentials | Automatic            | Server-to-server token exchange                                                           | `_CLIENT_ID`, `_CLIENT_SECRET`                                   |
-| Password (ROPC)    | Automatic            | Username/password grant                                                                   | `_CLIENT_ID`, `_CLIENT_SECRET`, `_USERNAME`, `_PASSWORD`         |
-| Authorization Code | `device_code`        | Returns verification URL + user code for the agent to present to the user. Poll on retry. | `_CLIENT_ID`, `_CLIENT_SECRET`, `_DEVICE_AUTHORIZATION_ENDPOINT` |
-| Authorization Code | `authorization_code` | Returns authorization URL. Starts local callback server. Poll on retry.                   | `_CLIENT_ID`, `_CLIENT_SECRET`                                   |
-| Implicit           | N/A                  | Not supported server-side. Use `_ACCESS_TOKEN` bypass.                                    | `_ACCESS_TOKEN`                                                  |
-
-**Interactive flow UX (device code and authorization code):**
-
-When an endpoint requires an interactive OAuth2 flow, `make_endpoint_request` returns a structured response instead of an error:
+When a request needs user interaction, the tool returns structured guidance that an MCP agent can relay to the user. Typical device-code output looks like:
 
 ```json
 {
@@ -286,33 +271,99 @@ When an endpoint requires an interactive OAuth2 flow, `make_endpoint_request` re
 }
 ```
 
-The same information is also printed to stderr for direct CLI users. Call the endpoint again after the user authorizes to complete the flow and get the API response.
+This is especially useful for MCP agents because the auth step becomes a normal part of the user workflow instead of a dead-end error.
 
-**Tip:** Set `<API>_<SCHEME>_ACCESS_TOKEN` to skip all interactive flows. This is useful for CI/CD or when you already have a token from another source.
+## Environment Variables
 
-## Advanced Features
+Environment variables are useful for secrets, base URL overrides, and CI setups.
 
-### File Uploads and Binary Data
+Names are derived from normalized API and scheme names:
 
-When your AI needs to send a file to an endpoint (either raw `application/octet-stream`, or inside a `multipart/form-data` payload), MCP passes messages as JSON. The LLM formats the corresponding file using the `files` parameter mapping, and `make_endpoint_request` processes it natively (converting to Blobs and FormData).
+- Uppercase
+- Non-alphanumeric characters become `_`
+- Repeated `_` are collapsed
+- Leading and trailing `_` are removed
 
-#### MCP File Descriptor format
+Examples:
 
-Each key in the `files` object maps to a form field name. You must provide exactly one of `base64`, `text`, or `filePath`:
+- `pet-api` -> `PET_API`
+- `OAuth2` -> `OAUTH2`
 
-```jsonc
+### API-Level Variables
+
+- `<API>_BASE_URL`
+- `<API>_HEADERS` as a JSON object string
+- `OPENAPI_DYNAMIC_MCP_AUTH_FILE`
+
+### API Key
+
+- `<API>_<SCHEME>_API_KEY`
+
+### HTTP Auth
+
+- `<API>_<SCHEME>_TOKEN`
+- `<API>_<SCHEME>_USERNAME`
+- `<API>_<SCHEME>_PASSWORD`
+
+### OAuth2
+
+- `<API>_<SCHEME>_ACCESS_TOKEN`
+- `<API>_<SCHEME>_CLIENT_ID`
+- `<API>_<SCHEME>_CLIENT_SECRET`
+- `<API>_<SCHEME>_TOKEN_URL`
+- `<API>_<SCHEME>_SCOPES` as a space-delimited list
+- `<API>_<SCHEME>_TOKEN_AUTH_METHOD` as `client_secret_basic` or `client_secret_post`
+- `<API>_<SCHEME>_USERNAME`
+- `<API>_<SCHEME>_PASSWORD`
+- `<API>_<SCHEME>_AUTH_METHOD` as `device_code` or `authorization_code`
+- `<API>_<SCHEME>_DEVICE_AUTHORIZATION_ENDPOINT`
+- `<API>_<SCHEME>_REDIRECT_PORT`
+- `<API>_<SCHEME>_PKCE` as `true` or `false`
+
+Useful behaviors:
+
+- `_ACCESS_TOKEN` bypasses OAuth grant flows entirely.
+- `_AUTH_METHOD` forces `device_code` or `authorization_code` when both are possible.
+- `_USERNAME` and `_PASSWORD` are used for both HTTP basic auth and OAuth password grant, depending on the security scheme.
+
+## Working with Responses
+
+### JSONPath Filtering
+
+CLI `--fields` and MCP `fields: string[]` let you keep only the parts of a successful response you care about. This is helpful when specs or payloads are too large to inspect comfortably.
+
+Examples:
+
+```bash
+openapi-dynamic-mcp list_apis --config ./config.yaml --fields '$.apis[*].name'
+openapi-dynamic-mcp get_api_endpoint --config ./config.yaml --input '{"apiName":"pet-api","endpointId":"listPets"}' --fields '$.responses'
+```
+
+Selectors support quoted member escaping, array indexes, and wildcards.
+
+### Large Schema Warnings
+
+`get_api_schema` adds a `_sizeWarning` advisory field when the response is very large, prompting you to narrow the JSON Pointer.
+
+### Dry Runs
+
+`make_endpoint_request` supports `dryRun: true` so you can confirm the URL, headers, auth, and serialized body before sending a real request.
+
+## Files and Binary Data
+
+`make_endpoint_request` supports both `multipart/form-data` and raw binary uploads.
+
+Each file entry must provide exactly one content source: `base64`, `text`, or `filePath`.
+
+```json
 {
-  "name": "avatar.png", // (Optional) Explicit file name
-  "contentType": "image/png", // (Optional) Explicit mime type
-
-  // Choose EXACTLY ONE content source:
-  "base64": "iVBORw0KGgo...", // Base64 encoded bytes
-  "text": "File contents", // Raw text content
-  "filePath": "/path/to/img", // Local absolute file path to read
+  "name": "avatar.png",
+  "contentType": "image/png",
+  "filePath": "/absolute/path/to/avatar.png"
 }
 ```
 
-#### Example: Multipart Form-Data
+Multipart example:
 
 ```json
 {
@@ -332,7 +383,7 @@ Each key in the `files` object maps to a form field name. You must provide exact
 }
 ```
 
-#### Example: Raw Octet Stream
+Raw binary example:
 
 ```json
 {
@@ -347,30 +398,34 @@ Each key in the `files` object maps to a form field name. You must provide exact
 }
 ```
 
-## Available MCP Tools
+## MCP Tools
 
-These tools are exposed to your MCP client:
+These five tools cover the main user workflows:
 
-| Tool                    | Description                                                     | Inputs                                                                                                                              |
-| ----------------------- | --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `list_apis`             | Returns all available configured APIs                           | _None_                                                                                                                              |
-| `list_api_endpoints`    | Paginate or search endpoints in an API                          | `apiName` (req), `method`, `tag`, `pathContains`, `search`, `limit`, `cursor`                                                       |
-| `get_api_endpoint`      | Endpoint metadata (parameters, body types, responses, security) | `apiName`, `endpointId`                                                                                                             |
-| `get_api_schema`        | Detailed API schema object specification                        | `apiName`, `pointer` (JSON Pointer, optional)                                                                                       |
-| `make_endpoint_request` | Executes the actual API endpoint request                        | `apiName`, `endpointId`, `pathParams`, `query`, `headers`, `cookies`, `body`, `contentType`, `accept`, `timeoutMs`, `maxRetries429` |
-
-`get_api_schema` includes a `_sizeWarning` advisory field when the response exceeds 200KB, suggesting a more specific JSON pointer.
+| Tool                    | Purpose                                                        |
+| ----------------------- | -------------------------------------------------------------- |
+| `list_apis`             | List configured APIs                                           |
+| `list_api_endpoints`    | Search or paginate endpoints in one API                        |
+| `get_api_endpoint`      | Inspect endpoint metadata, parameters, responses, and security |
+| `get_api_schema`        | Return a schema object or JSON Pointer target from the spec    |
+| `make_endpoint_request` | Preview or execute an endpoint request                         |
 
 ## Development
 
-Install dependencies and run tests:
-
 ```bash
 npm install
-npm test
 npm run build
+npm test
+```
+
+Useful commands:
+
+```bash
+npm run lint
+npm run format
+npm run test:watch
 ```
 
 ## License
 
-This project is licensed under the MIT License.
+MIT

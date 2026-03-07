@@ -1,31 +1,60 @@
 import type { ToolContext } from '../context.js';
 import { z } from 'zod';
-import { fail, ok, parseInput, requireApi, type ToolResult } from './common.js';
+import {
+  requireApi,
+  runMcpTool,
+  withFields,
+  type ToolDefinition,
+  type ToolResult,
+} from './common.js';
 
-const listApiEndpointsInputSchema = z
-  .object({
-    apiName: z.string().min(1),
-    method: z.string().optional(),
-    tag: z.string().optional(),
-    pathContains: z.string().optional(),
-    search: z.array(z.string()).optional(),
-    limit: z.number().int().positive().optional(),
-    cursor: z.string().optional(),
-  })
-  .strict();
+const listApiEndpointsInputSchema = withFields(
+  z
+    .object({
+      apiName: z.string().min(1),
+      method: z.string().optional(),
+      tag: z.string().optional(),
+      pathContains: z.string().optional(),
+      search: z.array(z.string()).optional(),
+      limit: z.number().int().positive().optional(),
+      cursor: z.string().optional(),
+    })
+    .strict(),
+);
 
-export async function listApiEndpointsTool(
-  context: ToolContext,
-  args: unknown,
-): Promise<ToolResult> {
-  try {
-    const input = parseInput(args, listApiEndpointsInputSchema);
+const listApiEndpointsOutputSchema = z.object({
+  endpoints: z.array(
+    z.object({
+      endpointId: z.string(),
+      method: z.string(),
+      path: z.string(),
+      operationId: z.string().optional(),
+      summary: z.string().optional(),
+      tags: z.array(z.string()),
+    }),
+  ),
+  nextCursor: z.string().optional(),
+});
+
+type ListApiEndpointsInput = z.infer<typeof listApiEndpointsInputSchema>;
+type ListApiEndpointsOutput = z.infer<typeof listApiEndpointsOutputSchema>;
+
+export const listApiEndpointsToolDefinition: ToolDefinition<
+  ListApiEndpointsInput,
+  ListApiEndpointsOutput
+> = {
+  name: 'list_api_endpoints',
+  description: 'List endpoints from a specific API with optional filters.',
+  inputSchema: listApiEndpointsInputSchema,
+  outputSchema: listApiEndpointsOutputSchema,
+  async execute(context, input) {
     const api = requireApi(context, input.apiName);
 
     const methodFilter = input.method?.toLowerCase();
     const tagFilter = input.tag;
     const pathContains = input.pathContains;
-    const searchTerms = input.search?.map((s) => s.trim().toLowerCase()) ?? [];
+    const searchTerms =
+      input.search?.map((term: string) => term.trim().toLowerCase()) ?? [];
     const limit = Math.min(input.limit ?? 50, 200);
     const offset =
       typeof input.cursor === 'string' && input.cursor.trim()
@@ -58,8 +87,7 @@ export async function listApiEndpointsTool(
           .filter((value): value is string => typeof value === 'string')
           .map((value) => value.toLowerCase());
 
-        // Check if ANY search term matches any field in the haystack (OR logic)
-        const matchesAnyTerm = searchTerms.some((term) =>
+        const matchesAnyTerm = searchTerms.some((term: string) =>
           haystack.some((value) => value.includes(term)),
         );
 
@@ -75,7 +103,7 @@ export async function listApiEndpointsTool(
     const paged = filtered.slice(safeOffset, safeOffset + limit);
     const nextOffset = safeOffset + paged.length;
 
-    return ok({
+    return {
       endpoints: paged.map((endpoint) => ({
         endpointId: endpoint.endpointId,
         method: endpoint.method,
@@ -85,8 +113,13 @@ export async function listApiEndpointsTool(
         tags: endpoint.tags ?? [],
       })),
       nextCursor: nextOffset < filtered.length ? String(nextOffset) : undefined,
-    });
-  } catch (error) {
-    return fail(error);
-  }
+    };
+  },
+};
+
+export async function listApiEndpointsTool(
+  context: ToolContext,
+  args: unknown,
+): Promise<ToolResult> {
+  return runMcpTool(listApiEndpointsToolDefinition, context, args);
 }

@@ -1,5 +1,17 @@
-export { getApiEndpointTool } from './getApiEndpoint.js';
-export { getApiSchemaTool } from './getApiSchema.js';
-export { listApiEndpointsTool } from './listApiEndpoints.js';
-export { listApisTool } from './listApis.js';
-export { makeEndpointRequestTool } from './makeEndpointRequest.js';
+export {
+  getApiEndpointTool,
+  getApiEndpointToolDefinition,
+} from './getApiEndpoint.js';
+export {
+  getApiSchemaTool,
+  getApiSchemaToolDefinition,
+} from './getApiSchema.js';
+export {
+  listApiEndpointsTool,
+  listApiEndpointsToolDefinition,
+} from './listApiEndpoints.js';
+export { listApisTool, listApisToolDefinition } from './listApis.js';
+export {
+  makeEndpointRequestTool,
+  makeEndpointRequestToolDefinition,
+} from './makeEndpointRequest.js';

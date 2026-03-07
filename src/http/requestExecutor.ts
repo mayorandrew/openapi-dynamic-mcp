@@ -1,12 +1,15 @@
 import type { OpenAPIV3 } from 'openapi-types';
 import { readFile } from 'node:fs/promises';
+import type { AuthStore } from '../auth/authStore.js';
 import { readApiExtraHeaders } from '../auth/env.js';
 import { OAuthClient } from '../auth/oauthClient.js';
 import { resolveAuth } from '../auth/resolveAuth.js';
 import { OpenApiMcpError } from '../errors.js';
 import type {
   EndpointDefinition,
+  FormDataPreviewField,
   LoadedApi,
+  RequestBodyPreview,
   RequestExecutionResult,
   Retry429Config,
   McpFileDescriptor,
@@ -27,7 +30,20 @@ interface RequestExecutorInput {
   timeoutMs?: number;
   retry429?: Retry429Config;
   oauthClient: OAuthClient;
+  authStore?: AuthStore;
   env?: NodeJS.ProcessEnv;
+}
+
+export interface PreparedEndpointRequest {
+  request: RequestExecutionResult['request'];
+  requestBodyPreview: RequestBodyPreview;
+  timingMs: number;
+  authUsed: string[];
+  body: RequestInit['body'];
+  timeoutMs: number;
+  retry429: ResolvedRetry429Options;
+  fetchUrl: URL;
+  fetchHeaders: Record<string, string>;
 }
 
 interface ResolvedRetry429Options {
@@ -55,12 +71,97 @@ const DEFAULT_RETRY_429_OPTIONS: ResolvedRetry429Options = {
 export async function executeEndpointRequest(
   input: RequestExecutorInput,
 ): Promise<RequestExecutionResult> {
+  const prepared = await prepareEndpointRequest(input);
+  if ('response' in prepared) {
+    return prepared;
+  }
+
+  let response: Response | undefined;
+  for (let attempt = 0; attempt <= prepared.retry429.maxRetries; attempt++) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), prepared.timeoutMs);
+    try {
+      response = await fetch(prepared.fetchUrl, {
+        method: prepared.request.method,
+        headers: prepared.fetchHeaders,
+        body: prepared.body,
+        signal: controller.signal,
+      });
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new OpenApiMcpError(
+          'REQUEST_ERROR',
+          `Request timed out after ${prepared.timeoutMs}ms`,
+          {
+            apiName: input.api.config.name,
+            endpointId: input.endpoint.endpointId,
+          },
+        );
+      }
+
+      throw new OpenApiMcpError('REQUEST_ERROR', 'Request failed', {
+        cause: error instanceof Error ? error.message : String(error),
+        apiName: input.api.config.name,
+        endpointId: input.endpoint.endpointId,
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
+
+    if (response.status !== 429 || attempt >= prepared.retry429.maxRetries) {
+      break;
+    }
+
+    const delayMs = computeRetryDelayMs(
+      response.headers.get('retry-after'),
+      attempt,
+      prepared.retry429,
+    );
+    if (delayMs > 0) {
+      await sleep(delayMs);
+    }
+  }
+
+  if (!response) {
+    throw new OpenApiMcpError('REQUEST_ERROR', 'Request failed', {
+      apiName: input.api.config.name,
+      endpointId: input.endpoint.endpointId,
+    });
+  }
+
+  const responseHeaders = Object.fromEntries(response.headers.entries());
+  const responseBody = await decodeResponseBody(response);
+
+  return {
+    request: prepared.request,
+    response: {
+      status: response.status,
+      headers: responseHeaders,
+      ...responseBody,
+    },
+    timingMs: prepared.timingMs,
+    authUsed: prepared.authUsed,
+  };
+}
+
+export async function prepareEndpointRequest(
+  input: RequestExecutorInput,
+): Promise<
+  | PreparedEndpointRequest
+  | {
+      request: RequestExecutionResult['request'];
+      response: RequestExecutionResult['response'];
+      timingMs: number;
+      authUsed: string[];
+    }
+> {
   const env = input.env ?? process.env;
   const start = Date.now();
   const auth = await resolveAuth({
     api: input.api,
     endpoint: input.endpoint,
     oauthClient: input.oauthClient,
+    authStore: input.authStore,
     env,
   });
 
@@ -163,63 +264,6 @@ export async function executeEndpointRequest(
     input.api.config.retry429,
     input.retry429,
   );
-
-  let response: Response | undefined;
-  for (let attempt = 0; attempt <= retry429.maxRetries; attempt++) {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), timeoutMs);
-    try {
-      response = await fetch(url, {
-        method: input.endpoint.method.toUpperCase(),
-        headers: mergedHeaders,
-        body,
-        signal: controller.signal,
-      });
-    } catch (error) {
-      if (error instanceof Error && error.name === 'AbortError') {
-        throw new OpenApiMcpError(
-          'REQUEST_ERROR',
-          `Request timed out after ${timeoutMs}ms`,
-          {
-            apiName: input.api.config.name,
-            endpointId: input.endpoint.endpointId,
-          },
-        );
-      }
-
-      throw new OpenApiMcpError('REQUEST_ERROR', 'Request failed', {
-        cause: error instanceof Error ? error.message : String(error),
-        apiName: input.api.config.name,
-        endpointId: input.endpoint.endpointId,
-      });
-    } finally {
-      clearTimeout(timeout);
-    }
-
-    if (response.status !== 429 || attempt >= retry429.maxRetries) {
-      break;
-    }
-
-    const delayMs = computeRetryDelayMs(
-      response.headers.get('retry-after'),
-      attempt,
-      retry429,
-    );
-    if (delayMs > 0) {
-      await sleep(delayMs);
-    }
-  }
-
-  if (!response) {
-    throw new OpenApiMcpError('REQUEST_ERROR', 'Request failed', {
-      apiName: input.api.config.name,
-      endpointId: input.endpoint.endpointId,
-    });
-  }
-
-  const responseHeaders = Object.fromEntries(response.headers.entries());
-  const responseBody = await decodeResponseBody(response);
-
   return {
     request: {
       url: url.toString(),
@@ -227,13 +271,14 @@ export async function executeEndpointRequest(
       headersRedacted: redactHeaders(mergedHeaders),
       endpointId: input.endpoint.endpointId,
     },
-    response: {
-      status: response.status,
-      headers: responseHeaders,
-      ...responseBody,
-    },
+    requestBodyPreview: previewRequestBody(input.body, input.files, isFormData),
     timingMs: Date.now() - start,
     authUsed: auth.authUsed,
+    body,
+    timeoutMs,
+    retry429,
+    fetchUrl: url,
+    fetchHeaders: mergedHeaders,
   };
 }
 
@@ -558,6 +603,138 @@ async function prepareRequestBody(
   return {
     body: JSON.stringify(rawBody),
     inferredContentType: contentTypeOverride ?? 'application/json',
+  };
+}
+
+function previewRequestBody(
+  rawBody: unknown,
+  files?: Record<string, McpFileDescriptor>,
+  isFormData?: boolean,
+): RequestBodyPreview {
+  if (isFormData) {
+    return {
+      bodyType: 'form-data',
+      fields: previewFormFields(rawBody, files),
+    };
+  }
+
+  if ((rawBody === undefined || rawBody === null) && files) {
+    const descriptors = Object.values(files);
+    if (descriptors.length === 1) {
+      return previewBinaryDescriptor(descriptors[0]);
+    }
+  }
+
+  if (rawBody === undefined || rawBody === null) {
+    return { bodyType: 'empty' };
+  }
+
+  if (typeof rawBody === 'string') {
+    return { bodyType: 'text', bodyText: rawBody };
+  }
+
+  if (rawBody instanceof Uint8Array || Buffer.isBuffer(rawBody)) {
+    return {
+      bodyType: 'binary',
+      bodyBase64: Buffer.from(rawBody).toString('base64'),
+    };
+  }
+
+  return {
+    bodyType: 'json',
+    bodyJson: rawBody,
+  };
+}
+
+function previewBinaryDescriptor(
+  descriptor: McpFileDescriptor,
+): RequestBodyPreview {
+  if ('base64' in descriptor) {
+    return { bodyType: 'binary', bodyBase64: descriptor.base64 };
+  }
+
+  if ('text' in descriptor) {
+    return { bodyType: 'text', bodyText: descriptor.text };
+  }
+
+  return { bodyType: 'binary' };
+}
+
+function previewFormFields(
+  rawBody: unknown,
+  files?: Record<string, McpFileDescriptor>,
+): FormDataPreviewField[] {
+  const preview: FormDataPreviewField[] = [];
+
+  if (isPlainObject(rawBody)) {
+    for (const [key, value] of Object.entries(rawBody)) {
+      appendPreviewField(preview, key, value);
+    }
+  }
+
+  if (files) {
+    for (const [key, value] of Object.entries(files)) {
+      preview.push(previewFileField(key, value));
+    }
+  }
+
+  return preview;
+}
+
+function appendPreviewField(
+  target: FormDataPreviewField[],
+  key: string,
+  value: unknown,
+): void {
+  if (value === undefined || value === null) {
+    return;
+  }
+
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      appendPreviewField(target, key, item);
+    }
+    return;
+  }
+
+  if (isMcpFileDescriptor(value)) {
+    target.push(previewFileField(key, value));
+    return;
+  }
+
+  if (isPlainObject(value)) {
+    target.push({
+      name: key,
+      valueType: 'json',
+      valueJson: value,
+    });
+    return;
+  }
+
+  target.push({
+    name: key,
+    valueType: 'text',
+    valueText: String(value as string | number | boolean),
+  });
+}
+
+function previewFileField(
+  key: string,
+  descriptor: McpFileDescriptor,
+): FormDataPreviewField {
+  const sizeBytes =
+    'base64' in descriptor
+      ? Buffer.from(descriptor.base64, 'base64').byteLength
+      : 'text' in descriptor
+        ? Buffer.byteLength(descriptor.text)
+        : undefined;
+
+  return {
+    name: key,
+    valueType: 'file',
+    fileName: descriptor.name,
+    contentType: descriptor.contentType,
+    sizeBytes,
   };
 }
 

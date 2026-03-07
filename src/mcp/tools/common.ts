@@ -1,6 +1,8 @@
 import { asErrorResponse, OpenApiMcpError } from '../../errors.js';
 import type { LoadedApi } from '../../types.js';
 import type { ToolContext } from '../context.js';
+import { applyJsonPathFields } from '../../output/jsonPath.js';
+import { toJsonSchemaCompat } from '../../vendor/mcpJsonSchema.js';
 import { z } from 'zod';
 
 export interface ToolResult {
@@ -9,8 +11,20 @@ export interface ToolResult {
   structuredContent?: unknown;
 }
 
+export interface ToolDefinition<TInput extends { fields?: string[] }, TOutput> {
+  name: string;
+  description: string;
+  inputSchema: z.ZodType<TInput>;
+  outputSchema: z.ZodType<TOutput>;
+  execute: (
+    context: ToolContext,
+    input: Omit<TInput, 'fields'>,
+  ) => Promise<TOutput>;
+}
+
 export function ok(data: unknown): ToolResult {
   return {
+    isError: undefined,
     content: [
       {
         type: 'text',
@@ -43,13 +57,11 @@ export function requireApi(context: ToolContext, apiName: string): LoadedApi {
   return api;
 }
 
-export function parseInput<T extends z.ZodTypeAny>(
-  args: unknown,
-  schema: T,
-): z.infer<T> {
-  const parsed = schema.safeParse(args ?? {});
+export function parseInput<T>(args: unknown, schema: z.ZodType<T>): T {
+  const parsed: z.SafeParseReturnType<unknown, T> = schema.safeParse(
+    args ?? {},
+  );
   if (parsed.success) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return parsed.data;
   }
 
@@ -61,6 +73,71 @@ export function parseInput<T extends z.ZodTypeAny>(
       message: item.message,
     })),
   });
+}
+
+export function validateOutput<T>(data: unknown, schema: z.ZodType<T>): T {
+  const parsed: z.SafeParseReturnType<unknown, T> = schema.safeParse(data);
+  if (parsed.success) {
+    return parsed.data;
+  }
+
+  throw new OpenApiMcpError('SCHEMA_ERROR', 'Tool output validation failed', {
+    issues: parsed.error.issues.map((item) => ({
+      path: item.path,
+      message: item.message,
+    })),
+  });
+}
+
+export async function executeToolData<
+  TInput extends { fields?: string[] },
+  TOutput,
+>(
+  definition: ToolDefinition<TInput, TOutput>,
+  context: ToolContext,
+  args: unknown,
+): Promise<TOutput> {
+  const input = parseInput(args, definition.inputSchema);
+  const { fields, ...toolInput } = input;
+  const data = await definition.execute(context, toolInput);
+  const validated = validateOutput(data, definition.outputSchema);
+  return applyJsonPathFields(validated, fields);
+}
+
+export async function runMcpTool<TInput extends { fields?: string[] }, TOutput>(
+  definition: ToolDefinition<TInput, TOutput>,
+  context: ToolContext,
+  args: unknown,
+): Promise<ToolResult> {
+  try {
+    return ok(await executeToolData(definition, context, args));
+  } catch (error) {
+    return fail(error);
+  }
+}
+
+export function toToolDescriptor<TInput extends { fields?: string[] }, TOutput>(
+  definition: ToolDefinition<TInput, TOutput>,
+): {
+  name: string;
+  description: string;
+  inputSchema: Record<string, unknown>;
+  outputSchema: Record<string, unknown>;
+} {
+  return {
+    name: definition.name,
+    description: definition.description,
+    inputSchema: toJsonSchemaCompat(definition.inputSchema),
+    outputSchema: toJsonSchemaCompat(definition.outputSchema),
+  };
+}
+
+export function withFields<T extends z.AnyZodObject>(
+  schema: T,
+): z.ZodType<z.infer<T> & { fields?: string[] }> {
+  return schema.extend({
+    fields: z.array(z.string()).optional(),
+  }) as unknown as z.ZodType<z.infer<T> & { fields?: string[] }>;
 }
 
 export function toStringMap(

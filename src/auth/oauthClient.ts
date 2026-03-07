@@ -25,8 +25,12 @@ export interface OAuthPasswordGrantRequest extends OAuthTokenRequest {
   password: string;
 }
 
-interface TokenCacheEntry {
+export interface OAuthTokenResult {
   accessToken: string;
+  expiresIn?: number;
+}
+
+interface TokenCacheEntry extends OAuthTokenResult {
   expiresAtMs: number;
 }
 
@@ -47,10 +51,12 @@ export class OAuthClient {
   readonly deviceCodeFlow = new DeviceCodeFlowManager();
   readonly authCodeFlow = new AuthCodeFlowManager();
 
-  async getClientCredentialsToken(request: OAuthTokenRequest): Promise<string> {
-    const cached = this.cache.get(request.cacheKey);
-    if (cached && cached.expiresAtMs - Date.now() > TOKEN_EXPIRY_SAFETY_MS) {
-      return cached.accessToken;
+  async getClientCredentialsToken(
+    request: OAuthTokenRequest,
+  ): Promise<OAuthTokenResult> {
+    const cached = this.getCachedToken(request.cacheKey);
+    if (cached) {
+      return cached;
     }
 
     const as: oauth.AuthorizationServer = {
@@ -81,13 +87,12 @@ export class OAuthClient {
         client,
         tokenResponse,
       );
-      this.cache.set(request.cacheKey, {
+      const result: OAuthTokenResult = {
         accessToken: tokenResult.access_token,
-        expiresAtMs:
-          Date.now() + Math.max(tokenResult.expires_in ?? 3600, 1) * 1000,
-      });
-
-      return tokenResult.access_token;
+        expiresIn: tokenResult.expires_in,
+      };
+      this.cacheToken(request.cacheKey, result.accessToken, result.expiresIn);
+      return result;
     } catch (error) {
       if (error instanceof oauth.ResponseBodyError) {
         throw new OpenApiMcpError('AUTH_ERROR', 'OAuth2 token request failed', {
@@ -113,10 +118,10 @@ export class OAuthClient {
 
   async getPasswordGrantToken(
     request: OAuthPasswordGrantRequest,
-  ): Promise<string> {
-    const cached = this.cache.get(request.cacheKey);
-    if (cached && cached.expiresAtMs - Date.now() > TOKEN_EXPIRY_SAFETY_MS) {
-      return cached.accessToken;
+  ): Promise<OAuthTokenResult> {
+    const cached = this.getCachedToken(request.cacheKey);
+    if (cached) {
+      return cached;
     }
 
     const body = new URLSearchParams({
@@ -179,19 +184,28 @@ export class OAuthClient {
       access_token: string;
       expires_in?: number;
     };
-
-    this.cache.set(request.cacheKey, {
+    const tokenResult: OAuthTokenResult = {
       accessToken: result.access_token,
-      expiresAtMs: Date.now() + Math.max(result.expires_in ?? 3600, 1) * 1000,
-    });
-
-    return result.access_token;
+      expiresIn: result.expires_in,
+    };
+    this.cacheToken(
+      request.cacheKey,
+      tokenResult.accessToken,
+      tokenResult.expiresIn,
+    );
+    return tokenResult;
   }
 
-  getCachedToken(cacheKey: string): string | undefined {
+  getCachedToken(cacheKey: string): OAuthTokenResult | undefined {
     const cached = this.cache.get(cacheKey);
     if (cached && cached.expiresAtMs - Date.now() > TOKEN_EXPIRY_SAFETY_MS) {
-      return cached.accessToken;
+      return {
+        accessToken: cached.accessToken,
+        expiresIn: Math.max(
+          1,
+          Math.floor((cached.expiresAtMs - Date.now()) / 1000),
+        ),
+      };
     }
     return undefined;
   }
@@ -199,23 +213,28 @@ export class OAuthClient {
   cacheToken(cacheKey: string, accessToken: string, expiresIn?: number): void {
     this.cache.set(cacheKey, {
       accessToken,
+      expiresIn,
       expiresAtMs: Date.now() + Math.max(expiresIn ?? 3600, 1) * 1000,
     });
   }
 
   async startOrPollDeviceCode(
     params: DeviceAuthParams,
-  ): Promise<{ token: string } | InteractiveAuthResult> {
+  ): Promise<OAuthTokenResult | InteractiveAuthResult> {
     const cached = this.getCachedToken(params.cacheKey);
-    if (cached) return { token: cached };
+    if (cached) return cached;
 
     if (this.deviceCodeFlow.hasPending(params.cacheKey)) {
       const pollResult = await this.deviceCodeFlow.pollDeviceAuth(
         params.cacheKey,
       );
       if (pollResult.status === 'complete') {
-        this.cacheToken(params.cacheKey, pollResult.token);
-        return { token: pollResult.token };
+        this.cacheToken(
+          params.cacheKey,
+          pollResult.token.accessToken,
+          pollResult.token.expiresIn,
+        );
+        return pollResult.token;
       }
       return {
         status: 'authorization_pending',
@@ -236,17 +255,21 @@ export class OAuthClient {
 
   async startOrPollAuthCode(
     params: AuthCodeFlowParams,
-  ): Promise<{ token: string } | InteractiveAuthResult> {
+  ): Promise<OAuthTokenResult | InteractiveAuthResult> {
     const cached = this.getCachedToken(params.cacheKey);
-    if (cached) return { token: cached };
+    if (cached) return cached;
 
     if (this.authCodeFlow.hasPending(params.cacheKey)) {
       const pollResult = await this.authCodeFlow.pollAuthCodeFlow(
         params.cacheKey,
       );
       if (pollResult.status === 'complete') {
-        this.cacheToken(params.cacheKey, pollResult.token);
-        return { token: pollResult.token };
+        this.cacheToken(
+          params.cacheKey,
+          pollResult.token.accessToken,
+          pollResult.token.expiresIn,
+        );
+        return pollResult.token;
       }
       return {
         status: 'authorization_pending',

@@ -152,7 +152,10 @@ export class AuthCodeFlowManager {
 
   async pollAuthCodeFlow(
     cacheKey: string,
-  ): Promise<{ status: 'complete'; token: string } | { status: 'pending' }> {
+  ): Promise<
+    | { status: 'complete'; token: { accessToken: string; expiresIn?: number } }
+    | { status: 'pending' }
+  > {
     const entry = this.pending.get(cacheKey);
     if (!entry) {
       return { status: 'pending' };
@@ -208,7 +211,13 @@ export class AuthCodeFlowManager {
       );
       entry.server.close();
       this.pending.delete(cacheKey);
-      return { status: 'complete', token: result.access_token };
+      return {
+        status: 'complete',
+        token: {
+          accessToken: result.access_token,
+          expiresIn: result.expires_in,
+        },
+      };
     } catch (error) {
       entry.server.close();
       this.pending.delete(cacheKey);
@@ -239,6 +248,7 @@ function startCallbackServer(
 ): Promise<{ server: Server; port: number }> {
   return new Promise((resolve, reject) => {
     const server = createServer();
+    const fallbackPort = preferredPort ?? 33333;
     server.listen(preferredPort ?? 0, '127.0.0.1', () => {
       const addr = server.address();
       if (!addr || typeof addr === 'string') {
@@ -248,6 +258,13 @@ function startCallbackServer(
       }
       resolve({ server, port: addr.port });
     });
-    server.on('error', reject);
+    server.on('error', (error) => {
+      const code = (error as NodeJS.ErrnoException).code;
+      if (code === 'EPERM' || code === 'EACCES') {
+        resolve({ server, port: fallbackPort });
+        return;
+      }
+      reject(error);
+    });
   });
 }

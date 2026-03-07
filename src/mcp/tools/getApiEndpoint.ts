@@ -2,32 +2,70 @@ import type { OpenAPIV3 } from 'openapi-types';
 import { OpenApiMcpError } from '../../errors.js';
 import type { ToolContext } from '../context.js';
 import { z } from 'zod';
-import { fail, ok, parseInput, requireApi, type ToolResult } from './common.js';
+import {
+  requireApi,
+  runMcpTool,
+  withFields,
+  type ToolDefinition,
+  type ToolResult,
+} from './common.js';
 
-const getApiEndpointInputSchema = z
-  .object({
-    apiName: z.string().min(1),
-    endpointId: z.string().min(1),
-  })
-  .strict();
+const getApiEndpointInputSchema = withFields(
+  z
+    .object({
+      apiName: z.string().min(1),
+      endpointId: z.string().min(1),
+    })
+    .strict(),
+);
 
-export async function getApiEndpointTool(
-  context: ToolContext,
-  args: unknown,
-): Promise<ToolResult> {
-  try {
-    const input = parseInput(args, getApiEndpointInputSchema);
-    const apiName = input.apiName;
-    const endpointId = input.endpointId;
+const getApiEndpointOutputSchema = z.object({
+  endpointId: z.string(),
+  method: z.string(),
+  path: z.string(),
+  operationId: z.string().optional(),
+  summary: z.string().optional(),
+  description: z.string().optional(),
+  tags: z.array(z.string()),
+  parameters: z.array(
+    z.object({
+      name: z.string(),
+      in: z.string(),
+      required: z.boolean(),
+      description: z.string().optional(),
+      style: z.string().optional(),
+      explode: z.boolean().optional(),
+      schema: z.unknown().optional(),
+    }),
+  ),
+  requestBody: z.object({
+    required: z.boolean(),
+    contentTypes: z.array(z.string()),
+  }),
+  responses: z.unknown(),
+  security: z.array(z.record(z.array(z.string()))),
+});
 
-    const api = requireApi(context, apiName);
-    const endpoint = api.endpointById.get(endpointId);
+type GetApiEndpointInput = z.infer<typeof getApiEndpointInputSchema>;
+type GetApiEndpointOutput = z.infer<typeof getApiEndpointOutputSchema>;
+
+export const getApiEndpointToolDefinition: ToolDefinition<
+  GetApiEndpointInput,
+  GetApiEndpointOutput
+> = {
+  name: 'get_api_endpoint',
+  description: 'Get details for one endpoint in a specific API.',
+  inputSchema: getApiEndpointInputSchema,
+  outputSchema: getApiEndpointOutputSchema,
+  async execute(context, input) {
+    const api = requireApi(context, input.apiName);
+    const endpoint = api.endpointById.get(input.endpointId);
     if (!endpoint) {
       throw new OpenApiMcpError(
         'ENDPOINT_NOT_FOUND',
-        `Unknown endpoint '${endpointId}'`,
+        `Unknown endpoint '${input.endpointId}'`,
         {
-          apiName,
+          apiName: input.apiName,
         },
       );
     }
@@ -53,7 +91,7 @@ export async function getApiEndpointTool(
         : (endpoint.operation.requestBody?.content ?? {}),
     );
 
-    return ok({
+    return {
       endpointId: endpoint.endpointId,
       method: endpoint.method,
       path: endpoint.path,
@@ -72,8 +110,13 @@ export async function getApiEndpointTool(
       },
       responses: endpoint.operation.responses,
       security: endpoint.operation.security ?? api.schema.security ?? [],
-    });
-  } catch (error) {
-    return fail(error);
-  }
+    };
+  },
+};
+
+export async function getApiEndpointTool(
+  context: ToolContext,
+  args: unknown,
+): Promise<ToolResult> {
+  return runMcpTool(getApiEndpointToolDefinition, context, args);
 }

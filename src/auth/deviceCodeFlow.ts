@@ -102,7 +102,10 @@ export class DeviceCodeFlowManager {
 
   async pollDeviceAuth(
     cacheKey: string,
-  ): Promise<{ status: 'complete'; token: string } | { status: 'pending' }> {
+  ): Promise<
+    | { status: 'complete'; token: { accessToken: string; expiresIn?: number } }
+    | { status: 'pending' }
+  > {
     const entry = this.pending.get(cacheKey);
     if (!entry) {
       return { status: 'pending' };
@@ -126,7 +129,13 @@ export class DeviceCodeFlowManager {
         response,
       );
       this.pending.delete(cacheKey);
-      return { status: 'complete', token: result.access_token };
+      return {
+        status: 'complete',
+        token: {
+          accessToken: result.access_token,
+          expiresIn: result.expires_in,
+        },
+      };
     } catch (error) {
       if (
         error instanceof oauth.ResponseBodyError &&

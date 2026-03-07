@@ -6,135 +6,14 @@ import {
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import type { ToolContext } from './context.js';
-import {
-  getApiEndpointTool,
-  getApiSchemaTool,
-  listApiEndpointsTool,
-  listApisTool,
-  makeEndpointRequestTool,
-} from './tools/index.js';
-import { fail } from './tools/common.js';
+import { fail, toToolDescriptor } from './tools/common.js';
+import { getToolDefinition, toolDefinitions } from './tools/registry.js';
+import { executeToolData } from './tools/common.js';
 
 const require = createRequire(import.meta.url);
 export const { version } = require('../../package.json') as {
   version: string;
 };
-
-const TOOLS = [
-  {
-    name: 'list_apis',
-    description: 'List configured APIs loaded from the YAML configuration.',
-    inputSchema: {
-      type: 'object',
-      properties: {},
-      additionalProperties: false,
-    },
-  },
-  {
-    name: 'list_api_endpoints',
-    description: 'List endpoints from a specific API with optional filters.',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        apiName: { type: 'string' },
-        method: { type: 'string' },
-        tag: { type: 'string' },
-        pathContains: { type: 'string' },
-        search: { type: 'array', items: { type: 'string' } },
-        limit: { type: 'integer', minimum: 1 },
-        cursor: { type: 'string' },
-      },
-      required: ['apiName'],
-      additionalProperties: false,
-    },
-  },
-  {
-    name: 'get_api_endpoint',
-    description: 'Get details for one endpoint in a specific API.',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        apiName: { type: 'string' },
-        endpointId: { type: 'string' },
-      },
-      required: ['apiName', 'endpointId'],
-      additionalProperties: false,
-    },
-  },
-  {
-    name: 'get_api_schema',
-    description:
-      'Get the full dereferenced API schema or a JSON pointer fragment.',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        apiName: { type: 'string' },
-        pointer: { type: 'string' },
-      },
-      required: ['apiName'],
-      additionalProperties: false,
-    },
-  },
-  {
-    name: 'make_endpoint_request',
-    description: 'Execute an HTTP request for an endpoint by endpointId.',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        apiName: { type: 'string' },
-        endpointId: { type: 'string' },
-        pathParams: { type: 'object' },
-        query: { type: 'object' },
-        headers: { type: 'object', additionalProperties: { type: 'string' } },
-        cookies: { type: 'object', additionalProperties: { type: 'string' } },
-        body: {
-          description:
-            'Request body. For file uploads, use the files parameter instead.',
-        },
-        files: {
-          type: 'object',
-          description:
-            'Optional file payload(s) for multipart/form-data or application/octet-stream. Keys represent the form field name. Values must contain EXACTLY ONE of: base64, text, or filePath.',
-          additionalProperties: {
-            type: 'object',
-            properties: {
-              name: {
-                type: 'string',
-                description: 'Optional filename (e.g. avatar.png)',
-              },
-              contentType: {
-                type: 'string',
-                description: 'Optional MIME type (e.g. image/png)',
-              },
-              base64: { type: 'string', description: 'Base64 encoded content' },
-              text: { type: 'string', description: 'Raw text content' },
-              filePath: {
-                type: 'string',
-                description: 'Absolute path to local file',
-              },
-            },
-          },
-        },
-        contentType: { type: 'string' },
-        accept: { type: 'string' },
-        timeoutMs: { type: 'integer', minimum: 1 },
-        retry429: {
-          type: 'object',
-          properties: {
-            maxRetries: { type: 'integer', minimum: 0 },
-            baseDelayMs: { type: 'integer', minimum: 1 },
-            maxDelayMs: { type: 'integer', minimum: 1 },
-            jitterRatio: { type: 'number', minimum: 0, maximum: 1 },
-            respectRetryAfter: { type: 'boolean' },
-          },
-          additionalProperties: false,
-        },
-      },
-      required: ['apiName', 'endpointId'],
-      additionalProperties: false,
-    },
-  },
-] as const;
 
 export async function startMcpServer(context: ToolContext): Promise<void> {
   const server = new Server(
@@ -150,7 +29,7 @@ export async function startMcpServer(context: ToolContext): Promise<void> {
   );
 
   server.setRequestHandler(ListToolsRequestSchema, async () => {
-    return { tools: [...TOOLS] };
+    return { tools: toolDefinitions.map((tool) => toToolDescriptor(tool)) };
   });
 
   server.setRequestHandler(
@@ -159,20 +38,24 @@ export async function startMcpServer(context: ToolContext): Promise<void> {
     async (request): Promise<any> => {
       const toolName = request.params.name;
       const args = request.params.arguments ?? {};
+      const definition = getToolDefinition(toolName);
+      if (!definition) {
+        return fail(new Error(`Unknown tool: ${toolName}`));
+      }
 
-      switch (toolName) {
-        case 'list_apis':
-          return listApisTool(context);
-        case 'list_api_endpoints':
-          return listApiEndpointsTool(context, args);
-        case 'get_api_endpoint':
-          return getApiEndpointTool(context, args);
-        case 'get_api_schema':
-          return getApiSchemaTool(context, args);
-        case 'make_endpoint_request':
-          return makeEndpointRequestTool(context, args);
-        default:
-          return fail(new Error(`Unknown tool: ${toolName}`));
+      try {
+        const payload = await executeToolData(definition, context, args);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(payload, null, 2),
+            },
+          ],
+          structuredContent: payload,
+        };
+      } catch (error) {
+        return fail(error);
       }
     },
   );

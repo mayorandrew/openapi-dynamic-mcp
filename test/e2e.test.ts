@@ -13,8 +13,14 @@ describe('E2E MCP Server Test', () => {
 
   beforeAll(async () => {
     transport = new StdioClientTransport({
-      command: 'npx',
-      args: ['tsx', 'src/cli.ts', '--config', 'test/fixtures/config.yaml'],
+      command: 'node',
+      args: [
+        '--import',
+        'tsx',
+        'src/cli.ts',
+        '--config',
+        'test/fixtures/config.yaml',
+      ],
     });
     client = new Client(
       { name: 'test-client', version: '1.0.0' },
@@ -140,13 +146,15 @@ describe('E2E MCP Server Test', () => {
     ]);
     for (const tool of result.tools) {
       expect(tool.inputSchema).toBeDefined();
+      expect(tool.outputSchema).toBeDefined();
     }
   });
 });
 
 describe('CLI flags', () => {
   it('--help exits 0 with usage text', async () => {
-    const { stdout } = await execFileAsync('npx', [
+    const { stdout } = await execFileAsync('node', [
+      '--import',
       'tsx',
       'src/cli.ts',
       '--help',
@@ -157,7 +165,8 @@ describe('CLI flags', () => {
   });
 
   it('--version prints the package version', async () => {
-    const { stdout } = await execFileAsync('npx', [
+    const { stdout } = await execFileAsync('node', [
+      '--import',
       'tsx',
       'src/cli.ts',
       '--version',
@@ -168,7 +177,8 @@ describe('CLI flags', () => {
   it('-c shorthand works as alias for --config', async () => {
     // -c with a nonexistent file should fail with CONFIG_ERROR, not "missing --config"
     try {
-      await execFileAsync('npx', [
+      await execFileAsync('node', [
+        '--import',
         'tsx',
         'src/cli.ts',
         '-c',
@@ -184,7 +194,7 @@ describe('CLI flags', () => {
 
   it('missing --config exits non-zero', async () => {
     try {
-      await execFileAsync('npx', ['tsx', 'src/cli.ts']);
+      await execFileAsync('node', ['--import', 'tsx', 'src/cli.ts']);
     } catch (error: unknown) {
       const { stderr, stdout } = error as { stderr: string; stdout: string };
       const output = stdout + stderr;
@@ -192,5 +202,23 @@ describe('CLI flags', () => {
       return;
     }
     throw new Error('Expected command to fail');
+  });
+
+  it('tool --describe matches MCP tool metadata', async () => {
+    const { stdout } = await execFileAsync('node', [
+      '--import',
+      'tsx',
+      'src/cli.ts',
+      'list_apis',
+      '--describe',
+    ]);
+    const described = JSON.parse(stdout) as {
+      name: string;
+      inputSchema: unknown;
+      outputSchema: unknown;
+    };
+    expect(described.name).toBe('list_apis');
+    expect(described.inputSchema).toBeDefined();
+    expect(described.outputSchema).toBeDefined();
   });
 });

@@ -124,6 +124,16 @@ describe('MCP tools', () => {
     expect(payload.code).toBe('ENDPOINT_NOT_FOUND');
   });
 
+  it('filters success payloads with fields', async () => {
+    const result = await listApisTool(context, {
+      fields: ['$.apis[*].name'],
+    });
+    expect(result.isError).toBeUndefined();
+    expect(result.structuredContent).toEqual({
+      apis: [{ name: 'pet-api' }],
+    });
+  });
+
   it('executes make_endpoint_request', async () => {
     nock('https://api.example.com')
       .get('/v1/pets')
@@ -244,6 +254,27 @@ describe('MCP tools', () => {
     expect(result.isError).toBe(true);
     const payload = result.structuredContent as { code: string };
     expect(payload.code).toBe('REQUEST_ERROR');
+  });
+
+  it('supports dryRun on make_endpoint_request', async () => {
+    const result = await makeEndpointRequestTool(context, {
+      apiName: 'pet-api',
+      endpointId: 'listPets',
+      dryRun: true,
+    });
+
+    expect(result.isError).toBeUndefined();
+    expect(result.structuredContent).toMatchObject({
+      dryRun: true,
+      request: {
+        endpointId: 'listPets',
+        method: 'GET',
+      },
+      requestBodyPreview: {
+        bodyType: 'empty',
+      },
+      authUsed: ['ApiKeyAuth'],
+    });
   });
 });
 
