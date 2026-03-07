@@ -4,7 +4,12 @@ import { parse as parseYaml } from 'yaml';
 import { z } from 'zod';
 import { normalizeEnvSegment } from '../auth/env.js';
 import { OpenApiMcpError } from '../errors.js';
-import type { ApiConfig, RootConfig } from '../types.js';
+import type {
+  ApiConfig,
+  ApiOauth2Config,
+  Oauth2ConfigMap,
+  RootConfig,
+} from '../types.js';
 
 const retry429Schema = z.object({
   maxRetries: z.number().int().min(0).optional(),
@@ -23,13 +28,31 @@ const apiSchema = z
     timeoutMs: z.number().int().positive().optional(),
     headers: z.record(z.string()).optional(),
     oauth2: z
-      .object({
-        tokenUrlOverride: z.string().url().optional(),
-        scopes: z.array(z.string().min(1)).optional(),
-        tokenEndpointAuthMethod: z
-          .enum(['client_secret_basic', 'client_secret_post'])
-          .optional(),
-      })
+      .union([
+        // New per-scheme format: Record<schemeName, SchemeOauth2Config>
+        z.record(
+          z.object({
+            tokenUrl: z.string().url().optional(),
+            scopes: z.array(z.string().min(1)).optional(),
+            tokenEndpointAuthMethod: z
+              .enum(['client_secret_basic', 'client_secret_post'])
+              .optional(),
+            authMethod: z
+              .enum(['device_code', 'authorization_code'])
+              .optional(),
+            deviceAuthorizationEndpoint: z.string().url().optional(),
+            pkce: z.boolean().optional(),
+          }),
+        ),
+        // Legacy flat format
+        z.object({
+          tokenUrlOverride: z.string().url().optional(),
+          scopes: z.array(z.string().min(1)).optional(),
+          tokenEndpointAuthMethod: z
+            .enum(['client_secret_basic', 'client_secret_post'])
+            .optional(),
+        }),
+      ])
       .optional(),
     retry429: retry429Schema.optional(),
   })
@@ -93,6 +116,16 @@ export async function loadConfig(configPath: string): Promise<RootConfig> {
     }
     seenNames.add(normalized);
 
+    // Resolve oauth2 config: detect legacy vs per-scheme format
+    const { oauth2Schemes, oauth2Legacy } = resolveOauth2Config(api.oauth2);
+
+    const baseApiConfig = {
+      ...api,
+      oauth2: oauth2Legacy,
+      oauth2Schemes,
+      timeoutMs: api.timeoutMs ?? 30000,
+    };
+
     if (api.specPath !== undefined) {
       const resolvedSpecPath = path.resolve(configDir, api.specPath);
       try {
@@ -108,15 +141,11 @@ export async function loadConfig(configPath: string): Promise<RootConfig> {
       }
 
       resolvedApis.push({
-        ...api,
+        ...baseApiConfig,
         specPath: resolvedSpecPath,
-        timeoutMs: api.timeoutMs ?? 30000,
       });
     } else {
-      resolvedApis.push({
-        ...api,
-        timeoutMs: api.timeoutMs ?? 30000,
-      });
+      resolvedApis.push(baseApiConfig);
     }
   }
 
@@ -124,4 +153,29 @@ export async function loadConfig(configPath: string): Promise<RootConfig> {
     version: 1,
     apis: resolvedApis,
   };
+}
+
+function isLegacyOauth2(
+  value: unknown,
+): value is {
+  tokenUrlOverride?: string;
+  scopes?: string[];
+  tokenEndpointAuthMethod?: string;
+} {
+  if (!value || typeof value !== 'object') return false;
+  const keys = Object.keys(value);
+  return keys.some((k) => k === 'tokenUrlOverride');
+}
+
+function resolveOauth2Config(oauth2: unknown): {
+  oauth2Schemes?: Oauth2ConfigMap;
+  oauth2Legacy?: ApiOauth2Config;
+} {
+  if (!oauth2) return {};
+
+  if (isLegacyOauth2(oauth2)) {
+    return { oauth2Legacy: oauth2 as ApiOauth2Config };
+  }
+
+  return { oauth2Schemes: oauth2 as Oauth2ConfigMap };
 }

@@ -35,6 +35,14 @@ components:
           tokenUrl: https://auth.example.com/oauth/token
           scopes:
             read:pets: Read pets
+    OAuthAuthCode:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://auth.example.com/authorize
+          tokenUrl: https://auth.example.com/oauth/token
+          scopes:
+            read:pets: Read pets
 security:
   - ApiKeyAuth: []
 paths:
@@ -83,6 +91,15 @@ paths:
       security:
         - BasicAuth: []
         - BearerAuth: []
+      responses:
+        '200':
+          description: ok
+  /auth-code:
+    get:
+      operationId: authCodeEndpoint
+      security:
+        - OAuthAuthCode:
+            - read:pets
       responses:
         '200':
           description: ok

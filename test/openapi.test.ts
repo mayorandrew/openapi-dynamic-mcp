@@ -26,7 +26,7 @@ describe('OpenAPI loading/index', () => {
     const registry = await loadApiRegistry(config, {});
     const api = registry.byName.get('pet-api');
     expect(api).toBeDefined();
-    expect(api?.endpoints.length).toBe(8);
+    expect(api?.endpoints.length).toBe(9);
     expect(api?.endpointById.has('listPets')).toBe(true);
     expect(api?.baseUrl).toBe('https://api.example.com/v1');
   });

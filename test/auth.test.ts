@@ -204,6 +204,134 @@ describe('resolveAuth', () => {
       password: 'super-secret',
     });
   });
+
+  it('returns interactive auth for authorizationCode flow with device_code method', async () => {
+    const registry = await loadApiRegistry(buildConfig(), {});
+    const api = registry.byName.get('pet-api');
+    const endpoint = api?.endpointById.get('authCodeEndpoint');
+
+    expect(endpoint).toBeDefined();
+
+    nock('https://auth.example.com').post('/device').reply(200, {
+      device_code: 'dev-code-123',
+      user_code: 'ABCD-1234',
+      verification_uri: 'https://auth.example.com/device',
+      verification_uri_complete:
+        'https://auth.example.com/device?user_code=ABCD-1234',
+      expires_in: 600,
+      interval: 5,
+    });
+
+    const auth = await resolveAuth({
+      api: api!,
+      endpoint: endpoint!,
+      oauthClient: new OAuthClient(),
+      env: {
+        PET_API_OAUTHAUTHCODE_CLIENT_ID: 'client',
+        PET_API_OAUTHAUTHCODE_CLIENT_SECRET: 'secret',
+        PET_API_OAUTHAUTHCODE_AUTH_METHOD: 'device_code',
+        PET_API_OAUTHAUTHCODE_DEVICE_AUTHORIZATION_ENDPOINT:
+          'https://auth.example.com/device',
+      },
+    });
+
+    expect(auth.interactiveAuth).toBeDefined();
+    const interactive = auth.interactiveAuth as {
+      status: string;
+      method: string;
+      userCode: string;
+    };
+    expect(interactive.status).toBe('authorization_required');
+    expect(interactive.method).toBe('device_code');
+    expect(interactive.userCode).toBe('ABCD-1234');
+  });
+
+  it('returns interactive auth for authorizationCode flow with auth_code method', async () => {
+    const registry = await loadApiRegistry(buildConfig(), {});
+    const api = registry.byName.get('pet-api');
+    const endpoint = api?.endpointById.get('authCodeEndpoint');
+
+    const oauthClient = new OAuthClient();
+
+    const auth = await resolveAuth({
+      api: api!,
+      endpoint: endpoint!,
+      oauthClient,
+      env: {
+        PET_API_OAUTHAUTHCODE_CLIENT_ID: 'client',
+        PET_API_OAUTHAUTHCODE_CLIENT_SECRET: 'secret',
+        PET_API_OAUTHAUTHCODE_AUTH_METHOD: 'authorization_code',
+      },
+    });
+
+    expect(auth.interactiveAuth).toBeDefined();
+    const interactive = auth.interactiveAuth as {
+      status: string;
+      method: string;
+      authorizationUrl: string;
+    };
+    expect(interactive.status).toBe('authorization_required');
+    expect(interactive.method).toBe('authorization_code');
+    expect(interactive.authorizationUrl).toContain(
+      'https://auth.example.com/authorize',
+    );
+    expect(interactive.authorizationUrl).toContain('code_challenge');
+
+    // Clean up
+    oauthClient.authCodeFlow.cleanup();
+  });
+
+  it('ACCESS_TOKEN bypasses interactive flow for authorizationCode scheme', async () => {
+    const registry = await loadApiRegistry(buildConfig(), {});
+    const api = registry.byName.get('pet-api');
+    const endpoint = api?.endpointById.get('authCodeEndpoint');
+
+    const auth = await resolveAuth({
+      api: api!,
+      endpoint: endpoint!,
+      oauthClient: new OAuthClient(),
+      env: {
+        PET_API_OAUTHAUTHCODE_ACCESS_TOKEN: 'pre-obtained',
+      },
+    });
+
+    expect(auth.interactiveAuth).toBeUndefined();
+    expect(auth.authUsed).toEqual(['OAuthAuthCode']);
+    expect(auth.schemes[0]).toMatchObject({
+      type: 'oauth2',
+      token: 'pre-obtained',
+    });
+  });
+
+  it('auto-detects device_code method when device endpoint env var is set', async () => {
+    const registry = await loadApiRegistry(buildConfig(), {});
+    const api = registry.byName.get('pet-api');
+    const endpoint = api?.endpointById.get('authCodeEndpoint');
+
+    nock('https://auth.example.com').post('/device').reply(200, {
+      device_code: 'dev-code-auto',
+      user_code: 'AUTO-1234',
+      verification_uri: 'https://auth.example.com/device',
+      expires_in: 600,
+      interval: 5,
+    });
+
+    const auth = await resolveAuth({
+      api: api!,
+      endpoint: endpoint!,
+      oauthClient: new OAuthClient(),
+      env: {
+        PET_API_OAUTHAUTHCODE_CLIENT_ID: 'client',
+        PET_API_OAUTHAUTHCODE_CLIENT_SECRET: 'secret',
+        PET_API_OAUTHAUTHCODE_DEVICE_AUTHORIZATION_ENDPOINT:
+          'https://auth.example.com/device',
+      },
+    });
+
+    expect(auth.interactiveAuth).toBeDefined();
+    const interactive = auth.interactiveAuth as { method: string };
+    expect(interactive.method).toBe('device_code');
+  });
 });
 
 function buildConfig(): RootConfig {

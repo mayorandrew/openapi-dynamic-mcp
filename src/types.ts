@@ -19,11 +19,23 @@ export function isMcpFileDescriptor(
   );
 }
 
+export interface SchemeOauth2Config {
+  tokenUrl?: string;
+  scopes?: string[];
+  tokenEndpointAuthMethod?: 'client_secret_basic' | 'client_secret_post';
+  authMethod?: 'device_code' | 'authorization_code';
+  deviceAuthorizationEndpoint?: string;
+  pkce?: boolean;
+}
+
+/** @deprecated Use per-scheme oauth2 config instead */
 export interface ApiOauth2Config {
   tokenUrlOverride?: string;
   scopes?: string[];
   tokenEndpointAuthMethod?: 'client_secret_basic' | 'client_secret_post';
 }
+
+export type Oauth2ConfigMap = Record<string, SchemeOauth2Config>;
 
 export interface Retry429Config {
   maxRetries?: number;
@@ -40,7 +52,9 @@ export interface ApiConfig {
   baseUrl?: string;
   timeoutMs?: number;
   headers?: Record<string, string>;
+  /** @deprecated Use per-scheme oauth2 config instead */
   oauth2?: ApiOauth2Config;
+  oauth2Schemes?: Oauth2ConfigMap;
   retry429?: Retry429Config;
 }
 
@@ -102,6 +116,7 @@ export type ResolvedAuthScheme =
 export interface ResolvedAuthResult {
   authUsed: string[];
   schemes: ResolvedAuthScheme[];
+  interactiveAuth?: unknown;
 }
 
 export interface LoadedApi {

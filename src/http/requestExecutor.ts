@@ -64,6 +64,25 @@ export async function executeEndpointRequest(
     env,
   });
 
+  if (auth.interactiveAuth) {
+    return {
+      request: {
+        url: '',
+        method: input.endpoint.method.toUpperCase(),
+        headersRedacted: {},
+        endpointId: input.endpoint.endpointId,
+      },
+      response: {
+        status: 0,
+        headers: {},
+        bodyType: 'json',
+        bodyJson: auth.interactiveAuth,
+      },
+      timingMs: Date.now() - start,
+      authUsed: [],
+    };
+  }
+
   const url = new URL(
     joinBaseAndPath(
       input.api.baseUrl,

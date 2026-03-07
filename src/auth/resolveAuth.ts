@@ -2,17 +2,22 @@ import {
   readApiKeyValue,
   readHttpAuthCredentials,
   readOAuthAccessToken,
+  readOAuthAuthMethod,
   readOAuthClientCredentials,
+  readOAuthDeviceAuthEndpoint,
   readOAuthPasswordCredentials,
+  readOAuthPkce,
+  readOAuthRedirectPort,
   schemePrefix,
 } from './env.js';
-import { OAuthClient } from './oauthClient.js';
+import { OAuthClient, type InteractiveAuthResult } from './oauthClient.js';
 import { OpenApiMcpError } from '../errors.js';
 import type {
   EndpointDefinition,
   LoadedApi,
   ResolvedAuthResult,
   ResolvedAuthScheme,
+  SchemeOauth2Config,
 } from '../types.js';
 
 interface ResolveAuthInput {
@@ -81,121 +86,30 @@ export async function resolveAuth({
       }
 
       if (scheme.type === 'oauth2') {
-        const preObtainedToken = readOAuthAccessToken(
-          api.config.name,
+        const oauth2Result = await resolveOAuth2Scheme({
+          api,
           schemeName,
-          env,
-        );
-        if (preObtainedToken) {
-          resolved.push({
-            type: 'oauth2',
-            schemeName,
-            token: preObtainedToken,
-          });
-          continue;
-        }
-
-        const ccFlow = scheme.flows.clientCredentials;
-        const passwordFlow = scheme.flows.password;
-
-        if (!ccFlow && !passwordFlow) {
-          missingEnv.add(
-            `${schemePrefix(api.config.name, schemeName)}_ACCESS_TOKEN`,
-          );
-          failedReason = `Scheme '${schemeName}' does not support clientCredentials or password flow`;
-          break;
-        }
-
-        const fromEnv = readOAuthClientCredentials(
-          api.config.name,
-          schemeName,
-          env,
-        );
-        const clientId = fromEnv.clientId;
-        const clientSecret = fromEnv.clientSecret;
-
-        if (!clientId || !clientSecret) {
-          missingEnv.add(
-            `${schemePrefix(api.config.name, schemeName)}_CLIENT_ID`,
-          );
-          missingEnv.add(
-            `${schemePrefix(api.config.name, schemeName)}_CLIENT_SECRET`,
-          );
-          failedReason = `Missing OAuth2 client credentials for '${schemeName}'`;
-          break;
-        }
-
-        const activeFlow = ccFlow ?? passwordFlow!;
-        const tokenUrl =
-          fromEnv.tokenUrl ??
-          api.config.oauth2?.tokenUrlOverride ??
-          activeFlow.tokenUrl;
-        if (!tokenUrl) {
-          failedReason = `No OAuth2 token URL resolved for scheme '${schemeName}'`;
-          break;
-        }
-        const tokenEndpointAuthMethod =
-          fromEnv.tokenAuthMethod ??
-          api.config.oauth2?.tokenEndpointAuthMethod ??
-          'client_secret_basic';
-
-        const scopes = resolveScopes(
+          scheme,
           requestedScopes,
-          fromEnv.scopes,
-          api.config.oauth2?.scopes,
-          activeFlow,
-        );
-        const cacheKey = [
-          api.config.name,
-          schemeName,
-          clientId,
-          tokenUrl,
-          tokenEndpointAuthMethod,
-          scopes.sort().join(','),
-        ].join('|');
-
-        let token: string;
-        if (passwordFlow && !ccFlow) {
-          const passwordCreds = readOAuthPasswordCredentials(
-            api.config.name,
-            schemeName,
-            env,
-          );
-          if (!passwordCreds.username || !passwordCreds.password) {
-            missingEnv.add(
-              `${schemePrefix(api.config.name, schemeName)}_USERNAME`,
-            );
-            missingEnv.add(
-              `${schemePrefix(api.config.name, schemeName)}_PASSWORD`,
-            );
-            failedReason = `Missing OAuth2 password credentials for '${schemeName}'`;
-            break;
-          }
-          token = await oauthClient.getPasswordGrantToken({
-            cacheKey,
-            tokenUrl,
-            clientId,
-            clientSecret,
-            scopes,
-            tokenEndpointAuthMethod,
-            username: passwordCreds.username,
-            password: passwordCreds.password,
-          });
-        } else {
-          token = await oauthClient.getClientCredentialsToken({
-            cacheKey,
-            tokenUrl,
-            clientId,
-            clientSecret,
-            scopes,
-            tokenEndpointAuthMethod,
-          });
+          oauthClient,
+          env,
+        });
+        if ('interactiveAuth' in oauth2Result) {
+          return {
+            authUsed: [],
+            schemes: [],
+            interactiveAuth: oauth2Result.interactiveAuth,
+          };
         }
-
+        if ('failedReason' in oauth2Result) {
+          for (const e of oauth2Result.missingEnv) missingEnv.add(e);
+          failedReason = oauth2Result.failedReason;
+          break;
+        }
         resolved.push({
           type: 'oauth2',
           schemeName,
-          token,
+          token: oauth2Result.token,
         });
         continue;
       }
@@ -282,6 +196,237 @@ export async function resolveAuth({
       failures,
     },
   );
+}
+
+interface OAuth2SchemeInput {
+  api: LoadedApi;
+  schemeName: string;
+  scheme: {
+    flows: Record<
+      string,
+      {
+        tokenUrl?: string;
+        authorizationUrl?: string;
+        scopes?: Record<string, string>;
+      }
+    >;
+  };
+  requestedScopes: string[] | undefined;
+  oauthClient: OAuthClient;
+  env: NodeJS.ProcessEnv;
+}
+
+type OAuth2SchemeResult =
+  | { token: string }
+  | { interactiveAuth: InteractiveAuthResult }
+  | { failedReason: string; missingEnv: string[] };
+
+function getSchemeConfig(
+  api: LoadedApi,
+  schemeName: string,
+): SchemeOauth2Config | undefined {
+  return api.config.oauth2Schemes?.[schemeName];
+}
+
+async function resolveOAuth2Scheme(
+  input: OAuth2SchemeInput,
+): Promise<OAuth2SchemeResult> {
+  const { api, schemeName, scheme, requestedScopes, oauthClient, env } = input;
+  const prefix = schemePrefix(api.config.name, schemeName);
+  const schemeConfig = getSchemeConfig(api, schemeName);
+
+  // 1. Pre-obtained token
+  const preObtainedToken = readOAuthAccessToken(
+    api.config.name,
+    schemeName,
+    env,
+  );
+  if (preObtainedToken) {
+    return { token: preObtainedToken };
+  }
+
+  const ccFlow = scheme.flows.clientCredentials;
+  const passwordFlow = scheme.flows.password;
+  const authCodeFlow = scheme.flows.authorizationCode;
+
+  // Read client credentials (needed by all grant flows)
+  const fromEnv = readOAuthClientCredentials(api.config.name, schemeName, env);
+  const clientId = fromEnv.clientId;
+  const clientSecret = fromEnv.clientSecret;
+
+  if (!clientId || !clientSecret) {
+    return {
+      failedReason: `Missing OAuth2 client credentials for '${schemeName}'`,
+      missingEnv: [`${prefix}_CLIENT_ID`, `${prefix}_CLIENT_SECRET`],
+    };
+  }
+
+  // Resolve common params
+  const tokenUrl =
+    fromEnv.tokenUrl ??
+    schemeConfig?.tokenUrl ??
+    api.config.oauth2?.tokenUrlOverride ??
+    (ccFlow ?? passwordFlow ?? authCodeFlow)?.tokenUrl;
+  if (!tokenUrl) {
+    return {
+      failedReason: `No OAuth2 token URL resolved for scheme '${schemeName}'`,
+      missingEnv: [],
+    };
+  }
+  const tokenEndpointAuthMethod =
+    fromEnv.tokenAuthMethod ??
+    schemeConfig?.tokenEndpointAuthMethod ??
+    api.config.oauth2?.tokenEndpointAuthMethod ??
+    'client_secret_basic';
+
+  const activeFlow = ccFlow ?? passwordFlow ?? authCodeFlow;
+  const scopes = resolveScopes(
+    requestedScopes,
+    fromEnv.scopes,
+    schemeConfig?.scopes ?? api.config.oauth2?.scopes,
+    activeFlow ?? {},
+  );
+  const cacheKey = [
+    api.config.name,
+    schemeName,
+    clientId,
+    tokenUrl,
+    tokenEndpointAuthMethod,
+    scopes.sort().join(','),
+  ].join('|');
+
+  // 2. Client credentials flow (automatic)
+  if (ccFlow) {
+    const token = await oauthClient.getClientCredentialsToken({
+      cacheKey,
+      tokenUrl,
+      clientId,
+      clientSecret,
+      scopes,
+      tokenEndpointAuthMethod,
+    });
+    return { token };
+  }
+
+  // 3. Password flow (automatic)
+  if (passwordFlow) {
+    const passwordCreds = readOAuthPasswordCredentials(
+      api.config.name,
+      schemeName,
+      env,
+    );
+    if (!passwordCreds.username || !passwordCreds.password) {
+      return {
+        failedReason: `Missing OAuth2 password credentials for '${schemeName}'`,
+        missingEnv: [`${prefix}_USERNAME`, `${prefix}_PASSWORD`],
+      };
+    }
+    const token = await oauthClient.getPasswordGrantToken({
+      cacheKey,
+      tokenUrl,
+      clientId,
+      clientSecret,
+      scopes,
+      tokenEndpointAuthMethod,
+      username: passwordCreds.username,
+      password: passwordCreds.password,
+    });
+    return { token };
+  }
+
+  // 4. Interactive flows (authorizationCode / implicit)
+  if (authCodeFlow) {
+    const authMethod = resolveInteractiveAuthMethod(
+      api,
+      schemeName,
+      env,
+      schemeConfig,
+    );
+    const deviceAuthEndpoint =
+      readOAuthDeviceAuthEndpoint(api.config.name, schemeName, env) ??
+      schemeConfig?.deviceAuthorizationEndpoint;
+
+    if (authMethod === 'device_code') {
+      if (!deviceAuthEndpoint) {
+        return {
+          failedReason: `Device authorization endpoint not configured for '${schemeName}'`,
+          missingEnv: [`${prefix}_DEVICE_AUTHORIZATION_ENDPOINT`],
+        };
+      }
+      const result = await oauthClient.startOrPollDeviceCode({
+        cacheKey,
+        deviceAuthorizationEndpoint: deviceAuthEndpoint,
+        tokenUrl,
+        clientId,
+        clientSecret,
+        scopes,
+        tokenEndpointAuthMethod,
+      });
+      if ('token' in result) return { token: result.token };
+      return { interactiveAuth: result };
+    }
+
+    // authorization_code flow
+    const authorizationEndpoint = authCodeFlow.authorizationUrl;
+    if (!authorizationEndpoint) {
+      return {
+        failedReason: `No authorization endpoint for scheme '${schemeName}'`,
+        missingEnv: [],
+      };
+    }
+    const pkce =
+      readOAuthPkce(api.config.name, schemeName, env) ??
+      schemeConfig?.pkce ??
+      true;
+    const redirectPort = readOAuthRedirectPort(
+      api.config.name,
+      schemeName,
+      env,
+    );
+    const result = await oauthClient.startOrPollAuthCode({
+      cacheKey,
+      authorizationEndpoint,
+      tokenUrl,
+      clientId,
+      clientSecret,
+      scopes,
+      tokenEndpointAuthMethod,
+      pkce,
+      redirectPort,
+    });
+    if ('token' in result) return { token: result.token };
+    return { interactiveAuth: result };
+  }
+
+  // No supported flow
+  return {
+    failedReason: `Scheme '${schemeName}' has no supported OAuth2 flow`,
+    missingEnv: [`${prefix}_ACCESS_TOKEN`],
+  };
+}
+
+function resolveInteractiveAuthMethod(
+  api: LoadedApi,
+  schemeName: string,
+  env: NodeJS.ProcessEnv,
+  schemeConfig: SchemeOauth2Config | undefined,
+): 'device_code' | 'authorization_code' {
+  const envMethod = readOAuthAuthMethod(api.config.name, schemeName, env);
+  if (envMethod) return envMethod;
+
+  if (schemeConfig?.authMethod) return schemeConfig.authMethod;
+
+  // Auto-detect: if device endpoint is available, prefer device code
+  const deviceEndpoint = readOAuthDeviceAuthEndpoint(
+    api.config.name,
+    schemeName,
+    env,
+  );
+  if (deviceEndpoint || schemeConfig?.deviceAuthorizationEndpoint) {
+    return 'device_code';
+  }
+
+  return 'authorization_code';
 }
 
 function resolveScopes(

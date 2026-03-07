@@ -142,6 +142,62 @@ export function readOAuthAccessToken(
   return env[`${schemePrefix(apiName, schemeName)}_ACCESS_TOKEN`];
 }
 
+export function readOAuthAuthMethod(
+  apiName: string,
+  schemeName: string,
+  env: NodeJS.ProcessEnv = process.env,
+): 'device_code' | 'authorization_code' | undefined {
+  const raw = env[`${schemePrefix(apiName, schemeName)}_AUTH_METHOD`];
+  if (raw === 'device_code' || raw === 'authorization_code') return raw;
+  if (raw) {
+    throw new OpenApiMcpError(
+      'CONFIG_ERROR',
+      `Invalid ${schemePrefix(apiName, schemeName)}_AUTH_METHOD value`,
+      { value: raw },
+    );
+  }
+  return undefined;
+}
+
+export function readOAuthDeviceAuthEndpoint(
+  apiName: string,
+  schemeName: string,
+  env: NodeJS.ProcessEnv = process.env,
+): string | undefined {
+  return env[
+    `${schemePrefix(apiName, schemeName)}_DEVICE_AUTHORIZATION_ENDPOINT`
+  ];
+}
+
+export function readOAuthRedirectPort(
+  apiName: string,
+  schemeName: string,
+  env: NodeJS.ProcessEnv = process.env,
+): number | undefined {
+  const raw = env[`${schemePrefix(apiName, schemeName)}_REDIRECT_PORT`];
+  if (!raw) return undefined;
+  const port = Number.parseInt(raw, 10);
+  if (Number.isNaN(port) || port < 0 || port > 65535) {
+    throw new OpenApiMcpError(
+      'CONFIG_ERROR',
+      `Invalid ${schemePrefix(apiName, schemeName)}_REDIRECT_PORT value`,
+      { value: raw },
+    );
+  }
+  return port;
+}
+
+export function readOAuthPkce(
+  apiName: string,
+  schemeName: string,
+  env: NodeJS.ProcessEnv = process.env,
+): boolean | undefined {
+  const raw = env[`${schemePrefix(apiName, schemeName)}_PKCE`];
+  if (raw === 'true') return true;
+  if (raw === 'false') return false;
+  return undefined;
+}
+
 export function readHttpAuthCredentials(
   apiName: string,
   schemeName: string,
