@@ -22,6 +22,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "check:package-metadata": "node ./scripts/check-package-metadata.mjs",
     "dev": "tsx src/cli.ts",
     "format": "prettier --write .",
     "lint": "eslint . --ext .ts,.js,.cjs,.mjs,.json",

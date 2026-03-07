@@ -1,1 +1,2 @@
+npm run check:package-metadata
 npx lint-staged
