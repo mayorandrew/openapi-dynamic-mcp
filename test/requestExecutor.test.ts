@@ -344,6 +344,106 @@ describe('executeEndpointRequest', () => {
     expect(scope.isDone()).toBe(true);
   });
 
+  it('returns text for Content-Type: text/xml', async () => {
+    const env: NodeJS.ProcessEnv = {
+      PET_API_APIKEYAUTH_API_KEY: 'api-secret',
+    };
+    const registry = await loadApiRegistry(buildConfig(), env);
+    const api = registry.byName.get('pet-api')!;
+    const endpoint = api.endpointById.get('listPets')!;
+
+    nock('https://api.example.com')
+      .get('/v1/pets')
+      .query(true)
+      .reply(200, '<xml>data</xml>', { 'content-type': 'text/xml' });
+
+    const result = await executeEndpointRequest({
+      api,
+      endpoint,
+      oauthClient: new OAuthClient(),
+      env,
+    });
+
+    expect(result.response.bodyType).toBe('text');
+    expect(result.response.bodyText).toBe('<xml>data</xml>');
+  });
+
+  it('returns text for Content-Type: application/xml', async () => {
+    const env: NodeJS.ProcessEnv = {
+      PET_API_APIKEYAUTH_API_KEY: 'api-secret',
+    };
+    const registry = await loadApiRegistry(buildConfig(), env);
+    const api = registry.byName.get('pet-api')!;
+    const endpoint = api.endpointById.get('listPets')!;
+
+    nock('https://api.example.com')
+      .get('/v1/pets')
+      .query(true)
+      .reply(200, '<xml>data</xml>', {
+        'content-type': 'application/xml',
+      });
+
+    const result = await executeEndpointRequest({
+      api,
+      endpoint,
+      oauthClient: new OAuthClient(),
+      env,
+    });
+
+    expect(result.response.bodyType).toBe('text');
+  });
+
+  it('returns empty for Content-Type: application/octet-stream with no data', async () => {
+    const env: NodeJS.ProcessEnv = {
+      PET_API_APIKEYAUTH_API_KEY: 'api-secret',
+    };
+    const registry = await loadApiRegistry(buildConfig(), env);
+    const api = registry.byName.get('pet-api')!;
+    const endpoint = api.endpointById.get('listPets')!;
+
+    nock('https://api.example.com')
+      .get('/v1/pets')
+      .query(true)
+      .reply(200, Buffer.alloc(0), {
+        'content-type': 'application/octet-stream',
+      });
+
+    const result = await executeEndpointRequest({
+      api,
+      endpoint,
+      oauthClient: new OAuthClient(),
+      env,
+    });
+
+    expect(result.response.bodyType).toBe('empty');
+  });
+
+  it('returns text for Content-Type with charset parameter', async () => {
+    const env: NodeJS.ProcessEnv = {
+      PET_API_APIKEYAUTH_API_KEY: 'api-secret',
+    };
+    const registry = await loadApiRegistry(buildConfig(), env);
+    const api = registry.byName.get('pet-api')!;
+    const endpoint = api.endpointById.get('listPets')!;
+
+    nock('https://api.example.com')
+      .get('/v1/pets')
+      .query(true)
+      .reply(200, 'plain text', {
+        'content-type': 'text/plain; charset=utf-8',
+      });
+
+    const result = await executeEndpointRequest({
+      api,
+      endpoint,
+      oauthClient: new OAuthClient(),
+      env,
+    });
+
+    expect(result.response.bodyType).toBe('text');
+    expect(result.response.bodyText).toBe('plain text');
+  });
+
   it('processes raw binary data with base64 descriptor', async () => {
     const registry = await loadApiRegistry(buildConfig(), {});
     const api = registry.byName.get('pet-api')!;

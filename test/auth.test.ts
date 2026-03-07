@@ -303,6 +303,99 @@ describe('resolveAuth', () => {
     });
   });
 
+  it('token caching: second call uses cached token', async () => {
+    const registry = await loadApiRegistry(buildConfig(), {});
+    const api = registry.byName.get('pet-api');
+    const endpoint = api?.endpointById.get('comboSecurity');
+    const client = new OAuthClient();
+
+    // nock only responds once
+    nock('https://auth.example.com').post('/oauth/token').once().reply(200, {
+      access_token: 'cached-token',
+      token_type: 'Bearer',
+      expires_in: 3600,
+    });
+
+    const auth1 = await resolveAuth({
+      api: api!,
+      endpoint: endpoint!,
+      oauthClient: client,
+      env: {
+        PET_API_APIKEYAUTH_API_KEY: 'key',
+        PET_API_OAUTHCC_CLIENT_ID: 'client',
+        PET_API_OAUTHCC_CLIENT_SECRET: 'secret',
+      },
+    });
+    const auth2 = await resolveAuth({
+      api: api!,
+      endpoint: endpoint!,
+      oauthClient: client,
+      env: {
+        PET_API_APIKEYAUTH_API_KEY: 'key',
+        PET_API_OAUTHCC_CLIENT_ID: 'client',
+        PET_API_OAUTHCC_CLIENT_SECRET: 'secret',
+      },
+    });
+
+    expect(auth1.schemes[1]).toMatchObject({ token: 'cached-token' });
+    expect(auth2.schemes[1]).toMatchObject({ token: 'cached-token' });
+  });
+
+  it('client_secret_post auth method sends credentials in body', async () => {
+    const registry = await loadApiRegistry(buildConfig(), {});
+    const api = registry.byName.get('pet-api');
+    const endpoint = api?.endpointById.get('comboSecurity');
+
+    const scope = nock('https://auth.example.com')
+      .post('/oauth/token', (body: Record<string, string>) => {
+        return body.client_id === 'client' && body.client_secret === 'secret';
+      })
+      .reply(200, {
+        access_token: 'post-token',
+        token_type: 'Bearer',
+        expires_in: 3600,
+      });
+
+    const auth = await resolveAuth({
+      api: api!,
+      endpoint: endpoint!,
+      oauthClient: new OAuthClient(),
+      env: {
+        PET_API_APIKEYAUTH_API_KEY: 'key',
+        PET_API_OAUTHCC_CLIENT_ID: 'client',
+        PET_API_OAUTHCC_CLIENT_SECRET: 'secret',
+        PET_API_OAUTHCC_TOKEN_AUTH_METHOD: 'client_secret_post',
+      },
+    });
+
+    expect(auth.schemes[1]).toMatchObject({ token: 'post-token' });
+    expect(scope.isDone()).toBe(true);
+  });
+
+  it('token endpoint 400 returns AUTH_ERROR', async () => {
+    const registry = await loadApiRegistry(buildConfig(), {});
+    const api = registry.byName.get('pet-api');
+    const endpoint = api?.endpointById.get('comboSecurity');
+
+    nock('https://auth.example.com').post('/oauth/token').reply(400, {
+      error: 'invalid_client',
+      error_description: 'Bad credentials',
+    });
+
+    await expect(
+      resolveAuth({
+        api: api!,
+        endpoint: endpoint!,
+        oauthClient: new OAuthClient(),
+        env: {
+          PET_API_APIKEYAUTH_API_KEY: 'key',
+          PET_API_OAUTHCC_CLIENT_ID: 'client',
+          PET_API_OAUTHCC_CLIENT_SECRET: 'secret',
+        },
+      }),
+    ).rejects.toMatchObject({ code: 'AUTH_ERROR' });
+  });
+
   it('auto-detects device_code method when device endpoint env var is set', async () => {
     const registry = await loadApiRegistry(buildConfig(), {});
     const api = registry.byName.get('pet-api');
