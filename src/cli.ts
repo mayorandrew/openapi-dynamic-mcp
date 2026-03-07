@@ -16,7 +16,6 @@ import { authenticateSelectedScheme } from './auth/schemeAuth.js';
 import { loadConfig } from './config/loadConfig.js';
 import { OpenApiMcpError } from './errors.js';
 import { startMcpServer, version } from './mcp/server.js';
-import { executeToolData, toToolDescriptor } from './mcp/tools/common.js';
 import { getToolDefinition, toolDefinitions } from './mcp/tools/registry.js';
 import { loadApiRegistry } from './openapi/loadSpec.js';
 import { applyJsonPathFields } from './output/jsonPath.js';
@@ -122,7 +121,7 @@ function createToolCommand(toolName: string) {
     },
     handler: async ({ config, input, fields, authFile, describe }) => {
       if (describe) {
-        printJson(toToolDescriptor(definition));
+        printJson(definition.descriptor);
         return;
       }
 
@@ -132,7 +131,7 @@ function createToolCommand(toolName: string) {
       if (fields.length > 0) {
         parsedInput.fields = fields;
       }
-      printJson(await executeToolData(definition, context, parsedInput));
+      printJson(await definition.execute(context, parsedInput));
     },
   });
 }

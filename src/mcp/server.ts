@@ -6,9 +6,8 @@ import {
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import type { ToolContext } from './context.js';
-import { fail, toToolDescriptor } from './tools/common.js';
+import { fail } from './tools/common.js';
 import { getToolDefinition, toolDefinitions } from './tools/registry.js';
-import { executeToolData } from './tools/common.js';
 
 const require = createRequire(import.meta.url);
 export const { version } = require('../../package.json') as {
@@ -29,7 +28,7 @@ export async function startMcpServer(context: ToolContext): Promise<void> {
   );
 
   server.setRequestHandler(ListToolsRequestSchema, async () => {
-    return { tools: toolDefinitions.map((tool) => toToolDescriptor(tool)) };
+    return { tools: toolDefinitions.map((tool) => tool.descriptor) };
   });
 
   server.setRequestHandler(
@@ -44,7 +43,7 @@ export async function startMcpServer(context: ToolContext): Promise<void> {
       }
 
       try {
-        const payload = await executeToolData(definition, context, args);
+        const payload = await definition.execute(context, args);
         return {
           content: [
             {

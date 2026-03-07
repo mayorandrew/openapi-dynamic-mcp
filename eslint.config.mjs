@@ -3,14 +3,29 @@ import eslint from 'eslint/config';
 import { configs } from 'typescript-eslint';
 import eslintConfigPrettier from 'eslint-config-prettier';
 import globals from 'globals';
+import jsoncPlugin from 'eslint-plugin-jsonc';
+import jsonSchemaValidatorPlugin from 'eslint-plugin-json-schema-validator';
 
 export default eslint.defineConfig(
   {
-    ignores: ['dist/**', 'coverage/**', 'node_modules/**', 'get-apis.js'],
+    ignores: [
+      'dist/**',
+      'coverage/**',
+      'node_modules/**',
+      'get-apis.js',
+      'schemas/**',
+      '**/*.{yaml,yml}',
+    ],
   },
+  ...jsoncPlugin.configs['flat/recommended-with-json'],
+  ...jsonSchemaValidatorPlugin.configs['flat/recommended'],
   eslintJs.configs.recommended,
-  ...configs.recommendedTypeChecked,
+  ...configs.recommendedTypeChecked.map((config) => ({
+    ...config,
+    files: config.files ?? ['**/*.{ts,mts,cts,tsx}'],
+  })),
   {
+    files: ['**/*.{ts,mts,cts,tsx}'],
     languageOptions: {
       globals: {
         ...globals.node,
@@ -47,7 +62,13 @@ export default eslint.defineConfig(
     },
   },
   {
-    files: ['**/*.{js,cjs,mjs}'],
+    files: ['server.json'],
+    rules: {
+      'json-schema-validator/no-invalid': 'error',
+    },
+  },
+  {
+    files: ['**/*.{js,cjs,mjs}', '**/*.json'],
     ...configs.disableTypeChecked,
   },
   eslintConfigPrettier,

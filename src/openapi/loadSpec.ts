@@ -111,6 +111,12 @@ function parseSpecText(raw: string): unknown {
   }
 }
 
+async function dereferenceDocument(
+  source: string | OpenAPIV3.Document,
+): Promise<OpenAPIV3.Document> {
+  return (await SwaggerParser.dereference(source)) as OpenAPIV3.Document;
+}
+
 async function loadSingleApi(
   api: ApiConfig,
   env: NodeJS.ProcessEnv,
@@ -138,9 +144,7 @@ async function loadSingleApi(
           patch: true,
           warnOnly: true,
         });
-        parsed = await SwaggerParser.dereference(
-          converted.openapi as OpenAPIV3.Document,
-        );
+        parsed = await dereferenceDocument(converted.openapi);
       } catch (error) {
         throw new OpenApiMcpError(
           'SCHEMA_ERROR',
@@ -152,7 +156,7 @@ async function loadSingleApi(
         );
       }
     } else {
-      parsed = await SwaggerParser.dereference(specSource);
+      parsed = await dereferenceDocument(specSource);
     }
   } catch (error) {
     if (error instanceof OpenApiMcpError) {
