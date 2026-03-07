@@ -2,9 +2,16 @@ import path from 'node:path';
 import nock from 'nock';
 import { afterEach, describe, expect, it } from 'vitest';
 import { OAuthClient } from '../src/auth/oauthClient.js';
-import { executeEndpointRequest } from '../src/http/requestExecutor.js';
+import {
+  executeEndpointRequest,
+  prepareEndpointRequest,
+} from '../src/http/requestExecutor.js';
 import { loadApiRegistry } from '../src/openapi/loadSpec.js';
-import type { RootConfig } from '../src/types.js';
+import type {
+  EndpointDefinition,
+  LoadedApi,
+  RootConfig,
+} from '../src/types.js';
 
 const fixturesDir = path.resolve('test/fixtures');
 
@@ -249,6 +256,45 @@ describe('executeEndpointRequest', () => {
     expect(Date.now() - startedAt).toBeGreaterThanOrEqual(900);
   }, 10000);
 
+  it('respects HTTP-date Retry-After when present', async () => {
+    const env: NodeJS.ProcessEnv = {
+      PET_API_APIKEYAUTH_API_KEY: 'api-secret',
+    };
+    const registry = await loadApiRegistry(buildConfig(), env);
+    const api = registry.byName.get('pet-api')!;
+    const endpoint = api.endpointById.get('listPets')!;
+    const retryAfterDate = new Date(Date.now() + 2000).toUTCString();
+
+    nock('https://api.example.com')
+      .get('/v1/pets')
+      .query(true)
+      .reply(
+        429,
+        { error: 'rate_limited' },
+        { 'content-type': 'application/json', 'retry-after': retryAfterDate },
+      )
+      .get('/v1/pets')
+      .query(true)
+      .reply(200, { ok: true }, { 'content-type': 'application/json' });
+
+    const startedAt = Date.now();
+    const result = await executeEndpointRequest({
+      api,
+      endpoint,
+      oauthClient: new OAuthClient(),
+      env,
+      retry429: {
+        maxRetries: 1,
+        baseDelayMs: 1,
+        maxDelayMs: 2000,
+        jitterRatio: 0,
+      },
+    });
+
+    expect(result.response.status).toBe(200);
+    expect(Date.now() - startedAt).toBeGreaterThanOrEqual(1000);
+  }, 10000);
+
   it('falls back to exponential backoff on invalid Retry-After', async () => {
     const env: NodeJS.ProcessEnv = {
       PET_API_APIKEYAUTH_API_KEY: 'api-secret',
@@ -469,6 +515,320 @@ describe('executeEndpointRequest', () => {
     expect(result.response.status).toBe(200);
     expect(scope.isDone()).toBe(true);
   });
+
+  it('returns empty for 204 and 205 responses', async () => {
+    const env: NodeJS.ProcessEnv = {
+      PET_API_APIKEYAUTH_API_KEY: 'api-secret',
+    };
+    const registry = await loadApiRegistry(buildConfig(), env);
+    const api = registry.byName.get('pet-api')!;
+    const endpoint = api.endpointById.get('listPets')!;
+
+    nock('https://api.example.com')
+      .get('/v1/pets')
+      .query(true)
+      .reply(204)
+      .get('/v1/pets')
+      .query(true)
+      .reply(205);
+
+    const first = await executeEndpointRequest({
+      api,
+      endpoint,
+      oauthClient: new OAuthClient(),
+      env,
+    });
+    const second = await executeEndpointRequest({
+      api,
+      endpoint,
+      oauthClient: new OAuthClient(),
+      env,
+    });
+
+    expect(first.response.bodyType).toBe('empty');
+    expect(second.response.bodyType).toBe('empty');
+  });
+
+  it('falls back to text when json content is invalid', async () => {
+    const env: NodeJS.ProcessEnv = {
+      PET_API_APIKEYAUTH_API_KEY: 'api-secret',
+    };
+    const registry = await loadApiRegistry(buildConfig(), env);
+    const api = registry.byName.get('pet-api')!;
+    const endpoint = api.endpointById.get('listPets')!;
+
+    nock('https://api.example.com')
+      .get('/v1/pets')
+      .query(true)
+      .reply(200, '{not-json}', { 'content-type': 'application/json' });
+
+    const result = await executeEndpointRequest({
+      api,
+      endpoint,
+      oauthClient: new OAuthClient(),
+      env,
+    });
+
+    expect(result.response.bodyType).toBe('text');
+    expect(result.response.bodyText).toBe('{not-json}');
+  });
+
+  it('serializes deepObject query parameters', async () => {
+    const env: NodeJS.ProcessEnv = {
+      PET_API_APIKEYAUTH_API_KEY: 'api-secret',
+    };
+    const registry = await loadApiRegistry(buildConfig(), env);
+    const api = registry.byName.get('pet-api')!;
+    const endpoint = buildEndpoint(api, {
+      endpointId: 'searchDeepObject',
+      path: '/search',
+      method: 'get',
+      operation: {
+        responses: { '200': { description: 'ok' } },
+        parameters: [
+          {
+            name: 'filter',
+            in: 'query',
+            style: 'deepObject',
+            explode: true,
+            schema: { type: 'object' },
+          },
+        ],
+      },
+    });
+
+    const prepared = await prepareEndpointRequest({
+      api,
+      endpoint,
+      oauthClient: new OAuthClient(),
+      env,
+      query: {
+        filter: {
+          status: 'open',
+          owner: 'alice',
+        },
+      },
+    });
+
+    expect('fetchUrl' in prepared).toBe(true);
+    if ('fetchUrl' in prepared) {
+      expect(prepared.fetchUrl.searchParams.get('filter[status]')).toBe('open');
+      expect(prepared.fetchUrl.searchParams.get('filter[owner]')).toBe('alice');
+    }
+  });
+
+  it('serializes non-exploded arrays and objects in query parameters', async () => {
+    const env: NodeJS.ProcessEnv = {
+      PET_API_APIKEYAUTH_API_KEY: 'api-secret',
+    };
+    const registry = await loadApiRegistry(buildConfig(), env);
+    const api = registry.byName.get('pet-api')!;
+    const endpoint = buildEndpoint(api, {
+      endpointId: 'searchFormStyle',
+      path: '/search',
+      method: 'get',
+      operation: {
+        responses: { '200': { description: 'ok' } },
+        parameters: [
+          {
+            name: 'tags',
+            in: 'query',
+            style: 'form',
+            explode: false,
+            schema: { type: 'array', items: { type: 'string' } },
+          },
+          {
+            name: 'filter',
+            in: 'query',
+            style: 'form',
+            explode: false,
+            schema: { type: 'object' },
+          },
+        ],
+      },
+    });
+
+    const prepared = await prepareEndpointRequest({
+      api,
+      endpoint,
+      oauthClient: new OAuthClient(),
+      env,
+      query: {
+        tags: ['one', 'two'],
+        filter: { status: 'open', owner: 'alice' },
+      },
+    });
+
+    expect('fetchUrl' in prepared).toBe(true);
+    if ('fetchUrl' in prepared) {
+      expect(prepared.fetchUrl.searchParams.get('tags')).toBe('one,two');
+      expect(prepared.fetchUrl.searchParams.get('filter')).toBe(
+        'status,open,owner,alice',
+      );
+    }
+  });
+
+  it('expands array and object path parameters', async () => {
+    const env: NodeJS.ProcessEnv = {
+      PET_API_APIKEYAUTH_API_KEY: 'api-secret',
+    };
+    const registry = await loadApiRegistry(buildConfig(), env);
+    const api = registry.byName.get('pet-api')!;
+    const endpoint = buildEndpoint(api, {
+      endpointId: 'pathExpansion',
+      path: '/items/{ids}/{filter}',
+      method: 'get',
+      operation: {
+        responses: { '200': { description: 'ok' } },
+        parameters: [
+          {
+            name: 'ids',
+            in: 'path',
+            required: true,
+            schema: { type: 'array', items: { type: 'string' } },
+          },
+          {
+            name: 'filter',
+            in: 'path',
+            required: true,
+            schema: { type: 'object' },
+          },
+        ],
+      },
+    });
+
+    const prepared = await prepareEndpointRequest({
+      api,
+      endpoint,
+      oauthClient: new OAuthClient(),
+      env,
+      pathParams: {
+        ids: ['a', 'b'],
+        filter: { status: 'open', owner: 'alice' },
+      },
+    });
+
+    expect('fetchUrl' in prepared).toBe(true);
+    if ('fetchUrl' in prepared) {
+      expect(prepared.fetchUrl.toString()).toContain(
+        '/items/a,b/status%2Copen%2Cowner%2Calice',
+      );
+    }
+  });
+
+  it('applies cookie auth and redacts cookies and auth headers', async () => {
+    const api = buildCookieAuthApi();
+    const endpoint = api.endpointById.get('cookieEndpoint')!;
+
+    const prepared = await prepareEndpointRequest({
+      api,
+      endpoint,
+      oauthClient: new OAuthClient(),
+      env: {
+        COOKIE_API_COOKIEAUTH_API_KEY: 'cookie-secret',
+      },
+      cookies: {
+        session: 'user-cookie',
+      },
+      headers: {
+        Authorization: 'Bearer explicit',
+      },
+    });
+
+    expect('fetchHeaders' in prepared).toBe(true);
+    if ('fetchHeaders' in prepared) {
+      expect(prepared.fetchHeaders.cookie).toContain('session=user-cookie');
+      expect(prepared.fetchHeaders.cookie).toContain(
+        'cookie_key=cookie-secret',
+      );
+      expect(prepared.request.headersRedacted.cookie).toBe('<redacted>');
+      expect(prepared.request.headersRedacted.Authorization).toBe('<redacted>');
+    }
+  });
+
+  it('rejects multiple files for raw binary bodies', async () => {
+    const registry = await loadApiRegistry(buildConfig(), {});
+    const api = registry.byName.get('pet-api')!;
+    const endpoint = api.endpointById.get('uploadRaw')!;
+
+    await expect(
+      prepareEndpointRequest({
+        api,
+        endpoint,
+        oauthClient: new OAuthClient(),
+        env: { PET_API_APIKEYAUTH_API_KEY: 'api-secret' },
+        files: {
+          one: { text: 'one' },
+          two: { text: 'two' },
+        },
+      }),
+    ).rejects.toMatchObject({
+      code: 'REQUEST_ERROR',
+      message: 'Multiple files provided but expected a single raw binary body',
+    });
+  });
+
+  it('rejects invalid file descriptors', async () => {
+    const registry = await loadApiRegistry(buildConfig(), {});
+    const api = registry.byName.get('pet-api')!;
+    const endpoint = api.endpointById.get('uploadRaw')!;
+
+    await expect(
+      prepareEndpointRequest({
+        api,
+        endpoint,
+        oauthClient: new OAuthClient(),
+        env: { PET_API_APIKEYAUTH_API_KEY: 'api-secret' },
+        // Intentionally bypass the descriptor type to cover runtime validation.
+        files: { body: {} as never },
+      }),
+    ).rejects.toMatchObject({
+      code: 'REQUEST_ERROR',
+      message: 'File descriptor must have base64, text, or filePath',
+    });
+  });
+
+  it('previews text and json request bodies with inferred content types', async () => {
+    const registry = await loadApiRegistry(buildConfig(), {});
+    const api = registry.byName.get('pet-api')!;
+    const endpoint = api.endpointById.get('listPets')!;
+    const env = { PET_API_APIKEYAUTH_API_KEY: 'api-secret' };
+
+    const textPrepared = await prepareEndpointRequest({
+      api,
+      endpoint,
+      oauthClient: new OAuthClient(),
+      env,
+      body: 'plain text body',
+    });
+    const jsonPrepared = await prepareEndpointRequest({
+      api,
+      endpoint,
+      oauthClient: new OAuthClient(),
+      env,
+      body: { hello: 'world' },
+    });
+
+    expect('fetchHeaders' in textPrepared).toBe(true);
+    if ('fetchHeaders' in textPrepared) {
+      expect(textPrepared.fetchHeaders['content-type']).toBe('text/plain');
+      expect(textPrepared.requestBodyPreview).toEqual({
+        bodyType: 'text',
+        bodyText: 'plain text body',
+      });
+    }
+
+    expect('fetchHeaders' in jsonPrepared).toBe(true);
+    if ('fetchHeaders' in jsonPrepared) {
+      expect(jsonPrepared.fetchHeaders['content-type']).toBe(
+        'application/json',
+      );
+      expect(jsonPrepared.requestBodyPreview).toEqual({
+        bodyType: 'json',
+        bodyJson: { hello: 'world' },
+      });
+    }
+  });
 });
 
 function buildConfig(): RootConfig {
@@ -483,5 +843,85 @@ function buildConfig(): RootConfig {
         },
       },
     ],
+  };
+}
+
+function buildEndpoint(
+  api: LoadedApi,
+  input: {
+    endpointId: string;
+    path: string;
+    method: EndpointDefinition['method'];
+    operation: EndpointDefinition['operation'];
+  },
+): EndpointDefinition {
+  return {
+    endpointId: input.endpointId,
+    path: input.path,
+    method: input.method,
+    operationId: input.endpointId,
+    operation: input.operation,
+    pathItem: {
+      [input.method]: input.operation,
+    },
+  };
+}
+
+function buildCookieAuthApi(): LoadedApi {
+  const endpoint = buildEndpoint(
+    {
+      config: { name: 'cookie-api', baseUrl: 'https://cookie.example.com' },
+      schemaPath: 'inline',
+      schema: {
+        openapi: '3.0.3',
+        info: { title: 'cookie-api', version: '1.0.0' },
+        paths: {},
+        components: {
+          securitySchemes: {
+            CookieAuth: {
+              type: 'apiKey',
+              in: 'cookie',
+              name: 'cookie_key',
+            },
+          },
+        },
+      },
+      baseUrl: 'https://cookie.example.com',
+      endpoints: [],
+      endpointById: new Map(),
+      authSchemeNames: ['CookieAuth'],
+    },
+    {
+      endpointId: 'cookieEndpoint',
+      path: '/cookie',
+      method: 'get',
+      operation: {
+        security: [{ CookieAuth: [] }],
+        responses: { '200': { description: 'ok' } },
+      },
+    },
+  );
+
+  return {
+    config: { name: 'cookie-api', baseUrl: 'https://cookie.example.com' },
+    schemaPath: 'inline',
+    schema: {
+      openapi: '3.0.3',
+      info: { title: 'cookie-api', version: '1.0.0' },
+      paths: {},
+      components: {
+        securitySchemes: {
+          CookieAuth: {
+            type: 'apiKey',
+            in: 'cookie',
+            name: 'cookie_key',
+          },
+        },
+      },
+    },
+    baseUrl: 'https://cookie.example.com',
+    endpoints: [endpoint],
+    endpointById: new Map([[endpoint.endpointId, endpoint]]),
+    authSchemeNames: ['CookieAuth'],
   };
 }

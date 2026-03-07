@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyJsonPathFields } from '../src/output/jsonPath.js';
+import { applyJsonPathFields, parseJsonPath } from '../src/output/jsonPath.js';
 
 const payload = {
   apis: [
@@ -32,6 +32,38 @@ describe('applyJsonPathFields', () => {
     expect(applyJsonPathFields(payload, ['$.missing'])).toEqual({});
     expect(() => applyJsonPathFields(payload, ['$..info'])).toThrow(
       /Invalid JSONPath/,
+    );
+  });
+
+  it('supports unicode escapes in quoted members', () => {
+    const complexPayload = {
+      info: {
+        'snowman\u2603': 'winter',
+      },
+    };
+
+    expect(
+      applyJsonPathFields(complexPayload, ["$.info['snowman\\u2603']"]),
+    ).toEqual({
+      info: {
+        'snowman\u2603': 'winter',
+      },
+    });
+  });
+
+  it('merges multiple selectors into one projected object', () => {
+    expect(
+      applyJsonPathFields(payload, ['$.apis[0].name', '$.info.title']),
+    ).toEqual({
+      apis: [{ name: 'pet-api' }, undefined],
+      info: { title: 'Demo' },
+    });
+  });
+
+  it('rejects unsupported selectors and invalid unicode escapes', () => {
+    expect(() => parseJsonPath('$.apis[0:2]')).toThrow(/not supported/);
+    expect(() => parseJsonPath("$.info['bad\\u00ZZ']")).toThrow(
+      /invalid unicode escape/,
     );
   });
 });
