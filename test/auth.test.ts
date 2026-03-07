@@ -79,6 +79,24 @@ describe('resolveAuth', () => {
     ).rejects.toMatchObject({ code: 'AUTH_ERROR' });
   });
 
+  it('error message contains missing env var names', async () => {
+    const registry = await loadApiRegistry(buildConfig(), {});
+    const api = registry.byName.get('pet-api');
+    const endpoint = api?.endpointById.get('comboSecurity');
+
+    await expect(
+      resolveAuth({
+        api: api!,
+        endpoint: endpoint!,
+        oauthClient: new OAuthClient(),
+        env: {},
+      }),
+    ).rejects.toMatchObject({
+      code: 'AUTH_ERROR',
+      message: expect.stringContaining('PET_API_APIKEYAUTH_API_KEY'),
+    });
+  });
+
   it('resolves HTTP Bearer auth', async () => {
     const registry = await loadApiRegistry(buildConfig(), {});
     const api = registry.byName.get('pet-api');

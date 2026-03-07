@@ -215,9 +215,17 @@ export async function resolveAuth({
     });
   }
 
+  const allMissingEnv = [
+    ...new Set(failures.flatMap((f) => f.missingEnv ?? [])),
+  ];
+  const envHint =
+    allMissingEnv.length > 0
+      ? `. Set environment variable(s): ${allMissingEnv.join(', ')}`
+      : '';
+
   throw new OpenApiMcpError(
     'AUTH_ERROR',
-    `Could not resolve authentication for '${api.config.name}'`,
+    `Could not resolve authentication for '${api.config.name}'${envHint}`,
     {
       endpointId: endpoint.endpointId,
       failures,
