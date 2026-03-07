@@ -1,8 +1,13 @@
 import path from 'node:path';
-import { describe, expect, it } from 'vitest';
+import nock from 'nock';
+import { afterEach, describe, expect, it } from 'vitest';
 import { loadApiRegistry } from '../src/openapi/loadSpec.js';
 import type { RootConfig } from '../src/types.js';
 import { OpenApiMcpError } from '../src/errors.js';
+
+afterEach(() => {
+  nock.cleanAll();
+});
 
 const fixturesDir = path.resolve('test/fixtures');
 
@@ -104,5 +109,46 @@ describe('OpenAPI loading/index', () => {
     await expect(loadApiRegistry(config, {})).rejects.toThrowError(
       OpenApiMcpError,
     );
+  });
+
+  it('gives friendly error for unreachable specUrl', async () => {
+    nock('https://unreachable.example.com')
+      .get('/spec.yaml')
+      .replyWithError('getaddrinfo ENOTFOUND unreachable.example.com');
+
+    const config: RootConfig = {
+      version: 1,
+      apis: [
+        {
+          name: 'remote-api',
+          specUrl: 'https://unreachable.example.com/spec.yaml',
+        },
+      ],
+    };
+    await expect(loadApiRegistry(config, {})).rejects.toMatchObject({
+      code: 'SCHEMA_ERROR',
+      message: expect.stringContaining('URL unreachable'),
+    });
+  });
+
+  it('gives friendly error for non-OpenAPI response from specUrl', async () => {
+    nock('https://bad-spec.example.com')
+      .get('/spec.yaml')
+      .reply(200, '<html>Not a spec</html>', {
+        'content-type': 'text/html',
+      });
+
+    const config: RootConfig = {
+      version: 1,
+      apis: [
+        {
+          name: 'bad-spec-api',
+          specUrl: 'https://bad-spec.example.com/spec.yaml',
+        },
+      ],
+    };
+    await expect(loadApiRegistry(config, {})).rejects.toMatchObject({
+      code: 'SCHEMA_ERROR',
+    });
   });
 });

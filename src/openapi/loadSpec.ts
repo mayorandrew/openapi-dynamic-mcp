@@ -70,13 +70,44 @@ async function loadSingleApi(
   try {
     parsed = await SwaggerParser.dereference(specSource);
   } catch (error) {
+    const cause = error instanceof Error ? error.message : String(error);
+    const isUrl =
+      specSource.startsWith('http://') || specSource.startsWith('https://');
+
+    if (isUrl) {
+      const msg = cause.toLowerCase();
+      if (
+        msg.includes('enotfound') ||
+        msg.includes('econnrefused') ||
+        msg.includes('etimedout') ||
+        msg.includes('fetch failed')
+      ) {
+        throw new OpenApiMcpError(
+          'SCHEMA_ERROR',
+          `URL unreachable for '${api.name}': ${specSource}`,
+          { apiName: api.name, specSource, cause },
+        );
+      }
+      if (
+        msg.includes('not a valid json schema') ||
+        msg.includes('not a valid swagger') ||
+        msg.includes('not a valid openapi')
+      ) {
+        throw new OpenApiMcpError(
+          'SCHEMA_ERROR',
+          `Not a valid OpenAPI spec for '${api.name}': ${specSource}`,
+          { apiName: api.name, specSource, cause },
+        );
+      }
+    }
+
     throw new OpenApiMcpError(
       'SCHEMA_ERROR',
       `Failed to parse OpenAPI schema for '${api.name}'`,
       {
         apiName: api.name,
         specSource,
-        cause: error instanceof Error ? error.message : String(error),
+        cause,
       },
     );
   }
