@@ -32,6 +32,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Validate package metadata
+        run: npm run check:package-metadata
+
       - name: Build
         run: npm run build
 
