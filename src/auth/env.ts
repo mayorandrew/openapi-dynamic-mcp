@@ -122,6 +122,14 @@ export function readOAuthClientCredentials(
   };
 }
 
+export function readOAuthAccessToken(
+  apiName: string,
+  schemeName: string,
+  env: NodeJS.ProcessEnv = process.env,
+): string | undefined {
+  return env[`${schemePrefix(apiName, schemeName)}_ACCESS_TOKEN`];
+}
+
 export function readHttpAuthCredentials(
   apiName: string,
   schemeName: string,

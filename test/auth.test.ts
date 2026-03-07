@@ -97,6 +97,29 @@ describe('resolveAuth', () => {
     });
   });
 
+  it('uses pre-obtained ACCESS_TOKEN for oauth2 schemes', async () => {
+    const registry = await loadApiRegistry(buildConfig(), {});
+    const api = registry.byName.get('pet-api');
+    const endpoint = api?.endpointById.get('comboSecurity');
+
+    const auth = await resolveAuth({
+      api: api!,
+      endpoint: endpoint!,
+      oauthClient: new OAuthClient(),
+      env: {
+        PET_API_APIKEYAUTH_API_KEY: 'header-secret',
+        PET_API_OAUTHCC_ACCESS_TOKEN: 'pre-obtained-token',
+      },
+    });
+
+    expect(auth.authUsed).toEqual(['ApiKeyAuth', 'OAuthCC']);
+    expect(auth.schemes).toHaveLength(2);
+    expect(auth.schemes[1]).toMatchObject({
+      type: 'oauth2',
+      token: 'pre-obtained-token',
+    });
+  });
+
   it('resolves HTTP Bearer auth', async () => {
     const registry = await loadApiRegistry(buildConfig(), {});
     const api = registry.byName.get('pet-api');

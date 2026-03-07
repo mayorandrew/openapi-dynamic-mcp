@@ -1,6 +1,7 @@
 import {
   readApiKeyValue,
   readHttpAuthCredentials,
+  readOAuthAccessToken,
   readOAuthClientCredentials,
   schemePrefix,
 } from './env.js';
@@ -79,6 +80,20 @@ export async function resolveAuth({
       }
 
       if (scheme.type === 'oauth2') {
+        const preObtainedToken = readOAuthAccessToken(
+          api.config.name,
+          schemeName,
+          env,
+        );
+        if (preObtainedToken) {
+          resolved.push({
+            type: 'oauth2',
+            schemeName,
+            token: preObtainedToken,
+          });
+          continue;
+        }
+
         const flow = scheme.flows.clientCredentials;
         if (!flow) {
           failedReason = `Scheme '${schemeName}' does not support clientCredentials flow`;
