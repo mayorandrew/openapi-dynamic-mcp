@@ -53,8 +53,5 @@ jobs:
       - name: Authenticate to MCP Registry
         run: ./mcp-publisher login github-oidc
 
-      - name: Validate MCP manifest
-        run: ./mcp-publisher publish --dry-run
-
       - name: Publish to MCP Registry
         run: ./mcp-publisher publish
