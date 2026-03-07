@@ -122,6 +122,18 @@ export function readOAuthClientCredentials(
   };
 }
 
+export function readOAuthPasswordCredentials(
+  apiName: string,
+  schemeName: string,
+  env: NodeJS.ProcessEnv = process.env,
+): { username?: string; password?: string } {
+  const prefix = schemePrefix(apiName, schemeName);
+  return {
+    username: env[`${prefix}_USERNAME`],
+    password: env[`${prefix}_PASSWORD`],
+  };
+}
+
 export function readOAuthAccessToken(
   apiName: string,
   schemeName: string,

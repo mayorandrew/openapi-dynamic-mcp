@@ -97,6 +97,38 @@ describe('resolveAuth', () => {
     });
   });
 
+  it('resolves OAuth2 password (ROPC) flow', async () => {
+    const registry = await loadApiRegistry(buildConfig(), {});
+    const api = registry.byName.get('pet-api');
+    const endpoint = api?.endpointById.get('passwordAuthEndpoint');
+
+    expect(endpoint).toBeDefined();
+
+    nock('https://auth.example.com').post('/oauth/token').reply(200, {
+      access_token: 'ropc-token-1',
+      token_type: 'Bearer',
+      expires_in: 3600,
+    });
+
+    const auth = await resolveAuth({
+      api: api!,
+      endpoint: endpoint!,
+      oauthClient: new OAuthClient(),
+      env: {
+        PET_API_OAUTHPASSWORD_CLIENT_ID: 'client',
+        PET_API_OAUTHPASSWORD_CLIENT_SECRET: 'secret',
+        PET_API_OAUTHPASSWORD_USERNAME: 'alice',
+        PET_API_OAUTHPASSWORD_PASSWORD: 'hunter2',
+      },
+    });
+
+    expect(auth.authUsed).toEqual(['OAuthPassword']);
+    expect(auth.schemes[0]).toMatchObject({
+      type: 'oauth2',
+      token: 'ropc-token-1',
+    });
+  });
+
   it('uses pre-obtained ACCESS_TOKEN for oauth2 schemes', async () => {
     const registry = await loadApiRegistry(buildConfig(), {});
     const api = registry.byName.get('pet-api');

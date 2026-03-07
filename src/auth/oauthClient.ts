@@ -10,6 +10,11 @@ export interface OAuthTokenRequest {
   tokenEndpointAuthMethod: 'client_secret_basic' | 'client_secret_post';
 }
 
+export interface OAuthPasswordGrantRequest extends OAuthTokenRequest {
+  username: string;
+  password: string;
+}
+
 interface TokenCacheEntry {
   accessToken: string;
   expiresAtMs: number;
@@ -82,5 +87,82 @@ export class OAuthClient {
         cause: error instanceof Error ? error.message : String(error),
       });
     }
+  }
+
+  async getPasswordGrantToken(
+    request: OAuthPasswordGrantRequest,
+  ): Promise<string> {
+    const cached = this.cache.get(request.cacheKey);
+    if (cached && cached.expiresAtMs - Date.now() > TOKEN_EXPIRY_SAFETY_MS) {
+      return cached.accessToken;
+    }
+
+    const body = new URLSearchParams({
+      grant_type: 'password',
+      username: request.username,
+      password: request.password,
+    });
+    if (request.scopes.length > 0) {
+      body.set('scope', request.scopes.join(' '));
+    }
+
+    const headers: Record<string, string> = {
+      'content-type': 'application/x-www-form-urlencoded',
+    };
+
+    if (request.tokenEndpointAuthMethod === 'client_secret_basic') {
+      headers.authorization = `Basic ${Buffer.from(`${request.clientId}:${request.clientSecret}`).toString('base64')}`;
+    } else {
+      body.set('client_id', request.clientId);
+      body.set('client_secret', request.clientSecret);
+    }
+
+    let response: Response;
+    try {
+      response = await fetch(request.tokenUrl, {
+        method: 'POST',
+        headers,
+        body,
+      });
+    } catch (error) {
+      throw new OpenApiMcpError(
+        'AUTH_ERROR',
+        'OAuth2 password grant request failed',
+        {
+          tokenUrl: request.tokenUrl,
+          cause: error instanceof Error ? error.message : String(error),
+        },
+      );
+    }
+
+    if (!response.ok) {
+      let errorBody: unknown;
+      try {
+        errorBody = await response.json();
+      } catch {
+        errorBody = await response.text();
+      }
+      throw new OpenApiMcpError(
+        'AUTH_ERROR',
+        'OAuth2 password grant request failed',
+        {
+          tokenUrl: request.tokenUrl,
+          status: response.status,
+          oauthError: errorBody,
+        },
+      );
+    }
+
+    const result = (await response.json()) as {
+      access_token: string;
+      expires_in?: number;
+    };
+
+    this.cache.set(request.cacheKey, {
+      accessToken: result.access_token,
+      expiresAtMs: Date.now() + Math.max(result.expires_in ?? 3600, 1) * 1000,
+    });
+
+    return result.access_token;
   }
 }

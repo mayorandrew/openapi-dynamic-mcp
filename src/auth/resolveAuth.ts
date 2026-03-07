@@ -3,6 +3,7 @@ import {
   readHttpAuthCredentials,
   readOAuthAccessToken,
   readOAuthClientCredentials,
+  readOAuthPasswordCredentials,
   schemePrefix,
 } from './env.js';
 import { OAuthClient } from './oauthClient.js';
@@ -94,9 +95,14 @@ export async function resolveAuth({
           continue;
         }
 
-        const flow = scheme.flows.clientCredentials;
-        if (!flow) {
-          failedReason = `Scheme '${schemeName}' does not support clientCredentials flow`;
+        const ccFlow = scheme.flows.clientCredentials;
+        const passwordFlow = scheme.flows.password;
+
+        if (!ccFlow && !passwordFlow) {
+          missingEnv.add(
+            `${schemePrefix(api.config.name, schemeName)}_ACCESS_TOKEN`,
+          );
+          failedReason = `Scheme '${schemeName}' does not support clientCredentials or password flow`;
           break;
         }
 
@@ -119,10 +125,11 @@ export async function resolveAuth({
           break;
         }
 
+        const activeFlow = ccFlow ?? passwordFlow!;
         const tokenUrl =
           fromEnv.tokenUrl ??
           api.config.oauth2?.tokenUrlOverride ??
-          flow.tokenUrl;
+          activeFlow.tokenUrl;
         if (!tokenUrl) {
           failedReason = `No OAuth2 token URL resolved for scheme '${schemeName}'`;
           break;
@@ -136,7 +143,7 @@ export async function resolveAuth({
           requestedScopes,
           fromEnv.scopes,
           api.config.oauth2?.scopes,
-          flow,
+          activeFlow,
         );
         const cacheKey = [
           api.config.name,
@@ -147,14 +154,43 @@ export async function resolveAuth({
           scopes.sort().join(','),
         ].join('|');
 
-        const token = await oauthClient.getClientCredentialsToken({
-          cacheKey,
-          tokenUrl,
-          clientId,
-          clientSecret,
-          scopes,
-          tokenEndpointAuthMethod,
-        });
+        let token: string;
+        if (passwordFlow && !ccFlow) {
+          const passwordCreds = readOAuthPasswordCredentials(
+            api.config.name,
+            schemeName,
+            env,
+          );
+          if (!passwordCreds.username || !passwordCreds.password) {
+            missingEnv.add(
+              `${schemePrefix(api.config.name, schemeName)}_USERNAME`,
+            );
+            missingEnv.add(
+              `${schemePrefix(api.config.name, schemeName)}_PASSWORD`,
+            );
+            failedReason = `Missing OAuth2 password credentials for '${schemeName}'`;
+            break;
+          }
+          token = await oauthClient.getPasswordGrantToken({
+            cacheKey,
+            tokenUrl,
+            clientId,
+            clientSecret,
+            scopes,
+            tokenEndpointAuthMethod,
+            username: passwordCreds.username,
+            password: passwordCreds.password,
+          });
+        } else {
+          token = await oauthClient.getClientCredentialsToken({
+            cacheKey,
+            tokenUrl,
+            clientId,
+            clientSecret,
+            scopes,
+            tokenEndpointAuthMethod,
+          });
+        }
 
         resolved.push({
           type: 'oauth2',
