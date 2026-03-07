@@ -1,6 +1,6 @@
 {
   "name": "openapi-dynamic-mcp",
-  "version": "0.2.3",
+  "version": "1.0.0",
   "description": "MCP stdio server for OpenAPI APIs",
   "mcpName": "io.github.mayorandrew/openapi-dynamic",
   "type": "module",
