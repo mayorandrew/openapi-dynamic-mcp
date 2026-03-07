@@ -6,12 +6,12 @@
     "url": "https://github.com/mayorandrew/openapi-dynamic-mcp",
     "source": "github"
   },
-  "version": "0.3.1",
+  "version": "0.3.2",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "openapi-dynamic-mcp",
-      "version": "0.3.1",
+      "version": "0.3.2",
       "transport": {
         "type": "stdio"
       }
