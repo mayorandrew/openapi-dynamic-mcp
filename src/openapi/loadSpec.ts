@@ -1,6 +1,8 @@
 import SwaggerParser from '@apidevtools/swagger-parser';
+import { readFile } from 'node:fs/promises';
 import * as swagger2openapi from 'swagger2openapi';
 import type { OpenAPIV3 } from 'openapi-types';
+import { parse as parseYaml } from 'yaml';
 import { readApiBaseUrl } from '../auth/env.js';
 import { OpenApiMcpError } from '../errors.js';
 import type {
@@ -36,7 +38,7 @@ function resolveBaseUrl(
   env: NodeJS.ProcessEnv,
 ): string {
   const envBaseUrl = readApiBaseUrl(api.name, env);
-  const schemaBaseUrl = document.servers?.[0]?.url;
+  const schemaBaseUrl = resolveSchemaBaseUrl(document);
   const baseUrl = envBaseUrl ?? api.baseUrl ?? schemaBaseUrl;
   if (!baseUrl) {
     throw new OpenApiMcpError(
@@ -54,6 +56,61 @@ function resolveBaseUrl(
   return baseUrl;
 }
 
+function resolveSchemaBaseUrl(
+  document: OpenAPIV3.Document,
+): string | undefined {
+  const resolvedServers =
+    document.servers?.map(resolveServerUrl).filter(Boolean) ?? [];
+
+  return (
+    resolvedServers.find((url) => isAbsoluteUrl(url as string)) ??
+    resolvedServers[0]
+  );
+}
+
+function resolveServerUrl(
+  server: OpenAPIV3.ServerObject | undefined,
+): string | undefined {
+  if (!server?.url) {
+    return undefined;
+  }
+
+  return server.url.replace(/\{([^}]+)\}/g, (_match, name: string) => {
+    const variable = server.variables?.[name];
+    return variable?.default ?? `{${name}}`;
+  });
+}
+
+function isAbsoluteUrl(value: string): boolean {
+  try {
+    new URL(value);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function loadRawSpec(specSource: string): Promise<unknown> {
+  if (specSource.startsWith('http://') || specSource.startsWith('https://')) {
+    const response = await fetch(specSource);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status} when loading schema`);
+    }
+    const raw = await response.text();
+    return parseSpecText(raw);
+  }
+
+  return parseSpecText(await readFile(specSource, 'utf8'));
+}
+
+function parseSpecText(raw: string): unknown {
+  try {
+    return JSON.parse(raw) as unknown;
+  } catch {
+    return parseYaml(raw);
+  }
+}
+
 async function loadSingleApi(
   api: ApiConfig,
   env: NodeJS.ProcessEnv,
@@ -68,8 +125,39 @@ async function loadSingleApi(
 
   let parsed: unknown;
   try {
-    parsed = await SwaggerParser.dereference(specSource);
+    const rawSpec = await loadRawSpec(specSource);
+    if (
+      rawSpec &&
+      typeof rawSpec === 'object' &&
+      'swagger' in rawSpec &&
+      (rawSpec as Record<string, unknown>).swagger === '2.0'
+    ) {
+      try {
+        // Parse YAML/JSON first so swagger2openapi can handle merge keys before dereference.
+        const converted = await swagger2openapi.convertObj(rawSpec, {
+          patch: true,
+          warnOnly: true,
+        });
+        parsed = await SwaggerParser.dereference(
+          converted.openapi as OpenAPIV3.Document,
+        );
+      } catch (error) {
+        throw new OpenApiMcpError(
+          'SCHEMA_ERROR',
+          `Failed to convert Swagger 2.0 to OpenAPI 3.0 for '${api.name}'`,
+          {
+            apiName: api.name,
+            cause: error instanceof Error ? error.message : String(error),
+          },
+        );
+      }
+    } else {
+      parsed = await SwaggerParser.dereference(specSource);
+    }
   } catch (error) {
+    if (error instanceof OpenApiMcpError) {
+      throw error;
+    }
     const cause = error instanceof Error ? error.message : String(error);
     const isUrl =
       specSource.startsWith('http://') || specSource.startsWith('https://');
@@ -110,32 +198,6 @@ async function loadSingleApi(
         cause,
       },
     );
-  }
-
-  if (
-    parsed &&
-    typeof parsed === 'object' &&
-    'swagger' in parsed &&
-    (parsed as Record<string, unknown>).swagger === '2.0'
-  ) {
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      const converted = await swagger2openapi.convertObj(parsed, {
-        patch: true,
-        warnOnly: true,
-      });
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      parsed = converted.openapi;
-    } catch (error) {
-      throw new OpenApiMcpError(
-        'SCHEMA_ERROR',
-        `Failed to convert Swagger 2.0 to OpenAPI 3.0 for '${api.name}'`,
-        {
-          apiName: api.name,
-          cause: error instanceof Error ? error.message : String(error),
-        },
-      );
-    }
   }
 
   const document = parsed as OpenAPIV3.Document;

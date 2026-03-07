@@ -1,0 +1,466 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`gitlab public API tests > gets API endpoint details 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpointId": "getV3ApplicationSettings",
+  "method": "get",
+  "path": "/v3/application/settings",
+  "operationId": "getV3ApplicationSettings",
+  "summary": "Get the current application settings",
+  "description": "Get the current application settings",
+  "tags": [
+    "application"
+  ],
+  "parameters": [],
+  "requestBody": {
+    "required": false,
+    "contentTypes": []
+  },
+  "responses": {
+    "200": {
+      "description": "Get the current application settings",
+      "content": {
+        "application/json": {
+          "schema": {
+            "description": "Modify application settings",
+            "properties": {
+              "after_sign_out_path": {
+                "type": "string"
+              },
+              "after_sign_up_text": {
+                "type": "string"
+              },
+              "container_registry_token_expire_delay": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string"
+              },
+              "default_branch_protection": {
+                "type": "string"
+              },
+              "default_group_visibility": {
+                "type": "string"
+              },
+              "default_project_visibility": {
+                "type": "string"
+              },
+              "default_projects_limit": {
+                "type": "string"
+              },
+              "default_snippet_visibility": {
+                "type": "string"
+              },
+              "domain_blacklist": {
+                "type": "string"
+              },
+              "domain_blacklist_enabled": {
+                "type": "string"
+              },
+              "domain_whitelist": {
+                "type": "string"
+              },
+              "gravatar_enabled": {
+                "type": "string"
+              },
+              "home_page_url": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "koding_enabled": {
+                "type": "string"
+              },
+              "koding_url": {
+                "type": "string"
+              },
+              "max_attachment_size": {
+                "type": "string"
+              },
+              "plantuml_enabled": {
+                "type": "string"
+              },
+              "plantuml_url": {
+                "type": "string"
+              },
+              "repository_storage": {
+                "type": "string"
+              },
+              "repository_storages": {
+                "type": "string"
+              },
+              "restricted_visibility_levels": {
+                "type": "string"
+              },
+              "session_expire_delay": {
+                "type": "string"
+              },
+              "sign_in_text": {
+                "type": "string"
+              },
+              "signin_enabled": {
+                "type": "string"
+              },
+              "signup_enabled": {
+                "type": "string"
+              },
+              "updated_at": {
+                "type": "string"
+              },
+              "user_oauth_applications": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "private_token_header": []
+    },
+    {
+      "private_token_query": []
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "description": "Get the current application settings",
+    "endpointId": "getV3ApplicationSettings",
+    "method": "get",
+    "operationId": "getV3ApplicationSettings",
+    "parameters": [],
+    "path": "/v3/application/settings",
+    "requestBody": {
+      "contentTypes": [],
+      "required": false,
+    },
+    "responses": {
+      "200": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "description": "Modify application settings",
+              "properties": {
+                "after_sign_out_path": {
+                  "type": "string",
+                },
+                "after_sign_up_text": {
+                  "type": "string",
+                },
+                "container_registry_token_expire_delay": {
+                  "type": "string",
+                },
+                "created_at": {
+                  "type": "string",
+                },
+                "default_branch_protection": {
+                  "type": "string",
+                },
+                "default_group_visibility": {
+                  "type": "string",
+                },
+                "default_project_visibility": {
+                  "type": "string",
+                },
+                "default_projects_limit": {
+                  "type": "string",
+                },
+                "default_snippet_visibility": {
+                  "type": "string",
+                },
+                "domain_blacklist": {
+                  "type": "string",
+                },
+                "domain_blacklist_enabled": {
+                  "type": "string",
+                },
+                "domain_whitelist": {
+                  "type": "string",
+                },
+                "gravatar_enabled": {
+                  "type": "string",
+                },
+                "home_page_url": {
+                  "type": "string",
+                },
+                "id": {
+                  "type": "string",
+                },
+                "koding_enabled": {
+                  "type": "string",
+                },
+                "koding_url": {
+                  "type": "string",
+                },
+                "max_attachment_size": {
+                  "type": "string",
+                },
+                "plantuml_enabled": {
+                  "type": "string",
+                },
+                "plantuml_url": {
+                  "type": "string",
+                },
+                "repository_storage": {
+                  "type": "string",
+                },
+                "repository_storages": {
+                  "type": "string",
+                },
+                "restricted_visibility_levels": {
+                  "type": "string",
+                },
+                "session_expire_delay": {
+                  "type": "string",
+                },
+                "sign_in_text": {
+                  "type": "string",
+                },
+                "signin_enabled": {
+                  "type": "string",
+                },
+                "signup_enabled": {
+                  "type": "string",
+                },
+                "updated_at": {
+                  "type": "string",
+                },
+                "user_oauth_applications": {
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+          },
+        },
+        "description": "Get the current application settings",
+      },
+    },
+    "security": [
+      {
+        "private_token_header": [],
+      },
+      {
+        "private_token_query": [],
+      },
+    ],
+    "summary": "Get the current application settings",
+    "tags": [
+      "application",
+    ],
+  },
+}
+`;
+
+exports[`gitlab public API tests > gets API schema 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apiName": "gitlab",
+  "pointer": "/info/title",
+  "schema": "Gitlab"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apiName": "gitlab",
+    "pointer": "/info/title",
+    "schema": "Gitlab",
+  },
+}
+`;
+
+exports[`gitlab public API tests > lists api endpoints 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpoints": [
+    {
+      "endpointId": "getV3ApplicationSettings",
+      "method": "get",
+      "path": "/v3/application/settings",
+      "operationId": "getV3ApplicationSettings",
+      "summary": "Get the current application settings",
+      "tags": [
+        "application"
+      ]
+    },
+    {
+      "endpointId": "putV3ApplicationSettings",
+      "method": "put",
+      "path": "/v3/application/settings",
+      "operationId": "putV3ApplicationSettings",
+      "summary": "Modify application settings",
+      "tags": [
+        "application"
+      ]
+    },
+    {
+      "endpointId": "postV3CiLint",
+      "method": "post",
+      "path": "/v3/ci/lint",
+      "operationId": "postV3CiLint",
+      "summary": "Validation of .gitlab-ci.yml content",
+      "tags": [
+        "ci"
+      ]
+    }
+  ],
+  "nextCursor": "3"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "endpoints": [
+      {
+        "endpointId": "getV3ApplicationSettings",
+        "method": "get",
+        "operationId": "getV3ApplicationSettings",
+        "path": "/v3/application/settings",
+        "summary": "Get the current application settings",
+        "tags": [
+          "application",
+        ],
+      },
+      {
+        "endpointId": "putV3ApplicationSettings",
+        "method": "put",
+        "operationId": "putV3ApplicationSettings",
+        "path": "/v3/application/settings",
+        "summary": "Modify application settings",
+        "tags": [
+          "application",
+        ],
+      },
+      {
+        "endpointId": "postV3CiLint",
+        "method": "post",
+        "operationId": "postV3CiLint",
+        "path": "/v3/ci/lint",
+        "summary": "Validation of .gitlab-ci.yml content",
+        "tags": [
+          "ci",
+        ],
+      },
+    ],
+    "nextCursor": "3",
+  },
+}
+`;
+
+exports[`gitlab public API tests > lists the API 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apis": [
+    {
+      "name": "gitlab",
+      "title": "Gitlab",
+      "version": "v3",
+      "baseUrl": "https://gitlab.com/api",
+      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/gitlab.yaml",
+      "authSchemes": [
+        "private_token_header",
+        "private_token_query"
+      ]
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apis": [
+      {
+        "authSchemes": [
+          "private_token_header",
+          "private_token_query",
+        ],
+        "baseUrl": "https://gitlab.com/api",
+        "name": "gitlab",
+        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/gitlab.yaml",
+        "title": "Gitlab",
+        "version": "v3",
+      },
+    ],
+  },
+}
+`;
+
+exports[`gitlab public API tests > makes endpoint request 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "request": {
+    "url": "https://gitlab.com/api/v3/application/settings",
+    "method": "GET",
+    "headersRedacted": {
+      "PRIVATE_HEADER": "dummy_key"
+    },
+    "endpointId": "getV3ApplicationSettings"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "bodyType": "json",
+    "bodyJson": {
+      "success": true
+    }
+  },
+  "timingMs": "<timing>",
+  "authUsed": [
+    "private_token_header"
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "authUsed": [
+      "private_token_header",
+    ],
+    "request": {
+      "endpointId": "getV3ApplicationSettings",
+      "headersRedacted": {
+        "PRIVATE_HEADER": "dummy_key",
+      },
+      "method": "GET",
+      "url": "https://gitlab.com/api/v3/application/settings",
+    },
+    "response": {
+      "bodyJson": {
+        "success": true,
+      },
+      "bodyType": "json",
+      "headers": {
+        "content-type": "application/json",
+      },
+      "status": 200,
+    },
+    "timingMs": "<timing>",
+  },
+}
+`;

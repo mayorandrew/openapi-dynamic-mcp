@@ -1,0 +1,1684 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`shipengine public API tests > gets API endpoint details 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpointId": "parse_address",
+  "method": "put",
+  "path": "/v1/addresses/recognize",
+  "operationId": "parse_address",
+  "summary": "Parse an address",
+  "description": "The address-recognition API makes it easy for you to extract address data from unstructured text, including the recipient name, line 1, line 2, city, postal code, and more.\\n\\nData often enters your system as unstructured text (for example: emails, SMS messages, support tickets, or other documents). ShipEngine's address-recognition API helps you extract meaningful, structured data from this unstructured text. The parsed address data is returned in the same structure that's used for other ShipEngine APIs, such as address validation, rate quotes, and shipping labels.\\n\\n> **Note:** Address recognition is currently supported for the United States, Canada, Australia, New Zealand, the United Kingdom, and Ireland.\\n",
+  "tags": [
+    "addresses"
+  ],
+  "parameters": [],
+  "requestBody": {
+    "required": true,
+    "contentTypes": [
+      "application/json"
+    ]
+  },
+  "responses": {
+    "200": {
+      "content": {
+        "application/json": {
+          "examples": {
+            "some_known_fields": {
+              "description": "This response is shows that the address-recognition API was able to recognize all the address entities in the text.  Notice that the \`country_code\` and \`address_residential_indicator\` fields are populated with the values that were provided in the request.\\n",
+              "value": {
+                "address": {
+                  "address_line1": "3800 North Lamar",
+                  "address_line2": "Suite 200",
+                  "address_residential_indicator": "yes",
+                  "city_locality": "Austin",
+                  "country_code": "US",
+                  "name": "Margie McMiller",
+                  "postal_code": 78652,
+                  "state_province": "TX"
+                },
+                "entities": [
+                  {
+                    "end_index": 14,
+                    "result": {
+                      "value": "Margie McMiller"
+                    },
+                    "score": 0.9519646137063122,
+                    "start_index": 0,
+                    "text": "Margie McMiller",
+                    "type": "person"
+                  },
+                  {
+                    "end_index": 34,
+                    "result": {
+                      "line": 1,
+                      "value": "3800 North Lamar"
+                    },
+                    "score": 0.9805313966503588,
+                    "start_index": 19,
+                    "text": "3800 North Lamar",
+                    "type": "address_line"
+                  },
+                  {
+                    "end_index": 22,
+                    "result": {
+                      "type": "cardinal",
+                      "value": 3800
+                    },
+                    "score": 0.9805313966503588,
+                    "start_index": 19,
+                    "text": 3800,
+                    "type": "number"
+                  },
+                  {
+                    "end_index": 44,
+                    "result": {
+                      "line": 2,
+                      "value": "Suite 200"
+                    },
+                    "score": 1,
+                    "start_index": 36,
+                    "text": "suite 200",
+                    "type": "address_line"
+                  },
+                  {
+                    "end_index": 44,
+                    "result": {
+                      "type": "cardinal",
+                      "value": 200
+                    },
+                    "score": 0.9805313966503588,
+                    "start_index": 42,
+                    "text": 200,
+                    "type": "number"
+                  },
+                  {
+                    "end_index": 54,
+                    "result": {
+                      "value": "Austin"
+                    },
+                    "score": 0.9805313966503588,
+                    "start_index": 49,
+                    "text": "austin",
+                    "type": "city_locality"
+                  },
+                  {
+                    "end_index": 58,
+                    "result": {
+                      "name": "Texas",
+                      "value": "TX"
+                    },
+                    "score": 0.6082904353940255,
+                    "start_index": 57,
+                    "text": "tx",
+                    "type": "state_province"
+                  },
+                  {
+                    "end_index": 88,
+                    "result": {
+                      "value": 78652
+                    },
+                    "score": 0.9519646137063122,
+                    "start_index": 84,
+                    "text": 78652,
+                    "type": "postal_code"
+                  }
+                ],
+                "score": 0.9122137426845613
+              }
+            },
+            "text_only": {
+              "description": "This response shows that the address-recognition API was able to recognize all the address entities in the text.  Notice that the \`country_code\` is not populated and the \`address_residential_indicator\` is \\"unknown\\", since neither of these fields was included in the text.\\n",
+              "value": {
+                "address": {
+                  "address_line1": "3800 North Lamar",
+                  "address_line2": "Suite 200",
+                  "address_residential_indicator": "unknown",
+                  "city_locality": "Austin",
+                  "name": "Margie McMiller",
+                  "postal_code": 78652,
+                  "state_province": "TX"
+                },
+                "entities": [
+                  {
+                    "end_index": 14,
+                    "result": {
+                      "value": "Margie McMiller"
+                    },
+                    "score": 0.9519646137063122,
+                    "start_index": 0,
+                    "text": "Margie McMiller",
+                    "type": "person"
+                  },
+                  {
+                    "end_index": 34,
+                    "result": {
+                      "line": 1,
+                      "value": "3800 North Lamar"
+                    },
+                    "score": 0.9805313966503588,
+                    "start_index": 19,
+                    "text": "3800 North Lamar",
+                    "type": "address_line"
+                  },
+                  {
+                    "end_index": 22,
+                    "result": {
+                      "type": "cardinal",
+                      "value": 3800
+                    },
+                    "score": 0.9805313966503588,
+                    "start_index": 19,
+                    "text": 3800,
+                    "type": "number"
+                  },
+                  {
+                    "end_index": 44,
+                    "result": {
+                      "line": 2,
+                      "value": "Suite 200"
+                    },
+                    "score": 1,
+                    "start_index": 36,
+                    "text": "suite 200",
+                    "type": "address_line"
+                  },
+                  {
+                    "end_index": 44,
+                    "result": {
+                      "type": "cardinal",
+                      "value": 200
+                    },
+                    "score": 0.9805313966503588,
+                    "start_index": 42,
+                    "text": 200,
+                    "type": "number"
+                  },
+                  {
+                    "end_index": 54,
+                    "result": {
+                      "value": "Austin"
+                    },
+                    "score": 0.9805313966503588,
+                    "start_index": 49,
+                    "text": "austin",
+                    "type": "city_locality"
+                  },
+                  {
+                    "end_index": 58,
+                    "result": {
+                      "name": "Texas",
+                      "value": "TX"
+                    },
+                    "score": 0.6082904353940255,
+                    "start_index": 57,
+                    "text": "tx",
+                    "type": "state_province"
+                  },
+                  {
+                    "end_index": 88,
+                    "result": {
+                      "value": 78652
+                    },
+                    "score": 0.9519646137063122,
+                    "start_index": 84,
+                    "text": 78652,
+                    "type": "postal_code"
+                  }
+                ],
+                "score": 0.9122137426845613
+              }
+            }
+          },
+          "schema": {
+            "additionalProperties": false,
+            "description": "The parsed address, as well as a confidence score and a list of all the entities that were recognized in the text.\\n",
+            "properties": {
+              "address": {
+                "allOf": [
+                  {
+                    "additionalProperties": false,
+                    "description": "A complete or partial mailing address.",
+                    "properties": {
+                      "address_line1": {
+                        "description": "The first line of the street address.  For some addresses, this may be the only line.  Other addresses may require 2 or 3 lines.\\n",
+                        "example": "1999 Bishop Grandin Blvd.",
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "address_line2": {
+                        "description": "The second line of the street address.  For some addresses, this line may not be needed.\\n",
+                        "example": "Unit 408",
+                        "minLength": 1,
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "address_line3": {
+                        "description": "The third line of the street address.  For some addresses, this line may not be needed.\\n",
+                        "example": "Building #7",
+                        "minLength": 1,
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "address_residential_indicator": {
+                        "allOf": [
+                          {
+                            "description": "Indicates whether an address is residential.",
+                            "enum": [
+                              "unknown",
+                              "yes",
+                              "no"
+                            ],
+                            "title": "address_residential_indicator",
+                            "type": "string"
+                          }
+                        ],
+                        "default": "unknown",
+                        "description": "Indicates whether this is a residential address.",
+                        "example": "no"
+                      },
+                      "city_locality": {
+                        "description": "The name of the city or locality",
+                        "example": "Winnipeg",
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "company_name": {
+                        "description": "If this is a business address, then the company name should be specified here.\\n",
+                        "example": "The Home Depot",
+                        "minLength": 1,
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "country_code": {
+                        "allOf": [
+                          {
+                            "description": "A two-letter [ISO 3166-1 country code](https://en.wikipedia.org/wiki/ISO_3166-1)\\n",
+                            "example": "CA",
+                            "maxLength": 2,
+                            "minLength": 2,
+                            "title": "country_code",
+                            "type": "string"
+                          }
+                        ],
+                        "description": "The two-letter [ISO 3166-1 country code](https://en.wikipedia.org/wiki/ISO_3166-1)\\n"
+                      },
+                      "email": {
+                        "description": "Email for the address owner.\\n",
+                        "example": "example@example.com",
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "name": {
+                        "description": "The name of a contact person at this address.  This field may be set instead of - or in addition to - the \`company_name\` field.\\n",
+                        "example": "John Doe",
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "phone": {
+                        "description": "The phone number of a contact person at this address.  The format of this phone number varies depending on the country.\\n",
+                        "example": "+1 204-253-9411 ext. 123",
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "postal_code": {
+                        "allOf": [
+                          {
+                            "description": "postal code",
+                            "example": "78756-3717",
+                            "minLength": 1,
+                            "title": "postal_code",
+                            "type": "string"
+                          }
+                        ]
+                      },
+                      "state_province": {
+                        "description": "The state or province.  For some countries (including the U.S.) only abbreviations are allowed.  Other countries allow the full name or abbreviation.\\n",
+                        "example": "Manitoba",
+                        "minLength": 1,
+                        "type": "string"
+                      }
+                    },
+                    "title": "partial_address",
+                    "type": "object"
+                  }
+                ],
+                "description": "The parsed address.  This address may not be complete, depending on how much information was included in the text and how confident the API is about each recognized entity.\\n\\n> **Note:** The address-recognition API does not currently perform any validation of the parsed address, so we recommend that you use the [address-validation API](https://www.shipengine.com/docs/addresses/validation/) to ensure that the address is correct.\\n"
+              },
+              "entities": {
+                "description": "All of the entities that were recognized in the text. An \\"entity\\" is a single piece of data, such as a city, a postal code, or an address line.  Each entity includes the original text and the parsed value.\\n",
+                "items": {
+                  "additionalProperties": false,
+                  "description": "An entity is a single piece of data that was recognized in unstructured text.  For example, a city, a postal code, package dimensions, insured value, etc.  Each entity includes the original text and the parsed value.\\n",
+                  "properties": {
+                    "end_index": {
+                      "description": "The index of the last character of this entity within the original text",
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "result": {
+                      "additionalProperties": true,
+                      "description": "The normalized value of the entity.\\n\\nMost entity results have a \`value\` field, which is the normalized value of the entity.  For example, if the substring \\"john doe\\" was recognized as a \\"person\\" entity, then the value might be normalized to have proper capitalization (e.g. \\"John Doe\\").  Or if the substring \\"ft worth\\" was recognized as a \\"city\\" entity, then the value might be normalized to \\"Fort Worth\\".\\n\\nSome entities have other information in addition to, or instead of a \`value\`.  For example, a \\"dimensions\\" entity will have separate fields for \`length\`, \`width\`, \`height\`, and \`unit\`.\\n",
+                      "properties": {},
+                      "title": "normalized_entity",
+                      "type": "object"
+                    },
+                    "score": {
+                      "description": "A confidence score between zero and one that indicates how certain the API is that it correctly recognized this entity\\n",
+                      "format": "double",
+                      "maximum": 1,
+                      "minimum": 0,
+                      "type": "number"
+                    },
+                    "start_index": {
+                      "description": "The index of the first character of this entity within the original text",
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "text": {
+                      "description": "The substring from the original text that was recognized as this entity",
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "description": "The Entity type (e.g. \\"weight\\", \\"person\\", \\"address_line1\\", etc.)",
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "score",
+                    "text",
+                    "start_index",
+                    "end_index"
+                  ],
+                  "title": "recognized_entity",
+                  "type": "object"
+                },
+                "minItems": 0,
+                "type": "array"
+              },
+              "score": {
+                "description": "A confidence score between zero and one that indicates how certain the API is that it understood the text.\\n",
+                "format": "double",
+                "maximum": 1,
+                "minimum": 0,
+                "type": "number"
+              }
+            },
+            "required": [
+              "score",
+              "address",
+              "entities"
+            ],
+            "title": "parse_address_response_body",
+            "type": "object"
+          }
+        }
+      },
+      "description": "Returns the parsed address, as well as a confidence score and a list of all the entities that were recognized in the text.\\n"
+    },
+    "400": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "additionalProperties": false,
+            "description": "An error response body",
+            "properties": {
+              "errors": {
+                "description": "The errors associated with the failed API call",
+                "items": {
+                  "allOf": [
+                    {
+                      "additionalProperties": false,
+                      "description": "The error structure that gets returned with almost all failed API calls\\n",
+                      "properties": {
+                        "error_code": {
+                          "allOf": [
+                            {
+                              "description": "The error code specified for the failed API Call",
+                              "enum": [
+                                "auto_fund_not_supported",
+                                "batch_cannot_be_modified",
+                                "carrier_conflict",
+                                "carrier_disconnected",
+                                "carrier_not_connected",
+                                "carrier_not_supported",
+                                "confirmation_not_supported",
+                                "default_warehouse_cannot_be_deleted",
+                                "field_conflict",
+                                "field_value_required",
+                                "forbidden",
+                                "identifier_conflict",
+                                "identifiers_must_match",
+                                "insufficient_funds",
+                                "invalid_address",
+                                "invalid_billing_plan",
+                                "invalid_field_value",
+                                "invalid_identifier",
+                                "invalid_status",
+                                "invalid_string_length",
+                                "label_images_not_supported",
+                                "meter_failure",
+                                "order_source_not_active",
+                                "rate_limit_exceeded",
+                                "refresh_not_supported",
+                                "request_body_required",
+                                "return_label_not_supported",
+                                "settings_not_supported",
+                                "subscription_inactive",
+                                "terms_not_accepted",
+                                "tracking_not_supported",
+                                "trial_expired",
+                                "unauthorized",
+                                "unknown",
+                                "unspecified",
+                                "verification_failure",
+                                "warehouse_conflict",
+                                "webhook_event_type_conflict"
+                              ],
+                              "title": "error_code",
+                              "type": "string"
+                            }
+                          ]
+                        },
+                        "error_source": {
+                          "allOf": [
+                            {
+                              "description": "The source of the error, as indicated by the name this informs us if the API call failed because of the\\ncarrier, the order source, or the ShipEngine API itself.\\n",
+                              "enum": [
+                                "carrier",
+                                "order_source",
+                                "shipengine"
+                              ],
+                              "title": "error_source",
+                              "type": "string"
+                            }
+                          ]
+                        },
+                        "error_type": {
+                          "allOf": [
+                            {
+                              "description": "The type of error\\n",
+                              "enum": [
+                                "account_status",
+                                "business_rules",
+                                "validation",
+                                "security",
+                                "system",
+                                "integrations"
+                              ],
+                              "title": "error_type",
+                              "type": "string"
+                            }
+                          ]
+                        },
+                        "message": {
+                          "description": "An error message associated with the failed API call",
+                          "example": "Body of request cannot be null.",
+                          "minLength": 1,
+                          "readOnly": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "error_source",
+                        "error_type",
+                        "error_code",
+                        "message"
+                      ],
+                      "title": "error",
+                      "type": "object"
+                    }
+                  ]
+                },
+                "readOnly": true,
+                "type": "array"
+              },
+              "request_id": {
+                "allOf": [
+                  {
+                    "description": "A UUID (a.k.a. GUID) that uniquely identifies a resource",
+                    "example": "aa3d8e8e-462b-4476-9618-72db7f7b7009",
+                    "format": "uuid",
+                    "maxLength": 36,
+                    "minLength": 36,
+                    "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                    "title": "uuid",
+                    "type": "string"
+                  }
+                ],
+                "description": "A UUID that uniquely identifies the request id.\\nThis can be given to the support team to help debug non-trivial issues that may occur\\n"
+              }
+            },
+            "required": [
+              "request_id",
+              "errors"
+            ],
+            "title": "error_response_body",
+            "type": "object"
+          }
+        }
+      },
+      "description": "The request contained errors."
+    },
+    "500": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "additionalProperties": false,
+            "description": "An error response body",
+            "properties": {
+              "errors": {
+                "description": "The errors associated with the failed API call",
+                "items": {
+                  "allOf": [
+                    {
+                      "additionalProperties": false,
+                      "description": "The error structure that gets returned with almost all failed API calls\\n",
+                      "properties": {
+                        "error_code": {
+                          "allOf": [
+                            {
+                              "description": "The error code specified for the failed API Call",
+                              "enum": [
+                                "auto_fund_not_supported",
+                                "batch_cannot_be_modified",
+                                "carrier_conflict",
+                                "carrier_disconnected",
+                                "carrier_not_connected",
+                                "carrier_not_supported",
+                                "confirmation_not_supported",
+                                "default_warehouse_cannot_be_deleted",
+                                "field_conflict",
+                                "field_value_required",
+                                "forbidden",
+                                "identifier_conflict",
+                                "identifiers_must_match",
+                                "insufficient_funds",
+                                "invalid_address",
+                                "invalid_billing_plan",
+                                "invalid_field_value",
+                                "invalid_identifier",
+                                "invalid_status",
+                                "invalid_string_length",
+                                "label_images_not_supported",
+                                "meter_failure",
+                                "order_source_not_active",
+                                "rate_limit_exceeded",
+                                "refresh_not_supported",
+                                "request_body_required",
+                                "return_label_not_supported",
+                                "settings_not_supported",
+                                "subscription_inactive",
+                                "terms_not_accepted",
+                                "tracking_not_supported",
+                                "trial_expired",
+                                "unauthorized",
+                                "unknown",
+                                "unspecified",
+                                "verification_failure",
+                                "warehouse_conflict",
+                                "webhook_event_type_conflict"
+                              ],
+                              "title": "error_code",
+                              "type": "string"
+                            }
+                          ]
+                        },
+                        "error_source": {
+                          "allOf": [
+                            {
+                              "description": "The source of the error, as indicated by the name this informs us if the API call failed because of the\\ncarrier, the order source, or the ShipEngine API itself.\\n",
+                              "enum": [
+                                "carrier",
+                                "order_source",
+                                "shipengine"
+                              ],
+                              "title": "error_source",
+                              "type": "string"
+                            }
+                          ]
+                        },
+                        "error_type": {
+                          "allOf": [
+                            {
+                              "description": "The type of error\\n",
+                              "enum": [
+                                "account_status",
+                                "business_rules",
+                                "validation",
+                                "security",
+                                "system",
+                                "integrations"
+                              ],
+                              "title": "error_type",
+                              "type": "string"
+                            }
+                          ]
+                        },
+                        "message": {
+                          "description": "An error message associated with the failed API call",
+                          "example": "Body of request cannot be null.",
+                          "minLength": 1,
+                          "readOnly": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "error_source",
+                        "error_type",
+                        "error_code",
+                        "message"
+                      ],
+                      "title": "error",
+                      "type": "object"
+                    }
+                  ]
+                },
+                "readOnly": true,
+                "type": "array"
+              },
+              "request_id": {
+                "allOf": [
+                  {
+                    "description": "A UUID (a.k.a. GUID) that uniquely identifies a resource",
+                    "example": "aa3d8e8e-462b-4476-9618-72db7f7b7009",
+                    "format": "uuid",
+                    "maxLength": 36,
+                    "minLength": 36,
+                    "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                    "title": "uuid",
+                    "type": "string"
+                  }
+                ],
+                "description": "A UUID that uniquely identifies the request id.\\nThis can be given to the support team to help debug non-trivial issues that may occur\\n"
+              }
+            },
+            "required": [
+              "request_id",
+              "errors"
+            ],
+            "title": "error_response_body",
+            "type": "object"
+          }
+        }
+      },
+      "description": "An error occurred on ShipEngine's side.\\n\\n> This error will automatically be reported to our engineers.\\n"
+    }
+  },
+  "security": [
+    {
+      "api_key": []
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "description": "The address-recognition API makes it easy for you to extract address data from unstructured text, including the recipient name, line 1, line 2, city, postal code, and more.
+
+Data often enters your system as unstructured text (for example: emails, SMS messages, support tickets, or other documents). ShipEngine's address-recognition API helps you extract meaningful, structured data from this unstructured text. The parsed address data is returned in the same structure that's used for other ShipEngine APIs, such as address validation, rate quotes, and shipping labels.
+
+> **Note:** Address recognition is currently supported for the United States, Canada, Australia, New Zealand, the United Kingdom, and Ireland.
+",
+    "endpointId": "parse_address",
+    "method": "put",
+    "operationId": "parse_address",
+    "parameters": [],
+    "path": "/v1/addresses/recognize",
+    "requestBody": {
+      "contentTypes": [
+        "application/json",
+      ],
+      "required": true,
+    },
+    "responses": {
+      "200": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "some_known_fields": {
+                "description": "This response is shows that the address-recognition API was able to recognize all the address entities in the text.  Notice that the \`country_code\` and \`address_residential_indicator\` fields are populated with the values that were provided in the request.
+",
+                "value": {
+                  "address": {
+                    "address_line1": "3800 North Lamar",
+                    "address_line2": "Suite 200",
+                    "address_residential_indicator": "yes",
+                    "city_locality": "Austin",
+                    "country_code": "US",
+                    "name": "Margie McMiller",
+                    "postal_code": 78652,
+                    "state_province": "TX",
+                  },
+                  "entities": [
+                    {
+                      "end_index": 14,
+                      "result": {
+                        "value": "Margie McMiller",
+                      },
+                      "score": 0.9519646137063122,
+                      "start_index": 0,
+                      "text": "Margie McMiller",
+                      "type": "person",
+                    },
+                    {
+                      "end_index": 34,
+                      "result": {
+                        "line": 1,
+                        "value": "3800 North Lamar",
+                      },
+                      "score": 0.9805313966503588,
+                      "start_index": 19,
+                      "text": "3800 North Lamar",
+                      "type": "address_line",
+                    },
+                    {
+                      "end_index": 22,
+                      "result": {
+                        "type": "cardinal",
+                        "value": 3800,
+                      },
+                      "score": 0.9805313966503588,
+                      "start_index": 19,
+                      "text": 3800,
+                      "type": "number",
+                    },
+                    {
+                      "end_index": 44,
+                      "result": {
+                        "line": 2,
+                        "value": "Suite 200",
+                      },
+                      "score": 1,
+                      "start_index": 36,
+                      "text": "suite 200",
+                      "type": "address_line",
+                    },
+                    {
+                      "end_index": 44,
+                      "result": {
+                        "type": "cardinal",
+                        "value": 200,
+                      },
+                      "score": 0.9805313966503588,
+                      "start_index": 42,
+                      "text": 200,
+                      "type": "number",
+                    },
+                    {
+                      "end_index": 54,
+                      "result": {
+                        "value": "Austin",
+                      },
+                      "score": 0.9805313966503588,
+                      "start_index": 49,
+                      "text": "austin",
+                      "type": "city_locality",
+                    },
+                    {
+                      "end_index": 58,
+                      "result": {
+                        "name": "Texas",
+                        "value": "TX",
+                      },
+                      "score": 0.6082904353940255,
+                      "start_index": 57,
+                      "text": "tx",
+                      "type": "state_province",
+                    },
+                    {
+                      "end_index": 88,
+                      "result": {
+                        "value": 78652,
+                      },
+                      "score": 0.9519646137063122,
+                      "start_index": 84,
+                      "text": 78652,
+                      "type": "postal_code",
+                    },
+                  ],
+                  "score": 0.9122137426845613,
+                },
+              },
+              "text_only": {
+                "description": "This response shows that the address-recognition API was able to recognize all the address entities in the text.  Notice that the \`country_code\` is not populated and the \`address_residential_indicator\` is "unknown", since neither of these fields was included in the text.
+",
+                "value": {
+                  "address": {
+                    "address_line1": "3800 North Lamar",
+                    "address_line2": "Suite 200",
+                    "address_residential_indicator": "unknown",
+                    "city_locality": "Austin",
+                    "name": "Margie McMiller",
+                    "postal_code": 78652,
+                    "state_province": "TX",
+                  },
+                  "entities": [
+                    {
+                      "end_index": 14,
+                      "result": {
+                        "value": "Margie McMiller",
+                      },
+                      "score": 0.9519646137063122,
+                      "start_index": 0,
+                      "text": "Margie McMiller",
+                      "type": "person",
+                    },
+                    {
+                      "end_index": 34,
+                      "result": {
+                        "line": 1,
+                        "value": "3800 North Lamar",
+                      },
+                      "score": 0.9805313966503588,
+                      "start_index": 19,
+                      "text": "3800 North Lamar",
+                      "type": "address_line",
+                    },
+                    {
+                      "end_index": 22,
+                      "result": {
+                        "type": "cardinal",
+                        "value": 3800,
+                      },
+                      "score": 0.9805313966503588,
+                      "start_index": 19,
+                      "text": 3800,
+                      "type": "number",
+                    },
+                    {
+                      "end_index": 44,
+                      "result": {
+                        "line": 2,
+                        "value": "Suite 200",
+                      },
+                      "score": 1,
+                      "start_index": 36,
+                      "text": "suite 200",
+                      "type": "address_line",
+                    },
+                    {
+                      "end_index": 44,
+                      "result": {
+                        "type": "cardinal",
+                        "value": 200,
+                      },
+                      "score": 0.9805313966503588,
+                      "start_index": 42,
+                      "text": 200,
+                      "type": "number",
+                    },
+                    {
+                      "end_index": 54,
+                      "result": {
+                        "value": "Austin",
+                      },
+                      "score": 0.9805313966503588,
+                      "start_index": 49,
+                      "text": "austin",
+                      "type": "city_locality",
+                    },
+                    {
+                      "end_index": 58,
+                      "result": {
+                        "name": "Texas",
+                        "value": "TX",
+                      },
+                      "score": 0.6082904353940255,
+                      "start_index": 57,
+                      "text": "tx",
+                      "type": "state_province",
+                    },
+                    {
+                      "end_index": 88,
+                      "result": {
+                        "value": 78652,
+                      },
+                      "score": 0.9519646137063122,
+                      "start_index": 84,
+                      "text": 78652,
+                      "type": "postal_code",
+                    },
+                  ],
+                  "score": 0.9122137426845613,
+                },
+              },
+            },
+            "schema": {
+              "additionalProperties": false,
+              "description": "The parsed address, as well as a confidence score and a list of all the entities that were recognized in the text.
+",
+              "properties": {
+                "address": {
+                  "allOf": [
+                    {
+                      "additionalProperties": false,
+                      "description": "A complete or partial mailing address.",
+                      "properties": {
+                        "address_line1": {
+                          "description": "The first line of the street address.  For some addresses, this may be the only line.  Other addresses may require 2 or 3 lines.
+",
+                          "example": "1999 Bishop Grandin Blvd.",
+                          "minLength": 1,
+                          "type": "string",
+                        },
+                        "address_line2": {
+                          "description": "The second line of the street address.  For some addresses, this line may not be needed.
+",
+                          "example": "Unit 408",
+                          "minLength": 1,
+                          "nullable": true,
+                          "type": "string",
+                        },
+                        "address_line3": {
+                          "description": "The third line of the street address.  For some addresses, this line may not be needed.
+",
+                          "example": "Building #7",
+                          "minLength": 1,
+                          "nullable": true,
+                          "type": "string",
+                        },
+                        "address_residential_indicator": {
+                          "allOf": [
+                            {
+                              "description": "Indicates whether an address is residential.",
+                              "enum": [
+                                "unknown",
+                                "yes",
+                                "no",
+                              ],
+                              "title": "address_residential_indicator",
+                              "type": "string",
+                            },
+                          ],
+                          "default": "unknown",
+                          "description": "Indicates whether this is a residential address.",
+                          "example": "no",
+                        },
+                        "city_locality": {
+                          "description": "The name of the city or locality",
+                          "example": "Winnipeg",
+                          "minLength": 1,
+                          "type": "string",
+                        },
+                        "company_name": {
+                          "description": "If this is a business address, then the company name should be specified here.
+",
+                          "example": "The Home Depot",
+                          "minLength": 1,
+                          "nullable": true,
+                          "type": "string",
+                        },
+                        "country_code": {
+                          "allOf": [
+                            {
+                              "description": "A two-letter [ISO 3166-1 country code](https://en.wikipedia.org/wiki/ISO_3166-1)
+",
+                              "example": "CA",
+                              "maxLength": 2,
+                              "minLength": 2,
+                              "title": "country_code",
+                              "type": "string",
+                            },
+                          ],
+                          "description": "The two-letter [ISO 3166-1 country code](https://en.wikipedia.org/wiki/ISO_3166-1)
+",
+                        },
+                        "email": {
+                          "description": "Email for the address owner.
+",
+                          "example": "example@example.com",
+                          "nullable": true,
+                          "type": "string",
+                        },
+                        "name": {
+                          "description": "The name of a contact person at this address.  This field may be set instead of - or in addition to - the \`company_name\` field.
+",
+                          "example": "John Doe",
+                          "minLength": 1,
+                          "type": "string",
+                        },
+                        "phone": {
+                          "description": "The phone number of a contact person at this address.  The format of this phone number varies depending on the country.
+",
+                          "example": "+1 204-253-9411 ext. 123",
+                          "minLength": 1,
+                          "type": "string",
+                        },
+                        "postal_code": {
+                          "allOf": [
+                            {
+                              "description": "postal code",
+                              "example": "78756-3717",
+                              "minLength": 1,
+                              "title": "postal_code",
+                              "type": "string",
+                            },
+                          ],
+                        },
+                        "state_province": {
+                          "description": "The state or province.  For some countries (including the U.S.) only abbreviations are allowed.  Other countries allow the full name or abbreviation.
+",
+                          "example": "Manitoba",
+                          "minLength": 1,
+                          "type": "string",
+                        },
+                      },
+                      "title": "partial_address",
+                      "type": "object",
+                    },
+                  ],
+                  "description": "The parsed address.  This address may not be complete, depending on how much information was included in the text and how confident the API is about each recognized entity.
+
+> **Note:** The address-recognition API does not currently perform any validation of the parsed address, so we recommend that you use the [address-validation API](https://www.shipengine.com/docs/addresses/validation/) to ensure that the address is correct.
+",
+                },
+                "entities": {
+                  "description": "All of the entities that were recognized in the text. An "entity" is a single piece of data, such as a city, a postal code, or an address line.  Each entity includes the original text and the parsed value.
+",
+                  "items": {
+                    "additionalProperties": false,
+                    "description": "An entity is a single piece of data that was recognized in unstructured text.  For example, a city, a postal code, package dimensions, insured value, etc.  Each entity includes the original text and the parsed value.
+",
+                    "properties": {
+                      "end_index": {
+                        "description": "The index of the last character of this entity within the original text",
+                        "minimum": 0,
+                        "type": "integer",
+                      },
+                      "result": {
+                        "additionalProperties": true,
+                        "description": "The normalized value of the entity.
+
+Most entity results have a \`value\` field, which is the normalized value of the entity.  For example, if the substring "john doe" was recognized as a "person" entity, then the value might be normalized to have proper capitalization (e.g. "John Doe").  Or if the substring "ft worth" was recognized as a "city" entity, then the value might be normalized to "Fort Worth".
+
+Some entities have other information in addition to, or instead of a \`value\`.  For example, a "dimensions" entity will have separate fields for \`length\`, \`width\`, \`height\`, and \`unit\`.
+",
+                        "properties": {},
+                        "title": "normalized_entity",
+                        "type": "object",
+                      },
+                      "score": {
+                        "description": "A confidence score between zero and one that indicates how certain the API is that it correctly recognized this entity
+",
+                        "format": "double",
+                        "maximum": 1,
+                        "minimum": 0,
+                        "type": "number",
+                      },
+                      "start_index": {
+                        "description": "The index of the first character of this entity within the original text",
+                        "minimum": 0,
+                        "type": "integer",
+                      },
+                      "text": {
+                        "description": "The substring from the original text that was recognized as this entity",
+                        "minLength": 1,
+                        "type": "string",
+                      },
+                      "type": {
+                        "description": "The Entity type (e.g. "weight", "person", "address_line1", etc.)",
+                        "minLength": 1,
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "type",
+                      "score",
+                      "text",
+                      "start_index",
+                      "end_index",
+                    ],
+                    "title": "recognized_entity",
+                    "type": "object",
+                  },
+                  "minItems": 0,
+                  "type": "array",
+                },
+                "score": {
+                  "description": "A confidence score between zero and one that indicates how certain the API is that it understood the text.
+",
+                  "format": "double",
+                  "maximum": 1,
+                  "minimum": 0,
+                  "type": "number",
+                },
+              },
+              "required": [
+                "score",
+                "address",
+                "entities",
+              ],
+              "title": "parse_address_response_body",
+              "type": "object",
+            },
+          },
+        },
+        "description": "Returns the parsed address, as well as a confidence score and a list of all the entities that were recognized in the text.
+",
+      },
+      "400": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "additionalProperties": false,
+              "description": "An error response body",
+              "properties": {
+                "errors": {
+                  "description": "The errors associated with the failed API call",
+                  "items": {
+                    "allOf": [
+                      {
+                        "additionalProperties": false,
+                        "description": "The error structure that gets returned with almost all failed API calls
+",
+                        "properties": {
+                          "error_code": {
+                            "allOf": [
+                              {
+                                "description": "The error code specified for the failed API Call",
+                                "enum": [
+                                  "auto_fund_not_supported",
+                                  "batch_cannot_be_modified",
+                                  "carrier_conflict",
+                                  "carrier_disconnected",
+                                  "carrier_not_connected",
+                                  "carrier_not_supported",
+                                  "confirmation_not_supported",
+                                  "default_warehouse_cannot_be_deleted",
+                                  "field_conflict",
+                                  "field_value_required",
+                                  "forbidden",
+                                  "identifier_conflict",
+                                  "identifiers_must_match",
+                                  "insufficient_funds",
+                                  "invalid_address",
+                                  "invalid_billing_plan",
+                                  "invalid_field_value",
+                                  "invalid_identifier",
+                                  "invalid_status",
+                                  "invalid_string_length",
+                                  "label_images_not_supported",
+                                  "meter_failure",
+                                  "order_source_not_active",
+                                  "rate_limit_exceeded",
+                                  "refresh_not_supported",
+                                  "request_body_required",
+                                  "return_label_not_supported",
+                                  "settings_not_supported",
+                                  "subscription_inactive",
+                                  "terms_not_accepted",
+                                  "tracking_not_supported",
+                                  "trial_expired",
+                                  "unauthorized",
+                                  "unknown",
+                                  "unspecified",
+                                  "verification_failure",
+                                  "warehouse_conflict",
+                                  "webhook_event_type_conflict",
+                                ],
+                                "title": "error_code",
+                                "type": "string",
+                              },
+                            ],
+                          },
+                          "error_source": {
+                            "allOf": [
+                              {
+                                "description": "The source of the error, as indicated by the name this informs us if the API call failed because of the
+carrier, the order source, or the ShipEngine API itself.
+",
+                                "enum": [
+                                  "carrier",
+                                  "order_source",
+                                  "shipengine",
+                                ],
+                                "title": "error_source",
+                                "type": "string",
+                              },
+                            ],
+                          },
+                          "error_type": {
+                            "allOf": [
+                              {
+                                "description": "The type of error
+",
+                                "enum": [
+                                  "account_status",
+                                  "business_rules",
+                                  "validation",
+                                  "security",
+                                  "system",
+                                  "integrations",
+                                ],
+                                "title": "error_type",
+                                "type": "string",
+                              },
+                            ],
+                          },
+                          "message": {
+                            "description": "An error message associated with the failed API call",
+                            "example": "Body of request cannot be null.",
+                            "minLength": 1,
+                            "readOnly": true,
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "error_source",
+                          "error_type",
+                          "error_code",
+                          "message",
+                        ],
+                        "title": "error",
+                        "type": "object",
+                      },
+                    ],
+                  },
+                  "readOnly": true,
+                  "type": "array",
+                },
+                "request_id": {
+                  "allOf": [
+                    {
+                      "description": "A UUID (a.k.a. GUID) that uniquely identifies a resource",
+                      "example": "aa3d8e8e-462b-4476-9618-72db7f7b7009",
+                      "format": "uuid",
+                      "maxLength": 36,
+                      "minLength": 36,
+                      "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                      "title": "uuid",
+                      "type": "string",
+                    },
+                  ],
+                  "description": "A UUID that uniquely identifies the request id.
+This can be given to the support team to help debug non-trivial issues that may occur
+",
+                },
+              },
+              "required": [
+                "request_id",
+                "errors",
+              ],
+              "title": "error_response_body",
+              "type": "object",
+            },
+          },
+        },
+        "description": "The request contained errors.",
+      },
+      "500": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "additionalProperties": false,
+              "description": "An error response body",
+              "properties": {
+                "errors": {
+                  "description": "The errors associated with the failed API call",
+                  "items": {
+                    "allOf": [
+                      {
+                        "additionalProperties": false,
+                        "description": "The error structure that gets returned with almost all failed API calls
+",
+                        "properties": {
+                          "error_code": {
+                            "allOf": [
+                              {
+                                "description": "The error code specified for the failed API Call",
+                                "enum": [
+                                  "auto_fund_not_supported",
+                                  "batch_cannot_be_modified",
+                                  "carrier_conflict",
+                                  "carrier_disconnected",
+                                  "carrier_not_connected",
+                                  "carrier_not_supported",
+                                  "confirmation_not_supported",
+                                  "default_warehouse_cannot_be_deleted",
+                                  "field_conflict",
+                                  "field_value_required",
+                                  "forbidden",
+                                  "identifier_conflict",
+                                  "identifiers_must_match",
+                                  "insufficient_funds",
+                                  "invalid_address",
+                                  "invalid_billing_plan",
+                                  "invalid_field_value",
+                                  "invalid_identifier",
+                                  "invalid_status",
+                                  "invalid_string_length",
+                                  "label_images_not_supported",
+                                  "meter_failure",
+                                  "order_source_not_active",
+                                  "rate_limit_exceeded",
+                                  "refresh_not_supported",
+                                  "request_body_required",
+                                  "return_label_not_supported",
+                                  "settings_not_supported",
+                                  "subscription_inactive",
+                                  "terms_not_accepted",
+                                  "tracking_not_supported",
+                                  "trial_expired",
+                                  "unauthorized",
+                                  "unknown",
+                                  "unspecified",
+                                  "verification_failure",
+                                  "warehouse_conflict",
+                                  "webhook_event_type_conflict",
+                                ],
+                                "title": "error_code",
+                                "type": "string",
+                              },
+                            ],
+                          },
+                          "error_source": {
+                            "allOf": [
+                              {
+                                "description": "The source of the error, as indicated by the name this informs us if the API call failed because of the
+carrier, the order source, or the ShipEngine API itself.
+",
+                                "enum": [
+                                  "carrier",
+                                  "order_source",
+                                  "shipengine",
+                                ],
+                                "title": "error_source",
+                                "type": "string",
+                              },
+                            ],
+                          },
+                          "error_type": {
+                            "allOf": [
+                              {
+                                "description": "The type of error
+",
+                                "enum": [
+                                  "account_status",
+                                  "business_rules",
+                                  "validation",
+                                  "security",
+                                  "system",
+                                  "integrations",
+                                ],
+                                "title": "error_type",
+                                "type": "string",
+                              },
+                            ],
+                          },
+                          "message": {
+                            "description": "An error message associated with the failed API call",
+                            "example": "Body of request cannot be null.",
+                            "minLength": 1,
+                            "readOnly": true,
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "error_source",
+                          "error_type",
+                          "error_code",
+                          "message",
+                        ],
+                        "title": "error",
+                        "type": "object",
+                      },
+                    ],
+                  },
+                  "readOnly": true,
+                  "type": "array",
+                },
+                "request_id": {
+                  "allOf": [
+                    {
+                      "description": "A UUID (a.k.a. GUID) that uniquely identifies a resource",
+                      "example": "aa3d8e8e-462b-4476-9618-72db7f7b7009",
+                      "format": "uuid",
+                      "maxLength": 36,
+                      "minLength": 36,
+                      "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+                      "title": "uuid",
+                      "type": "string",
+                    },
+                  ],
+                  "description": "A UUID that uniquely identifies the request id.
+This can be given to the support team to help debug non-trivial issues that may occur
+",
+                },
+              },
+              "required": [
+                "request_id",
+                "errors",
+              ],
+              "title": "error_response_body",
+              "type": "object",
+            },
+          },
+        },
+        "description": "An error occurred on ShipEngine's side.
+
+> This error will automatically be reported to our engineers.
+",
+      },
+    },
+    "security": [
+      {
+        "api_key": [],
+      },
+    ],
+    "summary": "Parse an address",
+    "tags": [
+      "addresses",
+    ],
+  },
+}
+`;
+
+exports[`shipengine public API tests > gets API schema 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apiName": "shipengine",
+  "pointer": "/info/title",
+  "schema": "ShipEngine API"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apiName": "shipengine",
+    "pointer": "/info/title",
+    "schema": "ShipEngine API",
+  },
+}
+`;
+
+exports[`shipengine public API tests > lists api endpoints 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpoints": [
+    {
+      "endpointId": "parse_address",
+      "method": "put",
+      "path": "/v1/addresses/recognize",
+      "operationId": "parse_address",
+      "summary": "Parse an address",
+      "tags": [
+        "addresses"
+      ]
+    },
+    {
+      "endpointId": "validate_address",
+      "method": "post",
+      "path": "/v1/addresses/validate",
+      "operationId": "validate_address",
+      "summary": "Validate An Address",
+      "tags": [
+        "addresses"
+      ]
+    },
+    {
+      "endpointId": "list_batches",
+      "method": "get",
+      "path": "/v1/batches",
+      "operationId": "list_batches",
+      "summary": "List Batches",
+      "tags": [
+        "batches"
+      ]
+    }
+  ],
+  "nextCursor": "3"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "endpoints": [
+      {
+        "endpointId": "parse_address",
+        "method": "put",
+        "operationId": "parse_address",
+        "path": "/v1/addresses/recognize",
+        "summary": "Parse an address",
+        "tags": [
+          "addresses",
+        ],
+      },
+      {
+        "endpointId": "validate_address",
+        "method": "post",
+        "operationId": "validate_address",
+        "path": "/v1/addresses/validate",
+        "summary": "Validate An Address",
+        "tags": [
+          "addresses",
+        ],
+      },
+      {
+        "endpointId": "list_batches",
+        "method": "get",
+        "operationId": "list_batches",
+        "path": "/v1/batches",
+        "summary": "List Batches",
+        "tags": [
+          "batches",
+        ],
+      },
+    ],
+    "nextCursor": "3",
+  },
+}
+`;
+
+exports[`shipengine public API tests > lists the API 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apis": [
+    {
+      "name": "shipengine",
+      "title": "ShipEngine API",
+      "version": "1.1.202303022103",
+      "baseUrl": "https://api.shipengine.com",
+      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/shipengine.yaml",
+      "authSchemes": [
+        "api_key"
+      ]
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apis": [
+      {
+        "authSchemes": [
+          "api_key",
+        ],
+        "baseUrl": "https://api.shipengine.com",
+        "name": "shipengine",
+        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/shipengine.yaml",
+        "title": "ShipEngine API",
+        "version": "1.1.202303022103",
+      },
+    ],
+  },
+}
+`;
+
+exports[`shipengine public API tests > makes endpoint request 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "request": {
+    "url": "https://api.shipengine.com/v1/addresses/recognize",
+    "method": "PUT",
+    "headersRedacted": {
+      "API-Key": "<redacted>",
+      "content-type": "application/json"
+    },
+    "endpointId": "parse_address"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "bodyType": "json",
+    "bodyJson": {
+      "success": true
+    }
+  },
+  "timingMs": "<timing>",
+  "authUsed": [
+    "api_key"
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "authUsed": [
+      "api_key",
+    ],
+    "request": {
+      "endpointId": "parse_address",
+      "headersRedacted": {
+        "API-Key": "<redacted>",
+        "content-type": "application/json",
+      },
+      "method": "PUT",
+      "url": "https://api.shipengine.com/v1/addresses/recognize",
+    },
+    "response": {
+      "bodyJson": {
+        "success": true,
+      },
+      "bodyType": "json",
+      "headers": {
+        "content-type": "application/json",
+      },
+      "status": 200,
+    },
+    "timingMs": "<timing>",
+  },
+}
+`;

@@ -1,0 +1,338 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`launchdarkly public API tests > gets API endpoint details 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpointId": "getRoot",
+  "method": "get",
+  "path": "/",
+  "operationId": "getRoot",
+  "description": "You can issue a GET request to the root resource to find all of the resource categories supported by the API.",
+  "tags": [
+    "Root"
+  ],
+  "parameters": [],
+  "requestBody": {
+    "required": false,
+    "contentTypes": []
+  },
+  "responses": {
+    "200": {
+      "description": "A list of links to available resources in the API.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "properties": {
+              "next": {
+                "properties": {
+                  "href": {
+                    "example": "/api/v2/endpoint",
+                    "type": "string"
+                  },
+                  "type": {
+                    "example": "application/json",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "self": {
+                "properties": {
+                  "href": {
+                    "example": "/api/v2/endpoint",
+                    "type": "string"
+                  },
+                  "type": {
+                    "example": "application/json",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        }
+      }
+    },
+    "401": {
+      "description": "Invalid access token."
+    }
+  },
+  "security": [
+    {
+      "Token": []
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "description": "You can issue a GET request to the root resource to find all of the resource categories supported by the API.",
+    "endpointId": "getRoot",
+    "method": "get",
+    "operationId": "getRoot",
+    "parameters": [],
+    "path": "/",
+    "requestBody": {
+      "contentTypes": [],
+      "required": false,
+    },
+    "responses": {
+      "200": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "next": {
+                  "properties": {
+                    "href": {
+                      "example": "/api/v2/endpoint",
+                      "type": "string",
+                    },
+                    "type": {
+                      "example": "application/json",
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+                "self": {
+                  "properties": {
+                    "href": {
+                      "example": "/api/v2/endpoint",
+                      "type": "string",
+                    },
+                    "type": {
+                      "example": "application/json",
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+              },
+              "type": "object",
+            },
+          },
+        },
+        "description": "A list of links to available resources in the API.",
+      },
+      "401": {
+        "description": "Invalid access token.",
+      },
+    },
+    "security": [
+      {
+        "Token": [],
+      },
+    ],
+    "summary": undefined,
+    "tags": [
+      "Root",
+    ],
+  },
+}
+`;
+
+exports[`launchdarkly public API tests > gets API schema 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apiName": "launchdarkly",
+  "pointer": "/info/title",
+  "schema": "LaunchDarkly REST API"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apiName": "launchdarkly",
+    "pointer": "/info/title",
+    "schema": "LaunchDarkly REST API",
+  },
+}
+`;
+
+exports[`launchdarkly public API tests > lists api endpoints 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpoints": [
+    {
+      "endpointId": "getRoot",
+      "method": "get",
+      "path": "/",
+      "operationId": "getRoot",
+      "tags": [
+        "Root"
+      ]
+    },
+    {
+      "endpointId": "getRelayProxyConfigs",
+      "method": "get",
+      "path": "/account/relay-auto-configs",
+      "operationId": "getRelayProxyConfigs",
+      "summary": "Returns a list of relay proxy configurations in the account.",
+      "tags": [
+        "Relay proxy configurations"
+      ]
+    },
+    {
+      "endpointId": "postRelayAutoConfig",
+      "method": "post",
+      "path": "/account/relay-auto-configs",
+      "operationId": "postRelayAutoConfig",
+      "summary": "Create a new relay proxy config.",
+      "tags": [
+        "Relay proxy configurations"
+      ]
+    }
+  ],
+  "nextCursor": "3"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "endpoints": [
+      {
+        "endpointId": "getRoot",
+        "method": "get",
+        "operationId": "getRoot",
+        "path": "/",
+        "summary": undefined,
+        "tags": [
+          "Root",
+        ],
+      },
+      {
+        "endpointId": "getRelayProxyConfigs",
+        "method": "get",
+        "operationId": "getRelayProxyConfigs",
+        "path": "/account/relay-auto-configs",
+        "summary": "Returns a list of relay proxy configurations in the account.",
+        "tags": [
+          "Relay proxy configurations",
+        ],
+      },
+      {
+        "endpointId": "postRelayAutoConfig",
+        "method": "post",
+        "operationId": "postRelayAutoConfig",
+        "path": "/account/relay-auto-configs",
+        "summary": "Create a new relay proxy config.",
+        "tags": [
+          "Relay proxy configurations",
+        ],
+      },
+    ],
+    "nextCursor": "3",
+  },
+}
+`;
+
+exports[`launchdarkly public API tests > lists the API 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apis": [
+    {
+      "name": "launchdarkly",
+      "title": "LaunchDarkly REST API",
+      "version": "5.3.0",
+      "baseUrl": "https://app.launchdarkly.com/api/v2",
+      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/launchdarkly.yaml",
+      "authSchemes": [
+        "Token"
+      ]
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apis": [
+      {
+        "authSchemes": [
+          "Token",
+        ],
+        "baseUrl": "https://app.launchdarkly.com/api/v2",
+        "name": "launchdarkly",
+        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/launchdarkly.yaml",
+        "title": "LaunchDarkly REST API",
+        "version": "5.3.0",
+      },
+    ],
+  },
+}
+`;
+
+exports[`launchdarkly public API tests > makes endpoint request 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "request": {
+    "url": "https://app.launchdarkly.com/api/v2/",
+    "method": "GET",
+    "headersRedacted": {
+      "Authorization": "<redacted>"
+    },
+    "endpointId": "getRoot"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "bodyType": "json",
+    "bodyJson": {
+      "success": true
+    }
+  },
+  "timingMs": "<timing>",
+  "authUsed": [
+    "Token"
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "authUsed": [
+      "Token",
+    ],
+    "request": {
+      "endpointId": "getRoot",
+      "headersRedacted": {
+        "Authorization": "<redacted>",
+      },
+      "method": "GET",
+      "url": "https://app.launchdarkly.com/api/v2/",
+    },
+    "response": {
+      "bodyJson": {
+        "success": true,
+      },
+      "bodyType": "json",
+      "headers": {
+        "content-type": "application/json",
+      },
+      "status": 200,
+    },
+    "timingMs": "<timing>",
+  },
+}
+`;

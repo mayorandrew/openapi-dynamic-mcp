@@ -1,0 +1,534 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`google-calendar public API tests > gets API endpoint details 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpointId": "calendar.calendars.insert",
+  "method": "post",
+  "path": "/calendars",
+  "operationId": "calendar.calendars.insert",
+  "description": "Creates a secondary calendar.",
+  "tags": [
+    "calendars"
+  ],
+  "parameters": [
+    {
+      "name": "alt",
+      "in": "query",
+      "required": false,
+      "description": "Data format for the response.",
+      "schema": {
+        "enum": [
+          "json"
+        ],
+        "type": "string"
+      }
+    },
+    {
+      "name": "fields",
+      "in": "query",
+      "required": false,
+      "description": "Selector specifying which fields to include in a partial response.",
+      "schema": {
+        "type": "string"
+      }
+    },
+    {
+      "name": "key",
+      "in": "query",
+      "required": false,
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+      "schema": {
+        "type": "string"
+      }
+    },
+    {
+      "name": "oauth_token",
+      "in": "query",
+      "required": false,
+      "description": "OAuth 2.0 token for the current user.",
+      "schema": {
+        "type": "string"
+      }
+    },
+    {
+      "name": "prettyPrint",
+      "in": "query",
+      "required": false,
+      "description": "Returns response with indentations and line breaks.",
+      "schema": {
+        "type": "boolean"
+      }
+    },
+    {
+      "name": "quotaUser",
+      "in": "query",
+      "required": false,
+      "description": "An opaque string that represents a user for quota purposes. Must not exceed 40 characters.",
+      "schema": {
+        "type": "string"
+      }
+    },
+    {
+      "name": "userIp",
+      "in": "query",
+      "required": false,
+      "description": "Deprecated. Please use quotaUser instead.",
+      "schema": {
+        "type": "string"
+      }
+    }
+  ],
+  "requestBody": {
+    "required": false,
+    "contentTypes": [
+      "application/json"
+    ]
+  },
+  "responses": {
+    "200": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "properties": {
+              "conferenceProperties": {
+                "description": "Conferencing properties for this calendar, for example what types of conferences are allowed.",
+                "properties": {
+                  "allowedConferenceSolutionTypes": {
+                    "description": "The types of conference solutions that are supported for this calendar.\\nThe possible values are:  \\n- \\"eventHangout\\" \\n- \\"eventNamedHangout\\" \\n- \\"hangoutsMeet\\"  Optional.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              },
+              "description": {
+                "description": "Description of the calendar. Optional.",
+                "type": "string"
+              },
+              "etag": {
+                "description": "ETag of the resource.",
+                "type": "string"
+              },
+              "id": {
+                "description": "Identifier of the calendar. To retrieve IDs call the calendarList.list() method.",
+                "type": "string"
+              },
+              "kind": {
+                "default": "calendar#calendar",
+                "description": "Type of the resource (\\"calendar#calendar\\").",
+                "type": "string"
+              },
+              "location": {
+                "description": "Geographic location of the calendar as free-form text. Optional.",
+                "type": "string"
+              },
+              "summary": {
+                "description": "Title of the calendar.",
+                "type": "string"
+              },
+              "timeZone": {
+                "description": "The time zone of the calendar. (Formatted as an IANA Time Zone Database name, e.g. \\"Europe/Zurich\\".) Optional.",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        }
+      },
+      "description": "Successful response"
+    }
+  },
+  "security": [
+    {
+      "Oauth2": [
+        "https://www.googleapis.com/auth/calendar"
+      ],
+      "Oauth2c": [
+        "https://www.googleapis.com/auth/calendar"
+      ]
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "description": "Creates a secondary calendar.",
+    "endpointId": "calendar.calendars.insert",
+    "method": "post",
+    "operationId": "calendar.calendars.insert",
+    "parameters": [
+      {
+        "description": "Data format for the response.",
+        "explode": undefined,
+        "in": "query",
+        "name": "alt",
+        "required": false,
+        "schema": {
+          "enum": [
+            "json",
+          ],
+          "type": "string",
+        },
+        "style": undefined,
+      },
+      {
+        "description": "Selector specifying which fields to include in a partial response.",
+        "explode": undefined,
+        "in": "query",
+        "name": "fields",
+        "required": false,
+        "schema": {
+          "type": "string",
+        },
+        "style": undefined,
+      },
+      {
+        "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+        "explode": undefined,
+        "in": "query",
+        "name": "key",
+        "required": false,
+        "schema": {
+          "type": "string",
+        },
+        "style": undefined,
+      },
+      {
+        "description": "OAuth 2.0 token for the current user.",
+        "explode": undefined,
+        "in": "query",
+        "name": "oauth_token",
+        "required": false,
+        "schema": {
+          "type": "string",
+        },
+        "style": undefined,
+      },
+      {
+        "description": "Returns response with indentations and line breaks.",
+        "explode": undefined,
+        "in": "query",
+        "name": "prettyPrint",
+        "required": false,
+        "schema": {
+          "type": "boolean",
+        },
+        "style": undefined,
+      },
+      {
+        "description": "An opaque string that represents a user for quota purposes. Must not exceed 40 characters.",
+        "explode": undefined,
+        "in": "query",
+        "name": "quotaUser",
+        "required": false,
+        "schema": {
+          "type": "string",
+        },
+        "style": undefined,
+      },
+      {
+        "description": "Deprecated. Please use quotaUser instead.",
+        "explode": undefined,
+        "in": "query",
+        "name": "userIp",
+        "required": false,
+        "schema": {
+          "type": "string",
+        },
+        "style": undefined,
+      },
+    ],
+    "path": "/calendars",
+    "requestBody": {
+      "contentTypes": [
+        "application/json",
+      ],
+      "required": false,
+    },
+    "responses": {
+      "200": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "conferenceProperties": {
+                  "description": "Conferencing properties for this calendar, for example what types of conferences are allowed.",
+                  "properties": {
+                    "allowedConferenceSolutionTypes": {
+                      "description": "The types of conference solutions that are supported for this calendar.
+The possible values are:  
+- "eventHangout" 
+- "eventNamedHangout" 
+- "hangoutsMeet"  Optional.",
+                      "items": {
+                        "type": "string",
+                      },
+                      "type": "array",
+                    },
+                  },
+                  "type": "object",
+                },
+                "description": {
+                  "description": "Description of the calendar. Optional.",
+                  "type": "string",
+                },
+                "etag": {
+                  "description": "ETag of the resource.",
+                  "type": "string",
+                },
+                "id": {
+                  "description": "Identifier of the calendar. To retrieve IDs call the calendarList.list() method.",
+                  "type": "string",
+                },
+                "kind": {
+                  "default": "calendar#calendar",
+                  "description": "Type of the resource ("calendar#calendar").",
+                  "type": "string",
+                },
+                "location": {
+                  "description": "Geographic location of the calendar as free-form text. Optional.",
+                  "type": "string",
+                },
+                "summary": {
+                  "description": "Title of the calendar.",
+                  "type": "string",
+                },
+                "timeZone": {
+                  "description": "The time zone of the calendar. (Formatted as an IANA Time Zone Database name, e.g. "Europe/Zurich".) Optional.",
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+          },
+        },
+        "description": "Successful response",
+      },
+    },
+    "security": [
+      {
+        "Oauth2": [
+          "https://www.googleapis.com/auth/calendar",
+        ],
+        "Oauth2c": [
+          "https://www.googleapis.com/auth/calendar",
+        ],
+      },
+    ],
+    "summary": undefined,
+    "tags": [
+      "calendars",
+    ],
+  },
+}
+`;
+
+exports[`google-calendar public API tests > gets API schema 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apiName": "google-calendar",
+  "pointer": "/info/title",
+  "schema": "Calendar API"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apiName": "google-calendar",
+    "pointer": "/info/title",
+    "schema": "Calendar API",
+  },
+}
+`;
+
+exports[`google-calendar public API tests > lists api endpoints 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpoints": [
+    {
+      "endpointId": "calendar.calendars.insert",
+      "method": "post",
+      "path": "/calendars",
+      "operationId": "calendar.calendars.insert",
+      "tags": [
+        "calendars"
+      ]
+    },
+    {
+      "endpointId": "calendar.calendars.delete",
+      "method": "delete",
+      "path": "/calendars/{calendarId}",
+      "operationId": "calendar.calendars.delete",
+      "tags": [
+        "calendars"
+      ]
+    },
+    {
+      "endpointId": "calendar.calendars.get",
+      "method": "get",
+      "path": "/calendars/{calendarId}",
+      "operationId": "calendar.calendars.get",
+      "tags": [
+        "calendars"
+      ]
+    }
+  ],
+  "nextCursor": "3"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "endpoints": [
+      {
+        "endpointId": "calendar.calendars.insert",
+        "method": "post",
+        "operationId": "calendar.calendars.insert",
+        "path": "/calendars",
+        "summary": undefined,
+        "tags": [
+          "calendars",
+        ],
+      },
+      {
+        "endpointId": "calendar.calendars.delete",
+        "method": "delete",
+        "operationId": "calendar.calendars.delete",
+        "path": "/calendars/{calendarId}",
+        "summary": undefined,
+        "tags": [
+          "calendars",
+        ],
+      },
+      {
+        "endpointId": "calendar.calendars.get",
+        "method": "get",
+        "operationId": "calendar.calendars.get",
+        "path": "/calendars/{calendarId}",
+        "summary": undefined,
+        "tags": [
+          "calendars",
+        ],
+      },
+    ],
+    "nextCursor": "3",
+  },
+}
+`;
+
+exports[`google-calendar public API tests > lists the API 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apis": [
+    {
+      "name": "google-calendar",
+      "title": "Calendar API",
+      "version": "v3",
+      "baseUrl": "https://www.googleapis.com/calendar/v3",
+      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/google-calendar.yaml",
+      "authSchemes": [
+        "Oauth2",
+        "Oauth2c"
+      ]
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apis": [
+      {
+        "authSchemes": [
+          "Oauth2",
+          "Oauth2c",
+        ],
+        "baseUrl": "https://www.googleapis.com/calendar/v3",
+        "name": "google-calendar",
+        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/google-calendar.yaml",
+        "title": "Calendar API",
+        "version": "v3",
+      },
+    ],
+  },
+}
+`;
+
+exports[`google-calendar public API tests > makes endpoint request 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "request": {
+    "url": "https://www.googleapis.com/calendar/v3/calendars",
+    "method": "POST",
+    "headersRedacted": {
+      "authorization": "<redacted>",
+      "content-type": "application/json"
+    },
+    "endpointId": "calendar.calendars.insert"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "bodyType": "json",
+    "bodyJson": {
+      "success": true
+    }
+  },
+  "timingMs": "<timing>",
+  "authUsed": [
+    "Oauth2",
+    "Oauth2c"
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "authUsed": [
+      "Oauth2",
+      "Oauth2c",
+    ],
+    "request": {
+      "endpointId": "calendar.calendars.insert",
+      "headersRedacted": {
+        "authorization": "<redacted>",
+        "content-type": "application/json",
+      },
+      "method": "POST",
+      "url": "https://www.googleapis.com/calendar/v3/calendars",
+    },
+    "response": {
+      "bodyJson": {
+        "success": true,
+      },
+      "bodyType": "json",
+      "headers": {
+        "content-type": "application/json",
+      },
+      "status": 200,
+    },
+    "timingMs": "<timing>",
+  },
+}
+`;

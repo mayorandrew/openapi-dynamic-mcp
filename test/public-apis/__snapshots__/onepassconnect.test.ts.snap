@@ -1,0 +1,505 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`onepassconnect public API tests > gets API endpoint details 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpointId": "GetServerHealth",
+  "method": "get",
+  "path": "/health",
+  "operationId": "GetServerHealth",
+  "summary": "Get state of the server and its dependencies.",
+  "tags": [
+    "Health"
+  ],
+  "parameters": [],
+  "requestBody": {
+    "required": false,
+    "contentTypes": []
+  },
+  "responses": {
+    "200": {
+      "content": {
+        "application/json": {
+          "examples": {
+            "WaitingForAPIRequest": {
+              "summary": "API server waiting for first authenticated request",
+              "value": {
+                "dependencies": [
+                  {
+                    "service": "sync",
+                    "status": "TOKEN_NEEDED"
+                  },
+                  {
+                    "message": "Connected to./1password.sqlite",
+                    "service": "sqlite",
+                    "status": "ACTIVE"
+                  }
+                ],
+                "name": "1Password Connect API",
+                "version": "1.2.1"
+              }
+            }
+          },
+          "schema": {
+            "properties": {
+              "dependencies": {
+                "items": {
+                  "description": "The state of a registered server dependency.",
+                  "properties": {
+                    "message": {
+                      "description": "Human-readable message for explaining the current state.",
+                      "type": "string"
+                    },
+                    "service": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "name": {
+                "type": "string"
+              },
+              "version": {
+                "description": "The Connect server's version",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "version"
+            ],
+            "type": "object"
+          }
+        }
+      },
+      "description": "OK"
+    }
+  },
+  "security": []
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "description": undefined,
+    "endpointId": "GetServerHealth",
+    "method": "get",
+    "operationId": "GetServerHealth",
+    "parameters": [],
+    "path": "/health",
+    "requestBody": {
+      "contentTypes": [],
+      "required": false,
+    },
+    "responses": {
+      "200": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "WaitingForAPIRequest": {
+                "summary": "API server waiting for first authenticated request",
+                "value": {
+                  "dependencies": [
+                    {
+                      "service": "sync",
+                      "status": "TOKEN_NEEDED",
+                    },
+                    {
+                      "message": "Connected to./1password.sqlite",
+                      "service": "sqlite",
+                      "status": "ACTIVE",
+                    },
+                  ],
+                  "name": "1Password Connect API",
+                  "version": "1.2.1",
+                },
+              },
+            },
+            "schema": {
+              "properties": {
+                "dependencies": {
+                  "items": {
+                    "description": "The state of a registered server dependency.",
+                    "properties": {
+                      "message": {
+                        "description": "Human-readable message for explaining the current state.",
+                        "type": "string",
+                      },
+                      "service": {
+                        "type": "string",
+                      },
+                      "status": {
+                        "type": "string",
+                      },
+                    },
+                    "type": "object",
+                  },
+                  "type": "array",
+                },
+                "name": {
+                  "type": "string",
+                },
+                "version": {
+                  "description": "The Connect server's version",
+                  "type": "string",
+                },
+              },
+              "required": [
+                "name",
+                "version",
+              ],
+              "type": "object",
+            },
+          },
+        },
+        "description": "OK",
+      },
+    },
+    "security": [],
+    "summary": "Get state of the server and its dependencies.",
+    "tags": [
+      "Health",
+    ],
+  },
+}
+`;
+
+exports[`onepassconnect public API tests > gets API schema 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apiName": "onepassconnect",
+  "pointer": "/info/title",
+  "schema": "1Password Connect"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apiName": "onepassconnect",
+    "pointer": "/info/title",
+    "schema": "1Password Connect",
+  },
+}
+`;
+
+exports[`onepassconnect public API tests > lists api endpoints 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpoints": [
+    {
+      "endpointId": "GetApiActivity",
+      "method": "get",
+      "path": "/activity",
+      "operationId": "GetApiActivity",
+      "summary": "Retrieve a list of API Requests that have been made.",
+      "tags": [
+        "Activity"
+      ]
+    },
+    {
+      "endpointId": "GetServerHealth",
+      "method": "get",
+      "path": "/health",
+      "operationId": "GetServerHealth",
+      "summary": "Get state of the server and its dependencies.",
+      "tags": [
+        "Health"
+      ]
+    },
+    {
+      "endpointId": "GetHeartbeat",
+      "method": "get",
+      "path": "/heartbeat",
+      "operationId": "GetHeartbeat",
+      "summary": "Ping the server for liveness",
+      "tags": [
+        "Health"
+      ]
+    },
+    {
+      "endpointId": "GetPrometheusMetrics",
+      "method": "get",
+      "path": "/metrics",
+      "operationId": "GetPrometheusMetrics",
+      "summary": "Query server for exposed Prometheus metrics",
+      "tags": [
+        "Metrics"
+      ]
+    },
+    {
+      "endpointId": "GetVaults",
+      "method": "get",
+      "path": "/vaults",
+      "operationId": "GetVaults",
+      "summary": "Get all Vaults",
+      "tags": [
+        "Vaults"
+      ]
+    },
+    {
+      "endpointId": "GetVaultById",
+      "method": "get",
+      "path": "/vaults/{vaultUuid}",
+      "operationId": "GetVaultById",
+      "summary": "Get Vault details and metadata",
+      "tags": [
+        "Vaults"
+      ]
+    },
+    {
+      "endpointId": "GetVaultItems",
+      "method": "get",
+      "path": "/vaults/{vaultUuid}/items",
+      "operationId": "GetVaultItems",
+      "summary": "Get all items for inside a Vault",
+      "tags": [
+        "Items"
+      ]
+    },
+    {
+      "endpointId": "CreateVaultItem",
+      "method": "post",
+      "path": "/vaults/{vaultUuid}/items",
+      "operationId": "CreateVaultItem",
+      "summary": "Create a new Item",
+      "tags": [
+        "Items"
+      ]
+    },
+    {
+      "endpointId": "DeleteVaultItem",
+      "method": "delete",
+      "path": "/vaults/{vaultUuid}/items/{itemUuid}",
+      "operationId": "DeleteVaultItem",
+      "summary": "Delete an Item",
+      "tags": [
+        "Items"
+      ]
+    },
+    {
+      "endpointId": "GetVaultItemById",
+      "method": "get",
+      "path": "/vaults/{vaultUuid}/items/{itemUuid}",
+      "operationId": "GetVaultItemById",
+      "summary": "Get the details of an Item",
+      "tags": [
+        "Items"
+      ]
+    }
+  ],
+  "nextCursor": "10"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "endpoints": [
+      {
+        "endpointId": "GetApiActivity",
+        "method": "get",
+        "operationId": "GetApiActivity",
+        "path": "/activity",
+        "summary": "Retrieve a list of API Requests that have been made.",
+        "tags": [
+          "Activity",
+        ],
+      },
+      {
+        "endpointId": "GetServerHealth",
+        "method": "get",
+        "operationId": "GetServerHealth",
+        "path": "/health",
+        "summary": "Get state of the server and its dependencies.",
+        "tags": [
+          "Health",
+        ],
+      },
+      {
+        "endpointId": "GetHeartbeat",
+        "method": "get",
+        "operationId": "GetHeartbeat",
+        "path": "/heartbeat",
+        "summary": "Ping the server for liveness",
+        "tags": [
+          "Health",
+        ],
+      },
+      {
+        "endpointId": "GetPrometheusMetrics",
+        "method": "get",
+        "operationId": "GetPrometheusMetrics",
+        "path": "/metrics",
+        "summary": "Query server for exposed Prometheus metrics",
+        "tags": [
+          "Metrics",
+        ],
+      },
+      {
+        "endpointId": "GetVaults",
+        "method": "get",
+        "operationId": "GetVaults",
+        "path": "/vaults",
+        "summary": "Get all Vaults",
+        "tags": [
+          "Vaults",
+        ],
+      },
+      {
+        "endpointId": "GetVaultById",
+        "method": "get",
+        "operationId": "GetVaultById",
+        "path": "/vaults/{vaultUuid}",
+        "summary": "Get Vault details and metadata",
+        "tags": [
+          "Vaults",
+        ],
+      },
+      {
+        "endpointId": "GetVaultItems",
+        "method": "get",
+        "operationId": "GetVaultItems",
+        "path": "/vaults/{vaultUuid}/items",
+        "summary": "Get all items for inside a Vault",
+        "tags": [
+          "Items",
+        ],
+      },
+      {
+        "endpointId": "CreateVaultItem",
+        "method": "post",
+        "operationId": "CreateVaultItem",
+        "path": "/vaults/{vaultUuid}/items",
+        "summary": "Create a new Item",
+        "tags": [
+          "Items",
+        ],
+      },
+      {
+        "endpointId": "DeleteVaultItem",
+        "method": "delete",
+        "operationId": "DeleteVaultItem",
+        "path": "/vaults/{vaultUuid}/items/{itemUuid}",
+        "summary": "Delete an Item",
+        "tags": [
+          "Items",
+        ],
+      },
+      {
+        "endpointId": "GetVaultItemById",
+        "method": "get",
+        "operationId": "GetVaultItemById",
+        "path": "/vaults/{vaultUuid}/items/{itemUuid}",
+        "summary": "Get the details of an Item",
+        "tags": [
+          "Items",
+        ],
+      },
+    ],
+    "nextCursor": "10",
+  },
+}
+`;
+
+exports[`onepassconnect public API tests > lists the API 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apis": [
+    {
+      "name": "onepassconnect",
+      "title": "1Password Connect",
+      "version": "1.5.7",
+      "baseUrl": "http://1password.local",
+      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/onepassconnect.yaml",
+      "authSchemes": [
+        "ConnectToken"
+      ]
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apis": [
+      {
+        "authSchemes": [
+          "ConnectToken",
+        ],
+        "baseUrl": "http://1password.local",
+        "name": "onepassconnect",
+        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/onepassconnect.yaml",
+        "title": "1Password Connect",
+        "version": "1.5.7",
+      },
+    ],
+  },
+}
+`;
+
+exports[`onepassconnect public API tests > makes endpoint request 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "request": {
+    "url": "http://1password.local/health",
+    "method": "GET",
+    "headersRedacted": {},
+    "endpointId": "GetServerHealth"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "bodyType": "json",
+    "bodyJson": {
+      "success": true
+    }
+  },
+  "timingMs": "<timing>",
+  "authUsed": []
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "authUsed": [],
+    "request": {
+      "endpointId": "GetServerHealth",
+      "headersRedacted": {},
+      "method": "GET",
+      "url": "http://1password.local/health",
+    },
+    "response": {
+      "bodyJson": {
+        "success": true,
+      },
+      "bodyType": "json",
+      "headers": {
+        "content-type": "application/json",
+      },
+      "status": 200,
+    },
+    "timingMs": "<timing>",
+  },
+}
+`;

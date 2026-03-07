@@ -1,0 +1,438 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`netlify public API tests > gets API endpoint details 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpointId": "getAccountBuildStatus",
+  "method": "get",
+  "path": "/{account_id}/builds/status",
+  "operationId": "getAccountBuildStatus",
+  "tags": [
+    "build"
+  ],
+  "parameters": [
+    {
+      "name": "account_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+        "type": "string"
+      }
+    }
+  ],
+  "requestBody": {
+    "required": false,
+    "contentTypes": []
+  },
+  "responses": {
+    "200": {
+      "description": "OK",
+      "content": {
+        "application/json": {
+          "schema": {
+            "items": {
+              "properties": {
+                "active": {
+                  "type": "integer"
+                },
+                "build_count": {
+                  "type": "integer"
+                },
+                "enqueued": {
+                  "type": "integer"
+                },
+                "minutes": {
+                  "properties": {
+                    "current": {
+                      "type": "integer"
+                    },
+                    "current_average_sec": {
+                      "type": "integer"
+                    },
+                    "included_minutes": {
+                      "type": "string"
+                    },
+                    "included_minutes_with_packs": {
+                      "type": "string"
+                    },
+                    "last_updated_at": {
+                      "format": "dateTime",
+                      "type": "string"
+                    },
+                    "period_end_date": {
+                      "format": "dateTime",
+                      "type": "string"
+                    },
+                    "period_start_date": {
+                      "format": "dateTime",
+                      "type": "string"
+                    },
+                    "previous": {
+                      "type": "integer"
+                    }
+                  },
+                  "type": "object"
+                },
+                "pending_concurrency": {
+                  "type": "integer"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
+        }
+      }
+    },
+    "default": {
+      "description": "error",
+      "content": {
+        "application/json": {
+          "schema": {
+            "properties": {
+              "code": {
+                "format": "int64",
+                "type": "integer"
+              },
+              "message": {
+                "type": "string",
+                "nullable": false
+              }
+            },
+            "required": [
+              "message"
+            ],
+            "type": "object"
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "netlifyAuth": []
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "description": undefined,
+    "endpointId": "getAccountBuildStatus",
+    "method": "get",
+    "operationId": "getAccountBuildStatus",
+    "parameters": [
+      {
+        "description": undefined,
+        "explode": undefined,
+        "in": "path",
+        "name": "account_id",
+        "required": true,
+        "schema": {
+          "type": "string",
+        },
+        "style": undefined,
+      },
+    ],
+    "path": "/{account_id}/builds/status",
+    "requestBody": {
+      "contentTypes": [],
+      "required": false,
+    },
+    "responses": {
+      "200": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "items": {
+                "properties": {
+                  "active": {
+                    "type": "integer",
+                  },
+                  "build_count": {
+                    "type": "integer",
+                  },
+                  "enqueued": {
+                    "type": "integer",
+                  },
+                  "minutes": {
+                    "properties": {
+                      "current": {
+                        "type": "integer",
+                      },
+                      "current_average_sec": {
+                        "type": "integer",
+                      },
+                      "included_minutes": {
+                        "type": "string",
+                      },
+                      "included_minutes_with_packs": {
+                        "type": "string",
+                      },
+                      "last_updated_at": {
+                        "format": "dateTime",
+                        "type": "string",
+                      },
+                      "period_end_date": {
+                        "format": "dateTime",
+                        "type": "string",
+                      },
+                      "period_start_date": {
+                        "format": "dateTime",
+                        "type": "string",
+                      },
+                      "previous": {
+                        "type": "integer",
+                      },
+                    },
+                    "type": "object",
+                  },
+                  "pending_concurrency": {
+                    "type": "integer",
+                  },
+                },
+                "type": "object",
+              },
+              "type": "array",
+            },
+          },
+        },
+        "description": "OK",
+      },
+      "default": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "code": {
+                  "format": "int64",
+                  "type": "integer",
+                },
+                "message": {
+                  "nullable": false,
+                  "type": "string",
+                },
+              },
+              "required": [
+                "message",
+              ],
+              "type": "object",
+            },
+          },
+        },
+        "description": "error",
+      },
+    },
+    "security": [
+      {
+        "netlifyAuth": [],
+      },
+    ],
+    "summary": undefined,
+    "tags": [
+      "build",
+    ],
+  },
+}
+`;
+
+exports[`netlify public API tests > gets API schema 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apiName": "netlify",
+  "pointer": "/info/title",
+  "schema": "Netlify's API documentation"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apiName": "netlify",
+    "pointer": "/info/title",
+    "schema": "Netlify's API documentation",
+  },
+}
+`;
+
+exports[`netlify public API tests > lists api endpoints 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpoints": [
+    {
+      "endpointId": "getAccountBuildStatus",
+      "method": "get",
+      "path": "/{account_id}/builds/status",
+      "operationId": "getAccountBuildStatus",
+      "tags": [
+        "build"
+      ]
+    },
+    {
+      "endpointId": "listMembersForAccount",
+      "method": "get",
+      "path": "/{account_slug}/members",
+      "operationId": "listMembersForAccount",
+      "tags": [
+        "member"
+      ]
+    },
+    {
+      "endpointId": "addMemberToAccount",
+      "method": "post",
+      "path": "/{account_slug}/members",
+      "operationId": "addMemberToAccount",
+      "tags": [
+        "member"
+      ]
+    }
+  ],
+  "nextCursor": "3"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "endpoints": [
+      {
+        "endpointId": "getAccountBuildStatus",
+        "method": "get",
+        "operationId": "getAccountBuildStatus",
+        "path": "/{account_id}/builds/status",
+        "summary": undefined,
+        "tags": [
+          "build",
+        ],
+      },
+      {
+        "endpointId": "listMembersForAccount",
+        "method": "get",
+        "operationId": "listMembersForAccount",
+        "path": "/{account_slug}/members",
+        "summary": undefined,
+        "tags": [
+          "member",
+        ],
+      },
+      {
+        "endpointId": "addMemberToAccount",
+        "method": "post",
+        "operationId": "addMemberToAccount",
+        "path": "/{account_slug}/members",
+        "summary": undefined,
+        "tags": [
+          "member",
+        ],
+      },
+    ],
+    "nextCursor": "3",
+  },
+}
+`;
+
+exports[`netlify public API tests > lists the API 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apis": [
+    {
+      "name": "netlify",
+      "title": "Netlify's API documentation",
+      "version": "2.15.0",
+      "baseUrl": "https://api.netlify.com/api/v1",
+      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/netlify.yaml",
+      "authSchemes": [
+        "netlifyAuth"
+      ]
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apis": [
+      {
+        "authSchemes": [
+          "netlifyAuth",
+        ],
+        "baseUrl": "https://api.netlify.com/api/v1",
+        "name": "netlify",
+        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/netlify.yaml",
+        "title": "Netlify's API documentation",
+        "version": "2.15.0",
+      },
+    ],
+  },
+}
+`;
+
+exports[`netlify public API tests > makes endpoint request 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "request": {
+    "url": "https://api.netlify.com/api/v1/sample/builds/status",
+    "method": "GET",
+    "headersRedacted": {
+      "authorization": "<redacted>"
+    },
+    "endpointId": "getAccountBuildStatus"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "bodyType": "json",
+    "bodyJson": {
+      "success": true
+    }
+  },
+  "timingMs": "<timing>",
+  "authUsed": [
+    "netlifyAuth"
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "authUsed": [
+      "netlifyAuth",
+    ],
+    "request": {
+      "endpointId": "getAccountBuildStatus",
+      "headersRedacted": {
+        "authorization": "<redacted>",
+      },
+      "method": "GET",
+      "url": "https://api.netlify.com/api/v1/sample/builds/status",
+    },
+    "response": {
+      "bodyJson": {
+        "success": true,
+      },
+      "bodyType": "json",
+      "headers": {
+        "content-type": "application/json",
+      },
+      "status": 200,
+    },
+    "timingMs": "<timing>",
+  },
+}
+`;

@@ -1,0 +1,556 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`docker-hub public API tests > gets API endpoint details 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpointId": "GET /v2/access-tokens",
+  "method": "get",
+  "path": "/v2/access-tokens",
+  "summary": "Get a list of personal access tokens",
+  "description": "Returns a paginated list of personal access tokens.",
+  "tags": [
+    "access-tokens"
+  ],
+  "parameters": [
+    {
+      "name": "page",
+      "in": "query",
+      "required": false,
+      "schema": {
+        "default": 1,
+        "type": "number"
+      }
+    },
+    {
+      "name": "page_size",
+      "in": "query",
+      "required": false,
+      "schema": {
+        "default": 10,
+        "type": "number"
+      }
+    }
+  ],
+  "requestBody": {
+    "required": false,
+    "contentTypes": []
+  },
+  "responses": {
+    "200": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "properties": {
+              "active_count": {
+                "example": 1,
+                "type": "number"
+              },
+              "count": {
+                "example": 1,
+                "type": "number"
+              },
+              "next": {
+                "example": null,
+                "type": "string"
+              },
+              "previous": {
+                "example": null,
+                "type": "string"
+              },
+              "results": {
+                "items": {
+                  "allOf": [
+                    {
+                      "properties": {
+                        "client_id": {
+                          "example": "HUB",
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "example": "2021-07-20T12:00:00.000000Z",
+                          "type": "string"
+                        },
+                        "creator_ip": {
+                          "example": "127.0.0.1",
+                          "type": "string"
+                        },
+                        "creator_ua": {
+                          "example": "some user agent",
+                          "type": "string"
+                        },
+                        "generated_by": {
+                          "example": "manual",
+                          "type": "string"
+                        },
+                        "is_active": {
+                          "example": true,
+                          "type": "boolean"
+                        },
+                        "last_used": {
+                          "example": null,
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "scopes": {
+                          "example": [
+                            "repo:read"
+                          ],
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "token": {
+                          "example": "a7a5ef25-8889-43a0-8cc7-f2a94268e861",
+                          "type": "string"
+                        },
+                        "token_label": {
+                          "example": "My read only token",
+                          "type": "string"
+                        },
+                        "uuid": {
+                          "example": "b30bbf97-506c-4ecd-aabc-842f3cb484fb",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    {
+                      "properties": {
+                        "token": {
+                          "example": "",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  ]
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          }
+        }
+      },
+      "description": "OK"
+    },
+    "400": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "description": "Used to error if input validation fails.",
+            "properties": {
+              "fields": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        }
+      },
+      "description": "Bad Request"
+    },
+    "401": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "properties": {
+              "detail": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        }
+      },
+      "description": "Unauthorized"
+    }
+  },
+  "security": []
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "description": "Returns a paginated list of personal access tokens.",
+    "endpointId": "GET /v2/access-tokens",
+    "method": "get",
+    "operationId": undefined,
+    "parameters": [
+      {
+        "description": undefined,
+        "explode": undefined,
+        "in": "query",
+        "name": "page",
+        "required": false,
+        "schema": {
+          "default": 1,
+          "type": "number",
+        },
+        "style": undefined,
+      },
+      {
+        "description": undefined,
+        "explode": undefined,
+        "in": "query",
+        "name": "page_size",
+        "required": false,
+        "schema": {
+          "default": 10,
+          "type": "number",
+        },
+        "style": undefined,
+      },
+    ],
+    "path": "/v2/access-tokens",
+    "requestBody": {
+      "contentTypes": [],
+      "required": false,
+    },
+    "responses": {
+      "200": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "active_count": {
+                  "example": 1,
+                  "type": "number",
+                },
+                "count": {
+                  "example": 1,
+                  "type": "number",
+                },
+                "next": {
+                  "example": null,
+                  "type": "string",
+                },
+                "previous": {
+                  "example": null,
+                  "type": "string",
+                },
+                "results": {
+                  "items": {
+                    "allOf": [
+                      {
+                        "properties": {
+                          "client_id": {
+                            "example": "HUB",
+                            "type": "string",
+                          },
+                          "created_at": {
+                            "example": "2021-07-20T12:00:00.000000Z",
+                            "type": "string",
+                          },
+                          "creator_ip": {
+                            "example": "127.0.0.1",
+                            "type": "string",
+                          },
+                          "creator_ua": {
+                            "example": "some user agent",
+                            "type": "string",
+                          },
+                          "generated_by": {
+                            "example": "manual",
+                            "type": "string",
+                          },
+                          "is_active": {
+                            "example": true,
+                            "type": "boolean",
+                          },
+                          "last_used": {
+                            "example": null,
+                            "nullable": true,
+                            "type": "string",
+                          },
+                          "scopes": {
+                            "example": [
+                              "repo:read",
+                            ],
+                            "items": {
+                              "type": "string",
+                            },
+                            "type": "array",
+                          },
+                          "token": {
+                            "example": "a7a5ef25-8889-43a0-8cc7-f2a94268e861",
+                            "type": "string",
+                          },
+                          "token_label": {
+                            "example": "My read only token",
+                            "type": "string",
+                          },
+                          "uuid": {
+                            "example": "b30bbf97-506c-4ecd-aabc-842f3cb484fb",
+                            "type": "string",
+                          },
+                        },
+                        "type": "object",
+                      },
+                      {
+                        "properties": {
+                          "token": {
+                            "example": "",
+                            "type": "string",
+                          },
+                        },
+                        "type": "object",
+                      },
+                    ],
+                  },
+                  "type": "array",
+                },
+              },
+              "type": "object",
+            },
+          },
+        },
+        "description": "OK",
+      },
+      "400": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "description": "Used to error if input validation fails.",
+              "properties": {
+                "fields": {
+                  "items": {
+                    "type": "string",
+                  },
+                  "type": "object",
+                },
+                "text": {
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+          },
+        },
+        "description": "Bad Request",
+      },
+      "401": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "detail": {
+                  "type": "string",
+                },
+                "message": {
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+          },
+        },
+        "description": "Unauthorized",
+      },
+    },
+    "security": [],
+    "summary": "Get a list of personal access tokens",
+    "tags": [
+      "access-tokens",
+    ],
+  },
+}
+`;
+
+exports[`docker-hub public API tests > gets API schema 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apiName": "docker-hub",
+  "pointer": "/info/title",
+  "schema": "Docker HUB API"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apiName": "docker-hub",
+    "pointer": "/info/title",
+    "schema": "Docker HUB API",
+  },
+}
+`;
+
+exports[`docker-hub public API tests > lists api endpoints 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpoints": [
+    {
+      "endpointId": "GET /v2/access-tokens",
+      "method": "get",
+      "path": "/v2/access-tokens",
+      "summary": "Get a list of personal access tokens",
+      "tags": [
+        "access-tokens"
+      ]
+    },
+    {
+      "endpointId": "POST /v2/access-tokens",
+      "method": "post",
+      "path": "/v2/access-tokens",
+      "summary": "Create a personal access token",
+      "tags": [
+        "access-tokens"
+      ]
+    },
+    {
+      "endpointId": "DELETE /v2/access-tokens/{uuid}",
+      "method": "delete",
+      "path": "/v2/access-tokens/{uuid}",
+      "summary": "Delete a personal access token",
+      "tags": [
+        "access-tokens"
+      ]
+    }
+  ],
+  "nextCursor": "3"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "endpoints": [
+      {
+        "endpointId": "GET /v2/access-tokens",
+        "method": "get",
+        "operationId": undefined,
+        "path": "/v2/access-tokens",
+        "summary": "Get a list of personal access tokens",
+        "tags": [
+          "access-tokens",
+        ],
+      },
+      {
+        "endpointId": "POST /v2/access-tokens",
+        "method": "post",
+        "operationId": undefined,
+        "path": "/v2/access-tokens",
+        "summary": "Create a personal access token",
+        "tags": [
+          "access-tokens",
+        ],
+      },
+      {
+        "endpointId": "DELETE /v2/access-tokens/{uuid}",
+        "method": "delete",
+        "operationId": undefined,
+        "path": "/v2/access-tokens/{uuid}",
+        "summary": "Delete a personal access token",
+        "tags": [
+          "access-tokens",
+        ],
+      },
+    ],
+    "nextCursor": "3",
+  },
+}
+`;
+
+exports[`docker-hub public API tests > lists the API 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apis": [
+    {
+      "name": "docker-hub",
+      "title": "Docker HUB API",
+      "version": "beta",
+      "baseUrl": "https://hub.docker.com/",
+      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/docker-hub.yaml",
+      "authSchemes": []
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apis": [
+      {
+        "authSchemes": [],
+        "baseUrl": "https://hub.docker.com/",
+        "name": "docker-hub",
+        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/docker-hub.yaml",
+        "title": "Docker HUB API",
+        "version": "beta",
+      },
+    ],
+  },
+}
+`;
+
+exports[`docker-hub public API tests > makes endpoint request 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "request": {
+    "url": "https://hub.docker.com/v2/access-tokens",
+    "method": "GET",
+    "headersRedacted": {},
+    "endpointId": "GET /v2/access-tokens"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "bodyType": "json",
+    "bodyJson": {
+      "success": true
+    }
+  },
+  "timingMs": "<timing>",
+  "authUsed": []
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "authUsed": [],
+    "request": {
+      "endpointId": "GET /v2/access-tokens",
+      "headersRedacted": {},
+      "method": "GET",
+      "url": "https://hub.docker.com/v2/access-tokens",
+    },
+    "response": {
+      "bodyJson": {
+        "success": true,
+      },
+      "bodyType": "json",
+      "headers": {
+        "content-type": "application/json",
+      },
+      "status": 200,
+    },
+    "timingMs": "<timing>",
+  },
+}
+`;

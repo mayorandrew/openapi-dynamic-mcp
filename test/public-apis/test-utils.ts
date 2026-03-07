@@ -29,6 +29,7 @@ export async function createTestContext(
         .replace(/[^A-Z0-9_]/g, '_');
       env[`${prefix}_API_KEY`] = 'dummy_key';
       env[`${prefix}_TOKEN`] = 'dummy_token';
+      env[`${prefix}_ACCESS_TOKEN`] = 'dummy_access_token';
       env[`${prefix}_USERNAME`] = 'dummy_user';
       env[`${prefix}_PASSWORD`] = 'dummy_pass';
       env[`${prefix}_CLIENT_ID`] = 'dummy_client';

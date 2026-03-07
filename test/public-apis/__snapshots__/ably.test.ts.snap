@@ -1,0 +1,1085 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ably public API tests > gets API endpoint details 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpointId": "getMetadataOfAllChannels",
+  "method": "get",
+  "path": "/channels",
+  "operationId": "getMetadataOfAllChannels",
+  "summary": "Enumerate all active channels of the application",
+  "description": "Enumerate all active channels of the application",
+  "tags": [
+    "Status"
+  ],
+  "parameters": [
+    {
+      "name": "X-Ably-Version",
+      "in": "header",
+      "required": false,
+      "description": "The version of the API you wish to use.",
+      "schema": {
+        "type": "string"
+      }
+    },
+    {
+      "name": "format",
+      "in": "query",
+      "required": false,
+      "description": "The response format you would like",
+      "schema": {
+        "enum": [
+          "json",
+          "jsonp",
+          "msgpack",
+          "html"
+        ],
+        "type": "string"
+      }
+    },
+    {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "schema": {
+        "default": 100,
+        "type": "integer"
+      }
+    },
+    {
+      "name": "prefix",
+      "in": "query",
+      "required": false,
+      "description": "Optionally limits the query to only those channels whose name starts with the given prefix",
+      "schema": {
+        "type": "string"
+      }
+    },
+    {
+      "name": "by",
+      "in": "query",
+      "required": false,
+      "description": "optionally specifies whether to return just channel names (by=id) or ChannelDetails (by=value)",
+      "schema": {
+        "enum": [
+          "value",
+          "id"
+        ],
+        "type": "string"
+      }
+    }
+  ],
+  "requestBody": {
+    "required": false,
+    "contentTypes": []
+  },
+  "responses": {
+    "2XX": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "oneOf": [
+              {
+                "items": {
+                  "properties": {
+                    "channelId": {
+                      "description": "The required name of the channel including any qualifier, if any.",
+                      "type": "string"
+                    },
+                    "isGlobalMaster": {
+                      "description": "In events relating to the activity of a channel in a specific region, this optionally identifies whether or not that region is responsible for global coordination of the channel.",
+                      "type": "boolean"
+                    },
+                    "region": {
+                      "description": "In events relating to the activity of a channel in a specific region, this optionally identifies the region.",
+                      "type": "string"
+                    },
+                    "status": {
+                      "description": "A ChannelStatus instance.",
+                      "properties": {
+                        "isActive": {
+                          "description": "A required boolean value indicating whether the channel that is the subject of the event is active. For events indicating regional activity of a channel this indicates activity in that region, not global activity.",
+                          "type": "boolean"
+                        },
+                        "occupancy": {
+                          "description": "An Occupancy instance indicating the occupancy of a channel. For events indicating regional activity of a channel this indicates activity in that region, not global activity.",
+                          "properties": {
+                            "presenceConnections": {
+                              "description": "The number of connections that are authorised to enter members into the presence channel.",
+                              "type": "integer"
+                            },
+                            "presenceMembers": {
+                              "description": "The number of members currently entered into the presence channel.",
+                              "type": "integer"
+                            },
+                            "presenceSubscribers": {
+                              "description": "The number of connections that are authorised to subscribe to presence messages.",
+                              "type": "integer"
+                            },
+                            "publishers": {
+                              "description": "The number of connections attached to the channel that are authorised to publish.",
+                              "type": "integer"
+                            },
+                            "subscribers": {
+                              "description": "The number of connections attached that are authorised to subscribe to messages.",
+                              "type": "integer"
+                            }
+                          },
+                          "type": "object"
+                        }
+                      },
+                      "required": [
+                        "isActive"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "channelId"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            ]
+          }
+        },
+        "application/x-msgpack": {
+          "schema": {
+            "oneOf": [
+              {
+                "items": {
+                  "properties": {
+                    "channelId": {
+                      "description": "The required name of the channel including any qualifier, if any.",
+                      "type": "string"
+                    },
+                    "isGlobalMaster": {
+                      "description": "In events relating to the activity of a channel in a specific region, this optionally identifies whether or not that region is responsible for global coordination of the channel.",
+                      "type": "boolean"
+                    },
+                    "region": {
+                      "description": "In events relating to the activity of a channel in a specific region, this optionally identifies the region.",
+                      "type": "string"
+                    },
+                    "status": {
+                      "description": "A ChannelStatus instance.",
+                      "properties": {
+                        "isActive": {
+                          "description": "A required boolean value indicating whether the channel that is the subject of the event is active. For events indicating regional activity of a channel this indicates activity in that region, not global activity.",
+                          "type": "boolean"
+                        },
+                        "occupancy": {
+                          "description": "An Occupancy instance indicating the occupancy of a channel. For events indicating regional activity of a channel this indicates activity in that region, not global activity.",
+                          "properties": {
+                            "presenceConnections": {
+                              "description": "The number of connections that are authorised to enter members into the presence channel.",
+                              "type": "integer"
+                            },
+                            "presenceMembers": {
+                              "description": "The number of members currently entered into the presence channel.",
+                              "type": "integer"
+                            },
+                            "presenceSubscribers": {
+                              "description": "The number of connections that are authorised to subscribe to presence messages.",
+                              "type": "integer"
+                            },
+                            "publishers": {
+                              "description": "The number of connections attached to the channel that are authorised to publish.",
+                              "type": "integer"
+                            },
+                            "subscribers": {
+                              "description": "The number of connections attached that are authorised to subscribe to messages.",
+                              "type": "integer"
+                            }
+                          },
+                          "type": "object"
+                        }
+                      },
+                      "required": [
+                        "isActive"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "channelId"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            ]
+          }
+        },
+        "text/html": {
+          "schema": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "OK",
+      "headers": {
+        "link": {
+          "description": "Links to related resources, in the format defined by [RFC 5988](https://tools.ietf.org/html/rfc5988#section-5). This will potentially include a link with relation type \`next\`, \`first\`, and \`current\`, where appropiate.",
+          "required": true,
+          "schema": {
+            "pattern": "(<(.*)?>; rel=\\\\\\"(first|current|last)?\\\\\\",)*(<(.*)?>; rel=\\\\\\"(first|current|last)?\\\\\\")+",
+            "type": "string"
+          }
+        }
+      }
+    },
+    "default": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "description": "Returned error from failed REST.",
+            "properties": {
+              "code": {
+                "description": "Error code.",
+                "type": "integer"
+              },
+              "href": {
+                "description": "Link to help with error.",
+                "type": "string"
+              },
+              "message": {
+                "description": "Message explaining the error's cause.",
+                "type": "string"
+              },
+              "serverId": {
+                "description": "Server ID with which error was encountered.",
+                "type": "string"
+              },
+              "statusCode": {
+                "description": "Status error code.",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "application/x-msgpack": {
+          "schema": {
+            "description": "Returned error from failed REST.",
+            "properties": {
+              "code": {
+                "description": "Error code.",
+                "type": "integer"
+              },
+              "href": {
+                "description": "Link to help with error.",
+                "type": "string"
+              },
+              "message": {
+                "description": "Message explaining the error's cause.",
+                "type": "string"
+              },
+              "serverId": {
+                "description": "Server ID with which error was encountered.",
+                "type": "string"
+              },
+              "statusCode": {
+                "description": "Status error code.",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "text/html": {
+          "schema": {
+            "description": "Returned error from failed REST.",
+            "properties": {
+              "code": {
+                "description": "Error code.",
+                "type": "integer"
+              },
+              "href": {
+                "description": "Link to help with error.",
+                "type": "string"
+              },
+              "message": {
+                "description": "Message explaining the error's cause.",
+                "type": "string"
+              },
+              "serverId": {
+                "description": "Server ID with which error was encountered.",
+                "type": "string"
+              },
+              "statusCode": {
+                "description": "Status error code.",
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          }
+        }
+      },
+      "description": "Error",
+      "headers": {
+        "x-ably-errorcode": {
+          "description": "The error code.",
+          "schema": {
+            "type": "integer"
+          }
+        },
+        "x-ably-errormessage": {
+          "description": "The error message.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        "x-ably-serverid": {
+          "description": "The ID for the server communicated with.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "basicAuth": []
+    },
+    {
+      "bearerAuth": []
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "description": "Enumerate all active channels of the application",
+    "endpointId": "getMetadataOfAllChannels",
+    "method": "get",
+    "operationId": "getMetadataOfAllChannels",
+    "parameters": [
+      {
+        "description": "The version of the API you wish to use.",
+        "explode": undefined,
+        "in": "header",
+        "name": "X-Ably-Version",
+        "required": false,
+        "schema": {
+          "type": "string",
+        },
+        "style": undefined,
+      },
+      {
+        "description": "The response format you would like",
+        "explode": undefined,
+        "in": "query",
+        "name": "format",
+        "required": false,
+        "schema": {
+          "enum": [
+            "json",
+            "jsonp",
+            "msgpack",
+            "html",
+          ],
+          "type": "string",
+        },
+        "style": undefined,
+      },
+      {
+        "description": undefined,
+        "explode": undefined,
+        "in": "query",
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "default": 100,
+          "type": "integer",
+        },
+        "style": undefined,
+      },
+      {
+        "description": "Optionally limits the query to only those channels whose name starts with the given prefix",
+        "explode": undefined,
+        "in": "query",
+        "name": "prefix",
+        "required": false,
+        "schema": {
+          "type": "string",
+        },
+        "style": undefined,
+      },
+      {
+        "description": "optionally specifies whether to return just channel names (by=id) or ChannelDetails (by=value)",
+        "explode": undefined,
+        "in": "query",
+        "name": "by",
+        "required": false,
+        "schema": {
+          "enum": [
+            "value",
+            "id",
+          ],
+          "type": "string",
+        },
+        "style": undefined,
+      },
+    ],
+    "path": "/channels",
+    "requestBody": {
+      "contentTypes": [],
+      "required": false,
+    },
+    "responses": {
+      "2XX": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "oneOf": [
+                {
+                  "items": {
+                    "properties": {
+                      "channelId": {
+                        "description": "The required name of the channel including any qualifier, if any.",
+                        "type": "string",
+                      },
+                      "isGlobalMaster": {
+                        "description": "In events relating to the activity of a channel in a specific region, this optionally identifies whether or not that region is responsible for global coordination of the channel.",
+                        "type": "boolean",
+                      },
+                      "region": {
+                        "description": "In events relating to the activity of a channel in a specific region, this optionally identifies the region.",
+                        "type": "string",
+                      },
+                      "status": {
+                        "description": "A ChannelStatus instance.",
+                        "properties": {
+                          "isActive": {
+                            "description": "A required boolean value indicating whether the channel that is the subject of the event is active. For events indicating regional activity of a channel this indicates activity in that region, not global activity.",
+                            "type": "boolean",
+                          },
+                          "occupancy": {
+                            "description": "An Occupancy instance indicating the occupancy of a channel. For events indicating regional activity of a channel this indicates activity in that region, not global activity.",
+                            "properties": {
+                              "presenceConnections": {
+                                "description": "The number of connections that are authorised to enter members into the presence channel.",
+                                "type": "integer",
+                              },
+                              "presenceMembers": {
+                                "description": "The number of members currently entered into the presence channel.",
+                                "type": "integer",
+                              },
+                              "presenceSubscribers": {
+                                "description": "The number of connections that are authorised to subscribe to presence messages.",
+                                "type": "integer",
+                              },
+                              "publishers": {
+                                "description": "The number of connections attached to the channel that are authorised to publish.",
+                                "type": "integer",
+                              },
+                              "subscribers": {
+                                "description": "The number of connections attached that are authorised to subscribe to messages.",
+                                "type": "integer",
+                              },
+                            },
+                            "type": "object",
+                          },
+                        },
+                        "required": [
+                          "isActive",
+                        ],
+                        "type": "object",
+                      },
+                    },
+                    "required": [
+                      "channelId",
+                    ],
+                    "type": "object",
+                  },
+                  "type": "array",
+                },
+                {
+                  "items": {
+                    "type": "string",
+                  },
+                  "type": "array",
+                },
+              ],
+            },
+          },
+          "application/x-msgpack": {
+            "schema": {
+              "oneOf": [
+                {
+                  "items": {
+                    "properties": {
+                      "channelId": {
+                        "description": "The required name of the channel including any qualifier, if any.",
+                        "type": "string",
+                      },
+                      "isGlobalMaster": {
+                        "description": "In events relating to the activity of a channel in a specific region, this optionally identifies whether or not that region is responsible for global coordination of the channel.",
+                        "type": "boolean",
+                      },
+                      "region": {
+                        "description": "In events relating to the activity of a channel in a specific region, this optionally identifies the region.",
+                        "type": "string",
+                      },
+                      "status": {
+                        "description": "A ChannelStatus instance.",
+                        "properties": {
+                          "isActive": {
+                            "description": "A required boolean value indicating whether the channel that is the subject of the event is active. For events indicating regional activity of a channel this indicates activity in that region, not global activity.",
+                            "type": "boolean",
+                          },
+                          "occupancy": {
+                            "description": "An Occupancy instance indicating the occupancy of a channel. For events indicating regional activity of a channel this indicates activity in that region, not global activity.",
+                            "properties": {
+                              "presenceConnections": {
+                                "description": "The number of connections that are authorised to enter members into the presence channel.",
+                                "type": "integer",
+                              },
+                              "presenceMembers": {
+                                "description": "The number of members currently entered into the presence channel.",
+                                "type": "integer",
+                              },
+                              "presenceSubscribers": {
+                                "description": "The number of connections that are authorised to subscribe to presence messages.",
+                                "type": "integer",
+                              },
+                              "publishers": {
+                                "description": "The number of connections attached to the channel that are authorised to publish.",
+                                "type": "integer",
+                              },
+                              "subscribers": {
+                                "description": "The number of connections attached that are authorised to subscribe to messages.",
+                                "type": "integer",
+                              },
+                            },
+                            "type": "object",
+                          },
+                        },
+                        "required": [
+                          "isActive",
+                        ],
+                        "type": "object",
+                      },
+                    },
+                    "required": [
+                      "channelId",
+                    ],
+                    "type": "object",
+                  },
+                  "type": "array",
+                },
+                {
+                  "items": {
+                    "type": "string",
+                  },
+                  "type": "array",
+                },
+              ],
+            },
+          },
+          "text/html": {
+            "schema": {
+              "type": "string",
+            },
+          },
+        },
+        "description": "OK",
+        "headers": {
+          "link": {
+            "description": "Links to related resources, in the format defined by [RFC 5988](https://tools.ietf.org/html/rfc5988#section-5). This will potentially include a link with relation type \`next\`, \`first\`, and \`current\`, where appropiate.",
+            "required": true,
+            "schema": {
+              "pattern": "(<(.*)?>; rel=\\"(first|current|last)?\\",)*(<(.*)?>; rel=\\"(first|current|last)?\\")+",
+              "type": "string",
+            },
+          },
+        },
+      },
+      "default": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "description": "Returned error from failed REST.",
+              "properties": {
+                "code": {
+                  "description": "Error code.",
+                  "type": "integer",
+                },
+                "href": {
+                  "description": "Link to help with error.",
+                  "type": "string",
+                },
+                "message": {
+                  "description": "Message explaining the error's cause.",
+                  "type": "string",
+                },
+                "serverId": {
+                  "description": "Server ID with which error was encountered.",
+                  "type": "string",
+                },
+                "statusCode": {
+                  "description": "Status error code.",
+                  "type": "integer",
+                },
+              },
+              "type": "object",
+            },
+          },
+          "application/x-msgpack": {
+            "schema": {
+              "description": "Returned error from failed REST.",
+              "properties": {
+                "code": {
+                  "description": "Error code.",
+                  "type": "integer",
+                },
+                "href": {
+                  "description": "Link to help with error.",
+                  "type": "string",
+                },
+                "message": {
+                  "description": "Message explaining the error's cause.",
+                  "type": "string",
+                },
+                "serverId": {
+                  "description": "Server ID with which error was encountered.",
+                  "type": "string",
+                },
+                "statusCode": {
+                  "description": "Status error code.",
+                  "type": "integer",
+                },
+              },
+              "type": "object",
+            },
+          },
+          "text/html": {
+            "schema": {
+              "description": "Returned error from failed REST.",
+              "properties": {
+                "code": {
+                  "description": "Error code.",
+                  "type": "integer",
+                },
+                "href": {
+                  "description": "Link to help with error.",
+                  "type": "string",
+                },
+                "message": {
+                  "description": "Message explaining the error's cause.",
+                  "type": "string",
+                },
+                "serverId": {
+                  "description": "Server ID with which error was encountered.",
+                  "type": "string",
+                },
+                "statusCode": {
+                  "description": "Status error code.",
+                  "type": "integer",
+                },
+              },
+              "type": "object",
+            },
+          },
+        },
+        "description": "Error",
+        "headers": {
+          "x-ably-errorcode": {
+            "description": "The error code.",
+            "schema": {
+              "type": "integer",
+            },
+          },
+          "x-ably-errormessage": {
+            "description": "The error message.",
+            "schema": {
+              "type": "string",
+            },
+          },
+          "x-ably-serverid": {
+            "description": "The ID for the server communicated with.",
+            "required": true,
+            "schema": {
+              "type": "string",
+            },
+          },
+        },
+      },
+    },
+    "security": [
+      {
+        "basicAuth": [],
+      },
+      {
+        "bearerAuth": [],
+      },
+    ],
+    "summary": "Enumerate all active channels of the application",
+    "tags": [
+      "Status",
+    ],
+  },
+}
+`;
+
+exports[`ably public API tests > gets API schema 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apiName": "ably",
+  "pointer": "/info/title",
+  "schema": "Platform API"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apiName": "ably",
+    "pointer": "/info/title",
+    "schema": "Platform API",
+  },
+}
+`;
+
+exports[`ably public API tests > lists api endpoints 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpoints": [
+    {
+      "endpointId": "getMetadataOfAllChannels",
+      "method": "get",
+      "path": "/channels",
+      "operationId": "getMetadataOfAllChannels",
+      "summary": "Enumerate all active channels of the application",
+      "tags": [
+        "Status"
+      ]
+    },
+    {
+      "endpointId": "getMetadataOfChannel",
+      "method": "get",
+      "path": "/channels/{channel_id}",
+      "operationId": "getMetadataOfChannel",
+      "summary": "Get metadata of a channel",
+      "tags": [
+        "Status"
+      ]
+    },
+    {
+      "endpointId": "getMessagesByChannel",
+      "method": "get",
+      "path": "/channels/{channel_id}/messages",
+      "operationId": "getMessagesByChannel",
+      "summary": "Get message history for a channel",
+      "tags": [
+        "History"
+      ]
+    },
+    {
+      "endpointId": "publishMessagesToChannel",
+      "method": "post",
+      "path": "/channels/{channel_id}/messages",
+      "operationId": "publishMessagesToChannel",
+      "summary": "Publish a message to a channel",
+      "tags": [
+        "Publishing"
+      ]
+    },
+    {
+      "endpointId": "getPresenceOfChannel",
+      "method": "get",
+      "path": "/channels/{channel_id}/presence",
+      "operationId": "getPresenceOfChannel",
+      "summary": "Get presence of a channel",
+      "tags": [
+        "Status"
+      ]
+    },
+    {
+      "endpointId": "getPresenceHistoryOfChannel",
+      "method": "get",
+      "path": "/channels/{channel_id}/presence/history",
+      "operationId": "getPresenceHistoryOfChannel",
+      "summary": "Get presence history of a channel",
+      "tags": [
+        "History"
+      ]
+    },
+    {
+      "endpointId": "requestAccessToken",
+      "method": "post",
+      "path": "/keys/{keyName}/requestToken",
+      "operationId": "requestAccessToken",
+      "summary": "Request an access token",
+      "tags": [
+        "Authentication"
+      ]
+    },
+    {
+      "endpointId": "getChannelsWithPushSubscribers",
+      "method": "get",
+      "path": "/push/channels",
+      "operationId": "getChannelsWithPushSubscribers",
+      "summary": "List all channels with at least one subscribed device",
+      "tags": [
+        "Push"
+      ]
+    },
+    {
+      "endpointId": "deletePushDeviceDetails",
+      "method": "delete",
+      "path": "/push/channelSubscriptions",
+      "operationId": "deletePushDeviceDetails",
+      "summary": "Delete a registered device's update token",
+      "tags": [
+        "Push"
+      ]
+    },
+    {
+      "endpointId": "getPushSubscriptionsOnChannels",
+      "method": "get",
+      "path": "/push/channelSubscriptions",
+      "operationId": "getPushSubscriptionsOnChannels",
+      "summary": "List channel subscriptions",
+      "tags": [
+        "Push"
+      ]
+    }
+  ],
+  "nextCursor": "10"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "endpoints": [
+      {
+        "endpointId": "getMetadataOfAllChannels",
+        "method": "get",
+        "operationId": "getMetadataOfAllChannels",
+        "path": "/channels",
+        "summary": "Enumerate all active channels of the application",
+        "tags": [
+          "Status",
+        ],
+      },
+      {
+        "endpointId": "getMetadataOfChannel",
+        "method": "get",
+        "operationId": "getMetadataOfChannel",
+        "path": "/channels/{channel_id}",
+        "summary": "Get metadata of a channel",
+        "tags": [
+          "Status",
+        ],
+      },
+      {
+        "endpointId": "getMessagesByChannel",
+        "method": "get",
+        "operationId": "getMessagesByChannel",
+        "path": "/channels/{channel_id}/messages",
+        "summary": "Get message history for a channel",
+        "tags": [
+          "History",
+        ],
+      },
+      {
+        "endpointId": "publishMessagesToChannel",
+        "method": "post",
+        "operationId": "publishMessagesToChannel",
+        "path": "/channels/{channel_id}/messages",
+        "summary": "Publish a message to a channel",
+        "tags": [
+          "Publishing",
+        ],
+      },
+      {
+        "endpointId": "getPresenceOfChannel",
+        "method": "get",
+        "operationId": "getPresenceOfChannel",
+        "path": "/channels/{channel_id}/presence",
+        "summary": "Get presence of a channel",
+        "tags": [
+          "Status",
+        ],
+      },
+      {
+        "endpointId": "getPresenceHistoryOfChannel",
+        "method": "get",
+        "operationId": "getPresenceHistoryOfChannel",
+        "path": "/channels/{channel_id}/presence/history",
+        "summary": "Get presence history of a channel",
+        "tags": [
+          "History",
+        ],
+      },
+      {
+        "endpointId": "requestAccessToken",
+        "method": "post",
+        "operationId": "requestAccessToken",
+        "path": "/keys/{keyName}/requestToken",
+        "summary": "Request an access token",
+        "tags": [
+          "Authentication",
+        ],
+      },
+      {
+        "endpointId": "getChannelsWithPushSubscribers",
+        "method": "get",
+        "operationId": "getChannelsWithPushSubscribers",
+        "path": "/push/channels",
+        "summary": "List all channels with at least one subscribed device",
+        "tags": [
+          "Push",
+        ],
+      },
+      {
+        "endpointId": "deletePushDeviceDetails",
+        "method": "delete",
+        "operationId": "deletePushDeviceDetails",
+        "path": "/push/channelSubscriptions",
+        "summary": "Delete a registered device's update token",
+        "tags": [
+          "Push",
+        ],
+      },
+      {
+        "endpointId": "getPushSubscriptionsOnChannels",
+        "method": "get",
+        "operationId": "getPushSubscriptionsOnChannels",
+        "path": "/push/channelSubscriptions",
+        "summary": "List channel subscriptions",
+        "tags": [
+          "Push",
+        ],
+      },
+    ],
+    "nextCursor": "10",
+  },
+}
+`;
+
+exports[`ably public API tests > lists the API 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apis": [
+    {
+      "name": "ably",
+      "title": "Platform API",
+      "version": "1.1.0",
+      "baseUrl": "https://rest.ably.io",
+      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/ably.yaml",
+      "authSchemes": [
+        "basicAuth",
+        "bearerAuth"
+      ]
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apis": [
+      {
+        "authSchemes": [
+          "basicAuth",
+          "bearerAuth",
+        ],
+        "baseUrl": "https://rest.ably.io",
+        "name": "ably",
+        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/ably.yaml",
+        "title": "Platform API",
+        "version": "1.1.0",
+      },
+    ],
+  },
+}
+`;
+
+exports[`ably public API tests > makes endpoint request 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "request": {
+    "url": "https://rest.ably.io/channels",
+    "method": "GET",
+    "headersRedacted": {
+      "authorization": "<redacted>"
+    },
+    "endpointId": "getMetadataOfAllChannels"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "bodyType": "json",
+    "bodyJson": {
+      "success": true
+    }
+  },
+  "timingMs": "<timing>",
+  "authUsed": [
+    "basicAuth"
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "authUsed": [
+      "basicAuth",
+    ],
+    "request": {
+      "endpointId": "getMetadataOfAllChannels",
+      "headersRedacted": {
+        "authorization": "<redacted>",
+      },
+      "method": "GET",
+      "url": "https://rest.ably.io/channels",
+    },
+    "response": {
+      "bodyJson": {
+        "success": true,
+      },
+      "bodyType": "json",
+      "headers": {
+        "content-type": "application/json",
+      },
+      "status": 200,
+    },
+    "timingMs": "<timing>",
+  },
+}
+`;

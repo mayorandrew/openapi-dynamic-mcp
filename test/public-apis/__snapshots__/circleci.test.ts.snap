@@ -1,0 +1,455 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`circleci public API tests > gets API endpoint details 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpointId": "GET /me",
+  "method": "get",
+  "path": "/me",
+  "description": "Provides information about the signed in user.\\n",
+  "tags": [],
+  "parameters": [],
+  "requestBody": {
+    "required": false,
+    "contentTypes": []
+  },
+  "responses": {
+    "200": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "properties": {
+              "admin": {
+                "type": "boolean"
+              },
+              "all_emails": {
+                "items": {
+                  "format": "email",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "analytics_id": {
+                "type": "string"
+              },
+              "avatar_url": {
+                "format": "uri",
+                "type": "string"
+              },
+              "basic_email_prefs": {
+                "type": "string"
+              },
+              "bitbucket": {
+                "nullable": true,
+                "type": "integer"
+              },
+              "bitbucket_authorized": {
+                "type": "boolean"
+              },
+              "containers": {
+                "type": "integer"
+              },
+              "created_at": {
+                "format": "date-time",
+                "type": "string"
+              },
+              "days_left_in_trial": {
+                "type": "integer"
+              },
+              "dev_admin": {
+                "type": "boolean"
+              },
+              "enrolled_betas": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "github_id": {
+                "nullable": true,
+                "type": "integer"
+              },
+              "github_oauth_scopes": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "gravatar_id": {
+                "nullable": true,
+                "type": "integer"
+              },
+              "heroku_api_key": {
+                "nullable": true,
+                "type": "string"
+              },
+              "in_beta_program": {
+                "type": "boolean"
+              },
+              "login": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "organization_prefs": {
+                "type": "object"
+              },
+              "parallelism": {
+                "type": "integer"
+              },
+              "plan": {
+                "nullable": true,
+                "type": "string"
+              },
+              "projects": {
+                "type": "object"
+              },
+              "pusher_id": {
+                "type": "string"
+              },
+              "selected_email": {
+                "format": "email",
+                "type": "string"
+              },
+              "sign_in_count": {
+                "type": "integer"
+              },
+              "trial_end": {
+                "format": "date-time",
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        }
+      },
+      "description": "signed in user"
+    }
+  },
+  "security": [
+    {
+      "apikey": []
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "description": "Provides information about the signed in user.
+",
+    "endpointId": "GET /me",
+    "method": "get",
+    "operationId": undefined,
+    "parameters": [],
+    "path": "/me",
+    "requestBody": {
+      "contentTypes": [],
+      "required": false,
+    },
+    "responses": {
+      "200": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "admin": {
+                  "type": "boolean",
+                },
+                "all_emails": {
+                  "items": {
+                    "format": "email",
+                    "type": "string",
+                  },
+                  "type": "array",
+                },
+                "analytics_id": {
+                  "type": "string",
+                },
+                "avatar_url": {
+                  "format": "uri",
+                  "type": "string",
+                },
+                "basic_email_prefs": {
+                  "type": "string",
+                },
+                "bitbucket": {
+                  "nullable": true,
+                  "type": "integer",
+                },
+                "bitbucket_authorized": {
+                  "type": "boolean",
+                },
+                "containers": {
+                  "type": "integer",
+                },
+                "created_at": {
+                  "format": "date-time",
+                  "type": "string",
+                },
+                "days_left_in_trial": {
+                  "type": "integer",
+                },
+                "dev_admin": {
+                  "type": "boolean",
+                },
+                "enrolled_betas": {
+                  "items": {
+                    "type": "string",
+                  },
+                  "type": "array",
+                },
+                "github_id": {
+                  "nullable": true,
+                  "type": "integer",
+                },
+                "github_oauth_scopes": {
+                  "items": {
+                    "type": "string",
+                  },
+                  "type": "array",
+                },
+                "gravatar_id": {
+                  "nullable": true,
+                  "type": "integer",
+                },
+                "heroku_api_key": {
+                  "nullable": true,
+                  "type": "string",
+                },
+                "in_beta_program": {
+                  "type": "boolean",
+                },
+                "login": {
+                  "type": "string",
+                },
+                "name": {
+                  "type": "string",
+                },
+                "organization_prefs": {
+                  "type": "object",
+                },
+                "parallelism": {
+                  "type": "integer",
+                },
+                "plan": {
+                  "nullable": true,
+                  "type": "string",
+                },
+                "projects": {
+                  "type": "object",
+                },
+                "pusher_id": {
+                  "type": "string",
+                },
+                "selected_email": {
+                  "format": "email",
+                  "type": "string",
+                },
+                "sign_in_count": {
+                  "type": "integer",
+                },
+                "trial_end": {
+                  "format": "date-time",
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+          },
+        },
+        "description": "signed in user",
+      },
+    },
+    "security": [
+      {
+        "apikey": [],
+      },
+    ],
+    "summary": undefined,
+    "tags": [],
+  },
+}
+`;
+
+exports[`circleci public API tests > gets API schema 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apiName": "circleci",
+  "pointer": "/info/title",
+  "schema": "CircleCI REST API"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apiName": "circleci",
+    "pointer": "/info/title",
+    "schema": "CircleCI REST API",
+  },
+}
+`;
+
+exports[`circleci public API tests > lists api endpoints 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpoints": [
+    {
+      "endpointId": "GET /me",
+      "method": "get",
+      "path": "/me",
+      "tags": []
+    },
+    {
+      "endpointId": "GET /project/{username}/{project}",
+      "method": "get",
+      "path": "/project/{username}/{project}",
+      "tags": []
+    },
+    {
+      "endpointId": "POST /project/{username}/{project}",
+      "method": "post",
+      "path": "/project/{username}/{project}",
+      "tags": []
+    }
+  ],
+  "nextCursor": "3"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "endpoints": [
+      {
+        "endpointId": "GET /me",
+        "method": "get",
+        "operationId": undefined,
+        "path": "/me",
+        "summary": undefined,
+        "tags": [],
+      },
+      {
+        "endpointId": "GET /project/{username}/{project}",
+        "method": "get",
+        "operationId": undefined,
+        "path": "/project/{username}/{project}",
+        "summary": undefined,
+        "tags": [],
+      },
+      {
+        "endpointId": "POST /project/{username}/{project}",
+        "method": "post",
+        "operationId": undefined,
+        "path": "/project/{username}/{project}",
+        "summary": undefined,
+        "tags": [],
+      },
+    ],
+    "nextCursor": "3",
+  },
+}
+`;
+
+exports[`circleci public API tests > lists the API 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apis": [
+    {
+      "name": "circleci",
+      "title": "CircleCI REST API",
+      "version": "v1",
+      "baseUrl": "https://circleci.com/api/v1",
+      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/circleci.yaml",
+      "authSchemes": [
+        "apikey"
+      ]
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apis": [
+      {
+        "authSchemes": [
+          "apikey",
+        ],
+        "baseUrl": "https://circleci.com/api/v1",
+        "name": "circleci",
+        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/circleci.yaml",
+        "title": "CircleCI REST API",
+        "version": "v1",
+      },
+    ],
+  },
+}
+`;
+
+exports[`circleci public API tests > makes endpoint request 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "request": {
+    "url": "https://circleci.com/api/v1/me?circle-token=dummy_key",
+    "method": "GET",
+    "headersRedacted": {},
+    "endpointId": "GET /me"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "bodyType": "json",
+    "bodyJson": {
+      "success": true
+    }
+  },
+  "timingMs": "<timing>",
+  "authUsed": [
+    "apikey"
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "authUsed": [
+      "apikey",
+    ],
+    "request": {
+      "endpointId": "GET /me",
+      "headersRedacted": {},
+      "method": "GET",
+      "url": "https://circleci.com/api/v1/me?circle-token=dummy_key",
+    },
+    "response": {
+      "bodyJson": {
+        "success": true,
+      },
+      "bodyType": "json",
+      "headers": {
+        "content-type": "application/json",
+      },
+      "status": 200,
+    },
+    "timingMs": "<timing>",
+  },
+}
+`;

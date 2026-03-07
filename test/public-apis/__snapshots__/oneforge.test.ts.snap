@@ -1,0 +1,232 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`oneforge public API tests > gets API endpoint details 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpointId": "GET /quotes",
+  "method": "get",
+  "path": "/quotes",
+  "summary": "Get quotes for all symbols",
+  "description": "Get quotes",
+  "tags": [
+    "forex",
+    "finance",
+    "quotes"
+  ],
+  "parameters": [],
+  "requestBody": {
+    "required": false,
+    "contentTypes": []
+  },
+  "responses": {
+    "200": {
+      "description": "A list of quotes"
+    }
+  },
+  "security": []
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "description": "Get quotes",
+    "endpointId": "GET /quotes",
+    "method": "get",
+    "operationId": undefined,
+    "parameters": [],
+    "path": "/quotes",
+    "requestBody": {
+      "contentTypes": [],
+      "required": false,
+    },
+    "responses": {
+      "200": {
+        "description": "A list of quotes",
+      },
+    },
+    "security": [],
+    "summary": "Get quotes for all symbols",
+    "tags": [
+      "forex",
+      "finance",
+      "quotes",
+    ],
+  },
+}
+`;
+
+exports[`oneforge public API tests > gets API schema 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apiName": "oneforge",
+  "pointer": "/info/title",
+  "schema": "1Forge Finance APIs"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apiName": "oneforge",
+    "pointer": "/info/title",
+    "schema": "1Forge Finance APIs",
+  },
+}
+`;
+
+exports[`oneforge public API tests > lists api endpoints 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpoints": [
+    {
+      "endpointId": "GET /quotes",
+      "method": "get",
+      "path": "/quotes",
+      "summary": "Get quotes for all symbols",
+      "tags": [
+        "forex",
+        "finance",
+        "quotes"
+      ]
+    },
+    {
+      "endpointId": "GET /symbols",
+      "method": "get",
+      "path": "/symbols",
+      "summary": "Get a list of symbols for which we provide real-time quotes",
+      "tags": [
+        "forex",
+        "finance",
+        "quotes"
+      ]
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "endpoints": [
+      {
+        "endpointId": "GET /quotes",
+        "method": "get",
+        "operationId": undefined,
+        "path": "/quotes",
+        "summary": "Get quotes for all symbols",
+        "tags": [
+          "forex",
+          "finance",
+          "quotes",
+        ],
+      },
+      {
+        "endpointId": "GET /symbols",
+        "method": "get",
+        "operationId": undefined,
+        "path": "/symbols",
+        "summary": "Get a list of symbols for which we provide real-time quotes",
+        "tags": [
+          "forex",
+          "finance",
+          "quotes",
+        ],
+      },
+    ],
+    "nextCursor": undefined,
+  },
+}
+`;
+
+exports[`oneforge public API tests > lists the API 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apis": [
+    {
+      "name": "oneforge",
+      "title": "1Forge Finance APIs",
+      "version": "0.0.1",
+      "baseUrl": "https://1forge.com/forex-quotes",
+      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/oneforge.yaml",
+      "authSchemes": []
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apis": [
+      {
+        "authSchemes": [],
+        "baseUrl": "https://1forge.com/forex-quotes",
+        "name": "oneforge",
+        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/oneforge.yaml",
+        "title": "1Forge Finance APIs",
+        "version": "0.0.1",
+      },
+    ],
+  },
+}
+`;
+
+exports[`oneforge public API tests > makes endpoint request 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "request": {
+    "url": "https://1forge.com/forex-quotes/quotes",
+    "method": "GET",
+    "headersRedacted": {},
+    "endpointId": "GET /quotes"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "bodyType": "json",
+    "bodyJson": {
+      "success": true
+    }
+  },
+  "timingMs": "<timing>",
+  "authUsed": []
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "authUsed": [],
+    "request": {
+      "endpointId": "GET /quotes",
+      "headersRedacted": {},
+      "method": "GET",
+      "url": "https://1forge.com/forex-quotes/quotes",
+    },
+    "response": {
+      "bodyJson": {
+        "success": true,
+      },
+      "bodyType": "json",
+      "headers": {
+        "content-type": "application/json",
+      },
+      "status": 200,
+    },
+    "timingMs": "<timing>",
+  },
+}
+`;

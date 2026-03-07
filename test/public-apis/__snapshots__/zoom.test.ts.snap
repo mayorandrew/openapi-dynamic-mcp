@@ -1,0 +1,771 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`zoom public API tests > gets API endpoint details 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpointId": "accounts",
+  "method": "get",
+  "path": "/accounts",
+  "operationId": "accounts",
+  "summary": "List sub accounts",
+  "description": "List all the sub accounts that have been created by a master account.<br><br>Zoom allows only [approved partners](https://marketplace.zoom.us/docs/api-reference/master-account-apis) to use master APIs and manage sub accounts. Email the partner programs team at **partner-success@zoom.us** for more details.\\n\\n<br>**Prerequisites:**<br>\\n* Pro or a higher paid account with master account option enabled. <br>\\n\\n**Scope**: \`account:read:admin\`\\n<br>**[Rate Limit Label](https://marketplace.zoom.us/docs/api-reference/rate-limits#rate-limits):** \`Medium\`<br>\\n\\n",
+  "tags": [
+    "Accounts"
+  ],
+  "parameters": [
+    {
+      "name": "page_size",
+      "in": "query",
+      "required": false,
+      "description": "The number of records returned within a single API call.",
+      "schema": {
+        "default": 30,
+        "maximum": 300,
+        "type": "integer"
+      }
+    },
+    {
+      "name": "page_number",
+      "in": "query",
+      "required": false,
+      "description": "\\n**Deprecated** - This field has been deprecated and we will stop supporting it completely in a future release. Please use \\"next_page_token\\" for pagination instead of this field.\\n\\nThe page number of the current page in the returned records.",
+      "schema": {
+        "default": 1,
+        "type": "integer"
+      }
+    },
+    {
+      "name": "next_page_token",
+      "in": "query",
+      "required": false,
+      "description": "The next page token is used to paginate through large result sets. A next page token will be returned whenever the set of available results exceeds the current page size. The expiration period for this token is 15 minutes.",
+      "schema": {
+        "type": "string"
+      }
+    }
+  ],
+  "requestBody": {
+    "required": false,
+    "contentTypes": []
+  },
+  "responses": {
+    "200": {
+      "content": {
+        "application/json": {
+          "examples": {
+            "response": {
+              "value": {
+                "accounts": [
+                  {
+                    "account_name": "string",
+                    "account_type": "string",
+                    "created_at": "string [date-time]",
+                    "id": "string [uuid]",
+                    "owner_email": "string",
+                    "seats": "integer",
+                    "subscription_end_time": "string [date-time]",
+                    "subscription_start_time": "string [date-time]"
+                  }
+                ],
+                "page_count": "integer",
+                "page_number": "integer",
+                "page_size": "integer",
+                "total_records": "integer"
+              }
+            }
+          },
+          "schema": {
+            "allOf": [
+              {
+                "description": "Pagination Object.",
+                "properties": {
+                  "next_page_token": {
+                    "description": "The next page token is used to paginate through large result sets. A next page token will be returned whenever the set of available results exceeds the current page size. The expiration period for this token is 15 minutes.",
+                    "type": "string"
+                  },
+                  "page_count": {
+                    "description": "The number of pages returned for the request made.",
+                    "type": "integer"
+                  },
+                  "page_number": {
+                    "default": 1,
+                    "description": "**Deprecated**: This field has been deprecated. Please use the \\"next_page_token\\" field for pagination instead of this field.\\n\\nThe page number of the current results.",
+                    "type": "integer"
+                  },
+                  "page_size": {
+                    "default": 30,
+                    "description": "The number of records returned with a single API call.",
+                    "maximum": 300,
+                    "type": "integer"
+                  },
+                  "total_records": {
+                    "description": "The total number of all the records available across pages.",
+                    "type": "integer"
+                  }
+                },
+                "type": "object"
+              },
+              {
+                "description": "Account object in the account list.",
+                "properties": {
+                  "accounts": {
+                    "description": "List of Account objects.",
+                    "items": {
+                      "properties": {
+                        "account_name": {
+                          "description": "Account name.",
+                          "type": "string"
+                        },
+                        "account_number": {
+                          "description": "Account Number of the account.",
+                          "type": "string"
+                        },
+                        "account_type": {
+                          "description": "Account type.",
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "description": "Account creation date and time.",
+                          "format": "date-time",
+                          "type": "string"
+                        },
+                        "id": {
+                          "description": "Account ID.",
+                          "type": "string"
+                        },
+                        "owner_email": {
+                          "description": "Account owner email.",
+                          "example": "john.doe@zoom.us",
+                          "type": "string"
+                        },
+                        "seats": {
+                          "description": "Account seats.",
+                          "type": "integer"
+                        },
+                        "subscription_end_time": {
+                          "description": "Account subscription end date and time.",
+                          "format": "date-time",
+                          "type": "string"
+                        },
+                        "subscription_start_time": {
+                          "description": "Account subscription start date and time.",
+                          "format": "date-time",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              }
+            ],
+            "description": "List of Accounts.",
+            "title": "Account List",
+            "type": "object"
+          }
+        },
+        "application/xml": {
+          "schema": {
+            "allOf": [
+              {
+                "description": "Pagination Object.",
+                "properties": {
+                  "next_page_token": {
+                    "description": "The next page token is used to paginate through large result sets. A next page token will be returned whenever the set of available results exceeds the current page size. The expiration period for this token is 15 minutes.",
+                    "type": "string"
+                  },
+                  "page_count": {
+                    "description": "The number of pages returned for the request made.",
+                    "type": "integer"
+                  },
+                  "page_number": {
+                    "default": 1,
+                    "description": "**Deprecated**: This field has been deprecated. Please use the \\"next_page_token\\" field for pagination instead of this field.\\n\\nThe page number of the current results.",
+                    "type": "integer"
+                  },
+                  "page_size": {
+                    "default": 30,
+                    "description": "The number of records returned with a single API call.",
+                    "maximum": 300,
+                    "type": "integer"
+                  },
+                  "total_records": {
+                    "description": "The total number of all the records available across pages.",
+                    "type": "integer"
+                  }
+                },
+                "type": "object"
+              },
+              {
+                "description": "Account object in the account list.",
+                "properties": {
+                  "accounts": {
+                    "description": "List of Account objects.",
+                    "items": {
+                      "properties": {
+                        "account_name": {
+                          "description": "Account name.",
+                          "type": "string"
+                        },
+                        "account_number": {
+                          "description": "Account Number of the account.",
+                          "type": "string"
+                        },
+                        "account_type": {
+                          "description": "Account type.",
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "description": "Account creation date and time.",
+                          "format": "date-time",
+                          "type": "string"
+                        },
+                        "id": {
+                          "description": "Account ID.",
+                          "type": "string"
+                        },
+                        "owner_email": {
+                          "description": "Account owner email.",
+                          "example": "john.doe@zoom.us",
+                          "type": "string"
+                        },
+                        "seats": {
+                          "description": "Account seats.",
+                          "type": "integer"
+                        },
+                        "subscription_end_time": {
+                          "description": "Account subscription end date and time.",
+                          "format": "date-time",
+                          "type": "string"
+                        },
+                        "subscription_start_time": {
+                          "description": "Account subscription start date and time.",
+                          "format": "date-time",
+                          "type": "string"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "type": "object"
+              }
+            ],
+            "description": "List of Accounts.",
+            "title": "Account List",
+            "type": "object"
+          }
+        }
+      },
+      "description": "Account list returned."
+    }
+  },
+  "security": [
+    {
+      "OAuth": []
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "description": "List all the sub accounts that have been created by a master account.<br><br>Zoom allows only [approved partners](https://marketplace.zoom.us/docs/api-reference/master-account-apis) to use master APIs and manage sub accounts. Email the partner programs team at **partner-success@zoom.us** for more details.
+
+<br>**Prerequisites:**<br>
+* Pro or a higher paid account with master account option enabled. <br>
+
+**Scope**: \`account:read:admin\`
+<br>**[Rate Limit Label](https://marketplace.zoom.us/docs/api-reference/rate-limits#rate-limits):** \`Medium\`<br>
+
+",
+    "endpointId": "accounts",
+    "method": "get",
+    "operationId": "accounts",
+    "parameters": [
+      {
+        "description": "The number of records returned within a single API call.",
+        "explode": undefined,
+        "in": "query",
+        "name": "page_size",
+        "required": false,
+        "schema": {
+          "default": 30,
+          "maximum": 300,
+          "type": "integer",
+        },
+        "style": undefined,
+      },
+      {
+        "description": "
+**Deprecated** - This field has been deprecated and we will stop supporting it completely in a future release. Please use "next_page_token" for pagination instead of this field.
+
+The page number of the current page in the returned records.",
+        "explode": undefined,
+        "in": "query",
+        "name": "page_number",
+        "required": false,
+        "schema": {
+          "default": 1,
+          "type": "integer",
+        },
+        "style": undefined,
+      },
+      {
+        "description": "The next page token is used to paginate through large result sets. A next page token will be returned whenever the set of available results exceeds the current page size. The expiration period for this token is 15 minutes.",
+        "explode": undefined,
+        "in": "query",
+        "name": "next_page_token",
+        "required": false,
+        "schema": {
+          "type": "string",
+        },
+        "style": undefined,
+      },
+    ],
+    "path": "/accounts",
+    "requestBody": {
+      "contentTypes": [],
+      "required": false,
+    },
+    "responses": {
+      "200": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "response": {
+                "value": {
+                  "accounts": [
+                    {
+                      "account_name": "string",
+                      "account_type": "string",
+                      "created_at": "string [date-time]",
+                      "id": "string [uuid]",
+                      "owner_email": "string",
+                      "seats": "integer",
+                      "subscription_end_time": "string [date-time]",
+                      "subscription_start_time": "string [date-time]",
+                    },
+                  ],
+                  "page_count": "integer",
+                  "page_number": "integer",
+                  "page_size": "integer",
+                  "total_records": "integer",
+                },
+              },
+            },
+            "schema": {
+              "allOf": [
+                {
+                  "description": "Pagination Object.",
+                  "properties": {
+                    "next_page_token": {
+                      "description": "The next page token is used to paginate through large result sets. A next page token will be returned whenever the set of available results exceeds the current page size. The expiration period for this token is 15 minutes.",
+                      "type": "string",
+                    },
+                    "page_count": {
+                      "description": "The number of pages returned for the request made.",
+                      "type": "integer",
+                    },
+                    "page_number": {
+                      "default": 1,
+                      "description": "**Deprecated**: This field has been deprecated. Please use the "next_page_token" field for pagination instead of this field.
+
+The page number of the current results.",
+                      "type": "integer",
+                    },
+                    "page_size": {
+                      "default": 30,
+                      "description": "The number of records returned with a single API call.",
+                      "maximum": 300,
+                      "type": "integer",
+                    },
+                    "total_records": {
+                      "description": "The total number of all the records available across pages.",
+                      "type": "integer",
+                    },
+                  },
+                  "type": "object",
+                },
+                {
+                  "description": "Account object in the account list.",
+                  "properties": {
+                    "accounts": {
+                      "description": "List of Account objects.",
+                      "items": {
+                        "properties": {
+                          "account_name": {
+                            "description": "Account name.",
+                            "type": "string",
+                          },
+                          "account_number": {
+                            "description": "Account Number of the account.",
+                            "type": "string",
+                          },
+                          "account_type": {
+                            "description": "Account type.",
+                            "type": "string",
+                          },
+                          "created_at": {
+                            "description": "Account creation date and time.",
+                            "format": "date-time",
+                            "type": "string",
+                          },
+                          "id": {
+                            "description": "Account ID.",
+                            "type": "string",
+                          },
+                          "owner_email": {
+                            "description": "Account owner email.",
+                            "example": "john.doe@zoom.us",
+                            "type": "string",
+                          },
+                          "seats": {
+                            "description": "Account seats.",
+                            "type": "integer",
+                          },
+                          "subscription_end_time": {
+                            "description": "Account subscription end date and time.",
+                            "format": "date-time",
+                            "type": "string",
+                          },
+                          "subscription_start_time": {
+                            "description": "Account subscription start date and time.",
+                            "format": "date-time",
+                            "type": "string",
+                          },
+                        },
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                  },
+                  "type": "object",
+                },
+              ],
+              "description": "List of Accounts.",
+              "title": "Account List",
+              "type": "object",
+            },
+          },
+          "application/xml": {
+            "schema": {
+              "allOf": [
+                {
+                  "description": "Pagination Object.",
+                  "properties": {
+                    "next_page_token": {
+                      "description": "The next page token is used to paginate through large result sets. A next page token will be returned whenever the set of available results exceeds the current page size. The expiration period for this token is 15 minutes.",
+                      "type": "string",
+                    },
+                    "page_count": {
+                      "description": "The number of pages returned for the request made.",
+                      "type": "integer",
+                    },
+                    "page_number": {
+                      "default": 1,
+                      "description": "**Deprecated**: This field has been deprecated. Please use the "next_page_token" field for pagination instead of this field.
+
+The page number of the current results.",
+                      "type": "integer",
+                    },
+                    "page_size": {
+                      "default": 30,
+                      "description": "The number of records returned with a single API call.",
+                      "maximum": 300,
+                      "type": "integer",
+                    },
+                    "total_records": {
+                      "description": "The total number of all the records available across pages.",
+                      "type": "integer",
+                    },
+                  },
+                  "type": "object",
+                },
+                {
+                  "description": "Account object in the account list.",
+                  "properties": {
+                    "accounts": {
+                      "description": "List of Account objects.",
+                      "items": {
+                        "properties": {
+                          "account_name": {
+                            "description": "Account name.",
+                            "type": "string",
+                          },
+                          "account_number": {
+                            "description": "Account Number of the account.",
+                            "type": "string",
+                          },
+                          "account_type": {
+                            "description": "Account type.",
+                            "type": "string",
+                          },
+                          "created_at": {
+                            "description": "Account creation date and time.",
+                            "format": "date-time",
+                            "type": "string",
+                          },
+                          "id": {
+                            "description": "Account ID.",
+                            "type": "string",
+                          },
+                          "owner_email": {
+                            "description": "Account owner email.",
+                            "example": "john.doe@zoom.us",
+                            "type": "string",
+                          },
+                          "seats": {
+                            "description": "Account seats.",
+                            "type": "integer",
+                          },
+                          "subscription_end_time": {
+                            "description": "Account subscription end date and time.",
+                            "format": "date-time",
+                            "type": "string",
+                          },
+                          "subscription_start_time": {
+                            "description": "Account subscription start date and time.",
+                            "format": "date-time",
+                            "type": "string",
+                          },
+                        },
+                        "type": "object",
+                      },
+                      "type": "array",
+                    },
+                  },
+                  "type": "object",
+                },
+              ],
+              "description": "List of Accounts.",
+              "title": "Account List",
+              "type": "object",
+            },
+          },
+        },
+        "description": "Account list returned.",
+      },
+    },
+    "security": [
+      {
+        "OAuth": [],
+      },
+    ],
+    "summary": "List sub accounts",
+    "tags": [
+      "Accounts",
+    ],
+  },
+}
+`;
+
+exports[`zoom public API tests > gets API schema 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apiName": "zoom",
+  "pointer": "/info/title",
+  "schema": "Zoom API"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apiName": "zoom",
+    "pointer": "/info/title",
+    "schema": "Zoom API",
+  },
+}
+`;
+
+exports[`zoom public API tests > lists api endpoints 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpoints": [
+    {
+      "endpointId": "accounts",
+      "method": "get",
+      "path": "/accounts",
+      "operationId": "accounts",
+      "summary": "List sub accounts",
+      "tags": [
+        "Accounts"
+      ]
+    },
+    {
+      "endpointId": "accountCreate",
+      "method": "post",
+      "path": "/accounts",
+      "operationId": "accountCreate",
+      "summary": "Create a sub account",
+      "tags": [
+        "Accounts"
+      ]
+    },
+    {
+      "endpointId": "accountDisassociate",
+      "method": "delete",
+      "path": "/accounts/{accountId}",
+      "operationId": "accountDisassociate",
+      "summary": "Disassociate a sub account",
+      "tags": [
+        "Accounts"
+      ]
+    }
+  ],
+  "nextCursor": "3"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "endpoints": [
+      {
+        "endpointId": "accounts",
+        "method": "get",
+        "operationId": "accounts",
+        "path": "/accounts",
+        "summary": "List sub accounts",
+        "tags": [
+          "Accounts",
+        ],
+      },
+      {
+        "endpointId": "accountCreate",
+        "method": "post",
+        "operationId": "accountCreate",
+        "path": "/accounts",
+        "summary": "Create a sub account",
+        "tags": [
+          "Accounts",
+        ],
+      },
+      {
+        "endpointId": "accountDisassociate",
+        "method": "delete",
+        "operationId": "accountDisassociate",
+        "path": "/accounts/{accountId}",
+        "summary": "Disassociate a sub account",
+        "tags": [
+          "Accounts",
+        ],
+      },
+    ],
+    "nextCursor": "3",
+  },
+}
+`;
+
+exports[`zoom public API tests > lists the API 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apis": [
+    {
+      "name": "zoom",
+      "title": "Zoom API",
+      "version": "2.0.0",
+      "baseUrl": "https://api.zoom.us/v2",
+      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/zoom.yaml",
+      "authSchemes": [
+        "Bearer",
+        "Client_Credentials",
+        "OAuth"
+      ]
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apis": [
+      {
+        "authSchemes": [
+          "Bearer",
+          "Client_Credentials",
+          "OAuth",
+        ],
+        "baseUrl": "https://api.zoom.us/v2",
+        "name": "zoom",
+        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/zoom.yaml",
+        "title": "Zoom API",
+        "version": "2.0.0",
+      },
+    ],
+  },
+}
+`;
+
+exports[`zoom public API tests > makes endpoint request 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "request": {
+    "url": "https://api.zoom.us/v2/accounts",
+    "method": "GET",
+    "headersRedacted": {
+      "authorization": "<redacted>"
+    },
+    "endpointId": "accounts"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "bodyType": "json",
+    "bodyJson": {
+      "success": true
+    }
+  },
+  "timingMs": "<timing>",
+  "authUsed": [
+    "OAuth"
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "authUsed": [
+      "OAuth",
+    ],
+    "request": {
+      "endpointId": "accounts",
+      "headersRedacted": {
+        "authorization": "<redacted>",
+      },
+      "method": "GET",
+      "url": "https://api.zoom.us/v2/accounts",
+    },
+    "response": {
+      "bodyJson": {
+        "success": true,
+      },
+      "bodyType": "json",
+      "headers": {
+        "content-type": "application/json",
+      },
+      "status": 200,
+    },
+    "timingMs": "<timing>",
+  },
+}
+`;

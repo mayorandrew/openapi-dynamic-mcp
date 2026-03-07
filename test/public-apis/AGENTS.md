@@ -1,34 +1,165 @@
-# Testing OpenAPI MCP with Real Public APIs
+# Public API Test Guide
 
-This directory contains integration-style unit tests that verify the `openapi-dynamic-mcp` tools against real-world, public OpenAPI specifications.
+This directory contains fixture-backed integration tests for `openapi-dynamic-mcp` against real public OpenAPI specs.
 
-## The Approach
+## Purpose
 
-To ensure our MCP server can handle the complexity and variety of real-world OpenAPI specifications, we test it against a curated list of public APIs (sourced from APIs.guru).
+These tests exist to prove that the MCP tools can handle messy real-world schemas, security definitions, server definitions, and request shapes without depending on live upstream services.
 
-The testing strategy follows these core principles:
+The fixtures come from public API specs, but the tests are fully local and deterministic.
 
-1. **Local Fixtures for Stability**:
-   Instead of fetching OpenAPI specifications from remote URLs during tests (which can cause flaky tests due to network issues), we download the `.yaml` specification files and store them locally in `test/public-apis/fixtures/`.
+## Current Pattern
 
-2. **Self-Contained Test Context**:
-   The `test-utils.ts` file provides a `createTestContext` helper. This helper initializes the `ToolContext` using the local fixture files, bypassing the need for a live `test-apis.yaml` or remote `specUrl` resolution.
+Each public API gets its own test file.
 
-3. **Bypassing Authentication Validation**:
-   Many real-world APIs require authentication (API Keys, Bearer tokens, OAuth2). The MCP server's `make_endpoint_request` tool validates these requirements _before_ executing a request. To test the request execution logic without needing real credentials, `test-utils.ts` inspects the loaded API's security schemes and automatically injects appropriate dummy credentials (e.g., `DUMMY_KEY`, `DUMMY_TOKEN`) into the test environment.
+Each file should:
 
-4. **Mocking HTTP Requests with Nock**:
-   We do not want to execute real HTTP requests to these public APIs during testing. Instead, we use `nock` to intercept the outgoing request just before it leaves the Node.js environment. We configure `nock` to intercept the specific HTTP method and base URL defined by the API specification, and return a mock `200 Success` response.
+- load exactly one local fixture from `test/public-apis/fixtures/`
+- create a fresh `ToolContext` with `createTestContext(...)`
+- snapshot the results of the five core tool interactions
+- use `nock` for request execution tests
+- hardcode the endpoint IDs used by the test instead of selecting endpoints dynamically
 
-5. **Deterministic Assertions (Object Matching)**:
-   Because we inject dummy credentials and use `nock` to return successful responses, our tests should always follow the "happy path". We expect `result.isError` to be undefined, and we explicitly assert the entire response object using `expect(result).toEqual({ ... })`. We avoid conditional assertions (`if (result.isError) { ... } else { ... }`) and piecemeal checks to ensure our tests are deterministic and strictly validate the complete expected behavior. For fields that are non-deterministic (like `timingMs`), we use matchers like `expect.any(Number)`.
+The standard five tests are:
 
-## Test File Anatomy
+1. `lists the API`
+2. `lists api endpoints`
+3. `gets API endpoint details`
+4. `gets API schema`
+5. `makes endpoint request`
 
-Each test file in this directory (e.g., `ably.test.ts`, `oneforge.test.ts`) is designed to test one specific public API against all 5 core MCP tools:
+## Assertions
 
-- `listApisTool`: Verifies the API registers successfully.
-- `listApiEndpointsTool`: Verifies the server can discover and list the API's endpoints.
-- `getApiEndpointTool`: Verifies the server can correctly extract method and path details for a specific endpoint.
-- `getApiSchemaTool`: Verifies the server can resolve JSON pointers within the API's schema.
-- `makeEndpointRequestTool`: Verifies the server can construct and execute (mocked) HTTP requests, correctly handling parameters and authentication.
+Public API tests use exact snapshots via `toMatchSnapshot()`.
+
+Do not write large inline `toEqual({ ... })` assertions for these files unless there is a specific reason to do so. Snapshot files are the source of truth for expected MCP output.
+
+Use `snapshotify(...)` from [snapshot-helpers.ts](/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/snapshot-helpers.ts) for request results so volatile timing fields are normalized before snapshotting.
+
+## Request Tests
+
+Request tests must execute a real mocked request, not `dryRun`.
+
+The pattern is:
+
+- pick a specific `REQUEST_ENDPOINT_ID`
+- resolve the endpoint from `api.endpointById`
+- call `mockEndpointRequest(...)` to prepare request inputs and install the `nock` interceptor
+- call `makeEndpointRequestTool(...)`
+- snapshot the normalized result
+
+This keeps request coverage aligned with the older hand-written suites while remaining deterministic.
+
+## Endpoint Selection
+
+Do not search for “any usable endpoint” at runtime.
+
+Hardcode explicit constants in each file:
+
+- `DETAIL_ENDPOINT_ID`
+- `REQUEST_ENDPOINT_ID`
+
+If the request endpoint needs path params or a synthetic body/file payload, that is handled by `mockEndpointRequest(...)`. The test file should still declare which endpoint it is exercising.
+
+When choosing endpoints:
+
+- prefer stable, low-complexity operations
+- prefer endpoints that do not require custom query/header setup beyond auth
+- for request tests, prefer endpoints that can be mocked with the helper’s generated path params and minimal body/files
+
+If one endpoint is best for metadata and another is best for execution, use different constants.
+
+## Helpers
+
+Two helper files support these tests:
+
+- [test-utils.ts](/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/test-utils.ts)
+- [snapshot-helpers.ts](/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/snapshot-helpers.ts)
+
+`test-utils.ts` is responsible for:
+
+- loading the fixture-backed registry
+- creating the `ToolContext`
+- injecting dummy auth env vars for every discovered auth scheme
+
+`snapshot-helpers.ts` is responsible for:
+
+- generating placeholder path params
+- normalizing snapshot timing fields
+- preparing minimal request bodies/files/content types when needed
+- installing the `nock` interceptor for the chosen endpoint
+
+Do not re-copy those helpers into individual test files.
+
+## Nock Usage
+
+Every file that calls `makeEndpointRequestTool(...)` should:
+
+- import `nock`
+- clean mocks in `afterEach(() => nock.cleanAll())`
+
+Do not make live network requests from these tests.
+
+## Fixtures
+
+Fixture files live in `test/public-apis/fixtures/`.
+
+Rules:
+
+- keep fixtures local in the repo
+- do not fetch specs during test execution
+- prefer checked-in `.yaml` fixtures matching the public API name
+
+If you add a new public API test:
+
+1. add the fixture
+2. add a dedicated `<api>.test.ts`
+3. use the same five-test pattern
+4. hardcode explicit endpoint IDs
+5. generate snapshots with Vitest
+
+## Snapshot Workflow
+
+When behavior changes intentionally, update snapshots with:
+
+```bash
+npx vitest run test/public-apis/<api>.test.ts -u
+```
+
+For broad public API updates:
+
+```bash
+npx vitest run test/public-apis/*.test.ts -u
+```
+
+Then run the full suite:
+
+```bash
+npm test
+```
+
+## What To Avoid
+
+Avoid these patterns in this directory:
+
+- dynamic endpoint discovery for assertions
+- `dryRun` request tests
+- live HTTP requests
+- duplicated local helper functions
+- partial assertions when a full snapshot is appropriate
+- remote spec downloads during tests
+
+## File Shape
+
+A typical file should look like this:
+
+- imports
+- `API_NAME`
+- `SPEC_FILE`
+- `DETAIL_ENDPOINT_ID`
+- `REQUEST_ENDPOINT_ID`
+- `beforeEach`
+- `afterEach`
+- five snapshot tests
+
+Keep the files simple and explicit. The goal here is coverage over a broad set of real specs, not abstraction for its own sake.

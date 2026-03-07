@@ -1,0 +1,906 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`digitalocean public API tests > gets API endpoint details 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpointId": "oneClicks_list",
+  "method": "get",
+  "path": "/v2/1-clicks",
+  "operationId": "oneClicks_list",
+  "summary": "List 1-Click Applications",
+  "description": "To list all available 1-Click applications, send a GET request to \`/v2/1-clicks\`. The \`type\` may\\nbe provided as query paramater in order to restrict results to a certain type of 1-Click, for\\nexample: \`/v2/1-clicks?type=droplet\`. Current supported types are \`kubernetes\` and \`droplet\`.\\n\\nThe response will be a JSON object with a key called \`1_clicks\`. This will be set to an array of\\n1-Click application data, each of which will contain the the slug and type for the 1-Click.\\n",
+  "tags": [
+    "1-Click Applications"
+  ],
+  "parameters": [
+    {
+      "name": "type",
+      "in": "query",
+      "required": false,
+      "description": "Restrict results to a certain type of 1-Click.",
+      "schema": {
+        "enum": [
+          "droplet",
+          "kubernetes"
+        ],
+        "type": "string"
+      }
+    }
+  ],
+  "requestBody": {
+    "required": false,
+    "contentTypes": []
+  },
+  "responses": {
+    "200": {
+      "content": {
+        "application/json": {
+          "examples": {
+            "All 1-Click Applications": {
+              "value": {
+                "1_clicks": [
+                  {
+                    "slug": "monitoring",
+                    "type": "kubernetes"
+                  },
+                  {
+                    "slug": "wordpress-18-04",
+                    "type": "droplet"
+                  }
+                ]
+              }
+            }
+          },
+          "schema": {
+            "properties": {
+              "1_clicks": {
+                "items": {
+                  "properties": {
+                    "slug": {
+                      "description": "The slug identifier for the 1-Click application.",
+                      "example": "monitoring",
+                      "title": "slug",
+                      "type": "string"
+                    },
+                    "type": {
+                      "description": "The type of the 1-Click application.",
+                      "example": "kubernetes",
+                      "title": "type",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "slug",
+                    "type"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            }
+          }
+        }
+      },
+      "description": "A JSON object with a key of \`1_clicks\`.",
+      "headers": {
+        "ratelimit-limit": {
+          "description": "The default limit on number of requests that can be made per hour and per minute. Current rate limits are 5000 requests per hour and 250 requests per minute.",
+          "example": 5000,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        "ratelimit-remaining": {
+          "description": "The number of requests in your hourly quota that remain before you hit your request limit. See https://developers.digitalocean.com/documentation/v2/#rate-limit for information about how requests expire.",
+          "example": 4816,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        "ratelimit-reset": {
+          "description": "The time when the oldest request will expire. The value is given in Unix epoch time. See https://developers.digitalocean.com/documentation/v2/#rate-limit for information about how requests expire.",
+          "example": 1444931833,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "401": {
+      "content": {
+        "application/json": {
+          "example": {
+            "id": "unauthorized",
+            "message": "Unable to authenticate you."
+          },
+          "schema": {
+            "properties": {
+              "id": {
+                "description": "A short identifier corresponding to the HTTP status code returned. For  example, the ID for a response returning a 404 status code would be \\"not_found.\\"",
+                "example": "not_found",
+                "type": "string"
+              },
+              "message": {
+                "description": "A message providing additional information about the error, including  details to help resolve it when possible.",
+                "example": "The resource you were accessing could not be found.",
+                "type": "string"
+              },
+              "request_id": {
+                "description": "Optionally, some endpoints may include a request ID that should be  provided when reporting bugs or opening support tickets to help  identify the issue.",
+                "example": "4d9d8375-3c56-4925-a3e7-eb137fed17e9",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "message"
+            ],
+            "type": "object"
+          }
+        }
+      },
+      "description": "Unauthorized",
+      "headers": {
+        "ratelimit-limit": {
+          "description": "The default limit on number of requests that can be made per hour and per minute. Current rate limits are 5000 requests per hour and 250 requests per minute.",
+          "example": 5000,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        "ratelimit-remaining": {
+          "description": "The number of requests in your hourly quota that remain before you hit your request limit. See https://developers.digitalocean.com/documentation/v2/#rate-limit for information about how requests expire.",
+          "example": 4816,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        "ratelimit-reset": {
+          "description": "The time when the oldest request will expire. The value is given in Unix epoch time. See https://developers.digitalocean.com/documentation/v2/#rate-limit for information about how requests expire.",
+          "example": 1444931833,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "429": {
+      "content": {
+        "application/json": {
+          "example": {
+            "id": "too_many_requests",
+            "message": "API Rate limit exceeded."
+          },
+          "schema": {
+            "properties": {
+              "id": {
+                "description": "A short identifier corresponding to the HTTP status code returned. For  example, the ID for a response returning a 404 status code would be \\"not_found.\\"",
+                "example": "not_found",
+                "type": "string"
+              },
+              "message": {
+                "description": "A message providing additional information about the error, including  details to help resolve it when possible.",
+                "example": "The resource you were accessing could not be found.",
+                "type": "string"
+              },
+              "request_id": {
+                "description": "Optionally, some endpoints may include a request ID that should be  provided when reporting bugs or opening support tickets to help  identify the issue.",
+                "example": "4d9d8375-3c56-4925-a3e7-eb137fed17e9",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "message"
+            ],
+            "type": "object"
+          }
+        }
+      },
+      "description": "API Rate limit exceeded",
+      "headers": {
+        "ratelimit-limit": {
+          "description": "The default limit on number of requests that can be made per hour and per minute. Current rate limits are 5000 requests per hour and 250 requests per minute.",
+          "example": 5000,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        "ratelimit-remaining": {
+          "description": "The number of requests in your hourly quota that remain before you hit your request limit. See https://developers.digitalocean.com/documentation/v2/#rate-limit for information about how requests expire.",
+          "example": 4816,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        "ratelimit-reset": {
+          "description": "The time when the oldest request will expire. The value is given in Unix epoch time. See https://developers.digitalocean.com/documentation/v2/#rate-limit for information about how requests expire.",
+          "example": 1444931833,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "500": {
+      "content": {
+        "application/json": {
+          "example": {
+            "id": "server_error",
+            "message": "Unexpected server-side error"
+          },
+          "schema": {
+            "properties": {
+              "id": {
+                "description": "A short identifier corresponding to the HTTP status code returned. For  example, the ID for a response returning a 404 status code would be \\"not_found.\\"",
+                "example": "not_found",
+                "type": "string"
+              },
+              "message": {
+                "description": "A message providing additional information about the error, including  details to help resolve it when possible.",
+                "example": "The resource you were accessing could not be found.",
+                "type": "string"
+              },
+              "request_id": {
+                "description": "Optionally, some endpoints may include a request ID that should be  provided when reporting bugs or opening support tickets to help  identify the issue.",
+                "example": "4d9d8375-3c56-4925-a3e7-eb137fed17e9",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "message"
+            ],
+            "type": "object"
+          }
+        }
+      },
+      "description": "Server error.",
+      "headers": {
+        "ratelimit-limit": {
+          "description": "The default limit on number of requests that can be made per hour and per minute. Current rate limits are 5000 requests per hour and 250 requests per minute.",
+          "example": 5000,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        "ratelimit-remaining": {
+          "description": "The number of requests in your hourly quota that remain before you hit your request limit. See https://developers.digitalocean.com/documentation/v2/#rate-limit for information about how requests expire.",
+          "example": 4816,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        "ratelimit-reset": {
+          "description": "The time when the oldest request will expire. The value is given in Unix epoch time. See https://developers.digitalocean.com/documentation/v2/#rate-limit for information about how requests expire.",
+          "example": 1444931833,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "default": {
+      "content": {
+        "application/json": {
+          "example": {
+            "id": "example_error",
+            "message": "some error message"
+          },
+          "schema": {
+            "properties": {
+              "id": {
+                "description": "A short identifier corresponding to the HTTP status code returned. For  example, the ID for a response returning a 404 status code would be \\"not_found.\\"",
+                "example": "not_found",
+                "type": "string"
+              },
+              "message": {
+                "description": "A message providing additional information about the error, including  details to help resolve it when possible.",
+                "example": "The resource you were accessing could not be found.",
+                "type": "string"
+              },
+              "request_id": {
+                "description": "Optionally, some endpoints may include a request ID that should be  provided when reporting bugs or opening support tickets to help  identify the issue.",
+                "example": "4d9d8375-3c56-4925-a3e7-eb137fed17e9",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "message"
+            ],
+            "type": "object"
+          }
+        }
+      },
+      "description": "Unexpected error",
+      "headers": {
+        "ratelimit-limit": {
+          "description": "The default limit on number of requests that can be made per hour and per minute. Current rate limits are 5000 requests per hour and 250 requests per minute.",
+          "example": 5000,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        "ratelimit-remaining": {
+          "description": "The number of requests in your hourly quota that remain before you hit your request limit. See https://developers.digitalocean.com/documentation/v2/#rate-limit for information about how requests expire.",
+          "example": 4816,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        "ratelimit-reset": {
+          "description": "The time when the oldest request will expire. The value is given in Unix epoch time. See https://developers.digitalocean.com/documentation/v2/#rate-limit for information about how requests expire.",
+          "example": 1444931833,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearer_auth": []
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "description": "To list all available 1-Click applications, send a GET request to \`/v2/1-clicks\`. The \`type\` may
+be provided as query paramater in order to restrict results to a certain type of 1-Click, for
+example: \`/v2/1-clicks?type=droplet\`. Current supported types are \`kubernetes\` and \`droplet\`.
+
+The response will be a JSON object with a key called \`1_clicks\`. This will be set to an array of
+1-Click application data, each of which will contain the the slug and type for the 1-Click.
+",
+    "endpointId": "oneClicks_list",
+    "method": "get",
+    "operationId": "oneClicks_list",
+    "parameters": [
+      {
+        "description": "Restrict results to a certain type of 1-Click.",
+        "explode": undefined,
+        "in": "query",
+        "name": "type",
+        "required": false,
+        "schema": {
+          "enum": [
+            "droplet",
+            "kubernetes",
+          ],
+          "type": "string",
+        },
+        "style": undefined,
+      },
+    ],
+    "path": "/v2/1-clicks",
+    "requestBody": {
+      "contentTypes": [],
+      "required": false,
+    },
+    "responses": {
+      "200": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "All 1-Click Applications": {
+                "value": {
+                  "1_clicks": [
+                    {
+                      "slug": "monitoring",
+                      "type": "kubernetes",
+                    },
+                    {
+                      "slug": "wordpress-18-04",
+                      "type": "droplet",
+                    },
+                  ],
+                },
+              },
+            },
+            "schema": {
+              "properties": {
+                "1_clicks": {
+                  "items": {
+                    "properties": {
+                      "slug": {
+                        "description": "The slug identifier for the 1-Click application.",
+                        "example": "monitoring",
+                        "title": "slug",
+                        "type": "string",
+                      },
+                      "type": {
+                        "description": "The type of the 1-Click application.",
+                        "example": "kubernetes",
+                        "title": "type",
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "slug",
+                      "type",
+                    ],
+                    "type": "object",
+                  },
+                  "type": "array",
+                },
+              },
+            },
+          },
+        },
+        "description": "A JSON object with a key of \`1_clicks\`.",
+        "headers": {
+          "ratelimit-limit": {
+            "description": "The default limit on number of requests that can be made per hour and per minute. Current rate limits are 5000 requests per hour and 250 requests per minute.",
+            "example": 5000,
+            "schema": {
+              "type": "integer",
+            },
+          },
+          "ratelimit-remaining": {
+            "description": "The number of requests in your hourly quota that remain before you hit your request limit. See https://developers.digitalocean.com/documentation/v2/#rate-limit for information about how requests expire.",
+            "example": 4816,
+            "schema": {
+              "type": "integer",
+            },
+          },
+          "ratelimit-reset": {
+            "description": "The time when the oldest request will expire. The value is given in Unix epoch time. See https://developers.digitalocean.com/documentation/v2/#rate-limit for information about how requests expire.",
+            "example": 1444931833,
+            "schema": {
+              "type": "integer",
+            },
+          },
+        },
+      },
+      "401": {
+        "content": {
+          "application/json": {
+            "example": {
+              "id": "unauthorized",
+              "message": "Unable to authenticate you.",
+            },
+            "schema": {
+              "properties": {
+                "id": {
+                  "description": "A short identifier corresponding to the HTTP status code returned. For  example, the ID for a response returning a 404 status code would be "not_found."",
+                  "example": "not_found",
+                  "type": "string",
+                },
+                "message": {
+                  "description": "A message providing additional information about the error, including  details to help resolve it when possible.",
+                  "example": "The resource you were accessing could not be found.",
+                  "type": "string",
+                },
+                "request_id": {
+                  "description": "Optionally, some endpoints may include a request ID that should be  provided when reporting bugs or opening support tickets to help  identify the issue.",
+                  "example": "4d9d8375-3c56-4925-a3e7-eb137fed17e9",
+                  "type": "string",
+                },
+              },
+              "required": [
+                "id",
+                "message",
+              ],
+              "type": "object",
+            },
+          },
+        },
+        "description": "Unauthorized",
+        "headers": {
+          "ratelimit-limit": {
+            "description": "The default limit on number of requests that can be made per hour and per minute. Current rate limits are 5000 requests per hour and 250 requests per minute.",
+            "example": 5000,
+            "schema": {
+              "type": "integer",
+            },
+          },
+          "ratelimit-remaining": {
+            "description": "The number of requests in your hourly quota that remain before you hit your request limit. See https://developers.digitalocean.com/documentation/v2/#rate-limit for information about how requests expire.",
+            "example": 4816,
+            "schema": {
+              "type": "integer",
+            },
+          },
+          "ratelimit-reset": {
+            "description": "The time when the oldest request will expire. The value is given in Unix epoch time. See https://developers.digitalocean.com/documentation/v2/#rate-limit for information about how requests expire.",
+            "example": 1444931833,
+            "schema": {
+              "type": "integer",
+            },
+          },
+        },
+      },
+      "429": {
+        "content": {
+          "application/json": {
+            "example": {
+              "id": "too_many_requests",
+              "message": "API Rate limit exceeded.",
+            },
+            "schema": {
+              "properties": {
+                "id": {
+                  "description": "A short identifier corresponding to the HTTP status code returned. For  example, the ID for a response returning a 404 status code would be "not_found."",
+                  "example": "not_found",
+                  "type": "string",
+                },
+                "message": {
+                  "description": "A message providing additional information about the error, including  details to help resolve it when possible.",
+                  "example": "The resource you were accessing could not be found.",
+                  "type": "string",
+                },
+                "request_id": {
+                  "description": "Optionally, some endpoints may include a request ID that should be  provided when reporting bugs or opening support tickets to help  identify the issue.",
+                  "example": "4d9d8375-3c56-4925-a3e7-eb137fed17e9",
+                  "type": "string",
+                },
+              },
+              "required": [
+                "id",
+                "message",
+              ],
+              "type": "object",
+            },
+          },
+        },
+        "description": "API Rate limit exceeded",
+        "headers": {
+          "ratelimit-limit": {
+            "description": "The default limit on number of requests that can be made per hour and per minute. Current rate limits are 5000 requests per hour and 250 requests per minute.",
+            "example": 5000,
+            "schema": {
+              "type": "integer",
+            },
+          },
+          "ratelimit-remaining": {
+            "description": "The number of requests in your hourly quota that remain before you hit your request limit. See https://developers.digitalocean.com/documentation/v2/#rate-limit for information about how requests expire.",
+            "example": 4816,
+            "schema": {
+              "type": "integer",
+            },
+          },
+          "ratelimit-reset": {
+            "description": "The time when the oldest request will expire. The value is given in Unix epoch time. See https://developers.digitalocean.com/documentation/v2/#rate-limit for information about how requests expire.",
+            "example": 1444931833,
+            "schema": {
+              "type": "integer",
+            },
+          },
+        },
+      },
+      "500": {
+        "content": {
+          "application/json": {
+            "example": {
+              "id": "server_error",
+              "message": "Unexpected server-side error",
+            },
+            "schema": {
+              "properties": {
+                "id": {
+                  "description": "A short identifier corresponding to the HTTP status code returned. For  example, the ID for a response returning a 404 status code would be "not_found."",
+                  "example": "not_found",
+                  "type": "string",
+                },
+                "message": {
+                  "description": "A message providing additional information about the error, including  details to help resolve it when possible.",
+                  "example": "The resource you were accessing could not be found.",
+                  "type": "string",
+                },
+                "request_id": {
+                  "description": "Optionally, some endpoints may include a request ID that should be  provided when reporting bugs or opening support tickets to help  identify the issue.",
+                  "example": "4d9d8375-3c56-4925-a3e7-eb137fed17e9",
+                  "type": "string",
+                },
+              },
+              "required": [
+                "id",
+                "message",
+              ],
+              "type": "object",
+            },
+          },
+        },
+        "description": "Server error.",
+        "headers": {
+          "ratelimit-limit": {
+            "description": "The default limit on number of requests that can be made per hour and per minute. Current rate limits are 5000 requests per hour and 250 requests per minute.",
+            "example": 5000,
+            "schema": {
+              "type": "integer",
+            },
+          },
+          "ratelimit-remaining": {
+            "description": "The number of requests in your hourly quota that remain before you hit your request limit. See https://developers.digitalocean.com/documentation/v2/#rate-limit for information about how requests expire.",
+            "example": 4816,
+            "schema": {
+              "type": "integer",
+            },
+          },
+          "ratelimit-reset": {
+            "description": "The time when the oldest request will expire. The value is given in Unix epoch time. See https://developers.digitalocean.com/documentation/v2/#rate-limit for information about how requests expire.",
+            "example": 1444931833,
+            "schema": {
+              "type": "integer",
+            },
+          },
+        },
+      },
+      "default": {
+        "content": {
+          "application/json": {
+            "example": {
+              "id": "example_error",
+              "message": "some error message",
+            },
+            "schema": {
+              "properties": {
+                "id": {
+                  "description": "A short identifier corresponding to the HTTP status code returned. For  example, the ID for a response returning a 404 status code would be "not_found."",
+                  "example": "not_found",
+                  "type": "string",
+                },
+                "message": {
+                  "description": "A message providing additional information about the error, including  details to help resolve it when possible.",
+                  "example": "The resource you were accessing could not be found.",
+                  "type": "string",
+                },
+                "request_id": {
+                  "description": "Optionally, some endpoints may include a request ID that should be  provided when reporting bugs or opening support tickets to help  identify the issue.",
+                  "example": "4d9d8375-3c56-4925-a3e7-eb137fed17e9",
+                  "type": "string",
+                },
+              },
+              "required": [
+                "id",
+                "message",
+              ],
+              "type": "object",
+            },
+          },
+        },
+        "description": "Unexpected error",
+        "headers": {
+          "ratelimit-limit": {
+            "description": "The default limit on number of requests that can be made per hour and per minute. Current rate limits are 5000 requests per hour and 250 requests per minute.",
+            "example": 5000,
+            "schema": {
+              "type": "integer",
+            },
+          },
+          "ratelimit-remaining": {
+            "description": "The number of requests in your hourly quota that remain before you hit your request limit. See https://developers.digitalocean.com/documentation/v2/#rate-limit for information about how requests expire.",
+            "example": 4816,
+            "schema": {
+              "type": "integer",
+            },
+          },
+          "ratelimit-reset": {
+            "description": "The time when the oldest request will expire. The value is given in Unix epoch time. See https://developers.digitalocean.com/documentation/v2/#rate-limit for information about how requests expire.",
+            "example": 1444931833,
+            "schema": {
+              "type": "integer",
+            },
+          },
+        },
+      },
+    },
+    "security": [
+      {
+        "bearer_auth": [],
+      },
+    ],
+    "summary": "List 1-Click Applications",
+    "tags": [
+      "1-Click Applications",
+    ],
+  },
+}
+`;
+
+exports[`digitalocean public API tests > gets API schema 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apiName": "digitalocean",
+  "pointer": "/info/title",
+  "schema": "DigitalOcean API"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apiName": "digitalocean",
+    "pointer": "/info/title",
+    "schema": "DigitalOcean API",
+  },
+}
+`;
+
+exports[`digitalocean public API tests > lists api endpoints 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpoints": [
+    {
+      "endpointId": "oneClicks_list",
+      "method": "get",
+      "path": "/v2/1-clicks",
+      "operationId": "oneClicks_list",
+      "summary": "List 1-Click Applications",
+      "tags": [
+        "1-Click Applications"
+      ]
+    },
+    {
+      "endpointId": "oneClicks_install_kubernetes",
+      "method": "post",
+      "path": "/v2/1-clicks/kubernetes",
+      "operationId": "oneClicks_install_kubernetes",
+      "summary": "Install Kubernetes 1-Click Applications",
+      "tags": [
+        "1-Click Applications"
+      ]
+    },
+    {
+      "endpointId": "account_get",
+      "method": "get",
+      "path": "/v2/account",
+      "operationId": "account_get",
+      "summary": "Get User Information",
+      "tags": [
+        "Account"
+      ]
+    }
+  ],
+  "nextCursor": "3"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "endpoints": [
+      {
+        "endpointId": "oneClicks_list",
+        "method": "get",
+        "operationId": "oneClicks_list",
+        "path": "/v2/1-clicks",
+        "summary": "List 1-Click Applications",
+        "tags": [
+          "1-Click Applications",
+        ],
+      },
+      {
+        "endpointId": "oneClicks_install_kubernetes",
+        "method": "post",
+        "operationId": "oneClicks_install_kubernetes",
+        "path": "/v2/1-clicks/kubernetes",
+        "summary": "Install Kubernetes 1-Click Applications",
+        "tags": [
+          "1-Click Applications",
+        ],
+      },
+      {
+        "endpointId": "account_get",
+        "method": "get",
+        "operationId": "account_get",
+        "path": "/v2/account",
+        "summary": "Get User Information",
+        "tags": [
+          "Account",
+        ],
+      },
+    ],
+    "nextCursor": "3",
+  },
+}
+`;
+
+exports[`digitalocean public API tests > lists the API 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apis": [
+    {
+      "name": "digitalocean",
+      "title": "DigitalOcean API",
+      "version": "2.0",
+      "baseUrl": "https://api.digitalocean.com",
+      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/digitalocean.yaml",
+      "authSchemes": [
+        "bearer_auth"
+      ]
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apis": [
+      {
+        "authSchemes": [
+          "bearer_auth",
+        ],
+        "baseUrl": "https://api.digitalocean.com",
+        "name": "digitalocean",
+        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/digitalocean.yaml",
+        "title": "DigitalOcean API",
+        "version": "2.0",
+      },
+    ],
+  },
+}
+`;
+
+exports[`digitalocean public API tests > makes endpoint request 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "request": {
+    "url": "https://api.digitalocean.com/v2/1-clicks",
+    "method": "GET",
+    "headersRedacted": {
+      "authorization": "<redacted>"
+    },
+    "endpointId": "oneClicks_list"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "bodyType": "json",
+    "bodyJson": {
+      "success": true
+    }
+  },
+  "timingMs": "<timing>",
+  "authUsed": [
+    "bearer_auth"
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "authUsed": [
+      "bearer_auth",
+    ],
+    "request": {
+      "endpointId": "oneClicks_list",
+      "headersRedacted": {
+        "authorization": "<redacted>",
+      },
+      "method": "GET",
+      "url": "https://api.digitalocean.com/v2/1-clicks",
+    },
+    "response": {
+      "bodyJson": {
+        "success": true,
+      },
+      "bodyType": "json",
+      "headers": {
+        "content-type": "application/json",
+      },
+      "status": 200,
+    },
+    "timingMs": "<timing>",
+  },
+}
+`;

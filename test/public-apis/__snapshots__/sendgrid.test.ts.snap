@@ -1,0 +1,797 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`sendgrid public API tests > gets API endpoint details 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpointId": "GET_access_settings-activity",
+  "method": "get",
+  "path": "/access_settings/activity",
+  "operationId": "GET_access_settings-activity",
+  "summary": "Retrieve all recent access attempts",
+  "description": "**This endpoint allows you to retrieve a list of all of the IP addresses that recently attempted to access your account either through the User Interface or the API.**",
+  "tags": [
+    "IP Access Management"
+  ],
+  "parameters": [
+    {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "description": "Limits the number of IPs to return.",
+      "schema": {
+        "default": 20,
+        "type": "integer"
+      }
+    },
+    {
+      "name": "on-behalf-of",
+      "in": "header",
+      "required": false,
+      "schema": {
+        "default": "The subuser's username. This header generates the API call as if the subuser account was making the call.",
+        "type": "string"
+      }
+    }
+  ],
+  "requestBody": {
+    "required": false,
+    "contentTypes": []
+  },
+  "responses": {
+    "200": {
+      "content": {
+        "application/json": {
+          "examples": {
+            "response": {
+              "value": {
+                "result": [
+                  {
+                    "allowed": false,
+                    "auth_method": "Web",
+                    "first_at": 1444087966,
+                    "ip": "1.1.1.1",
+                    "last_at": 1444406672,
+                    "location": "Australia"
+                  },
+                  {
+                    "allowed": false,
+                    "auth_method": "Web",
+                    "first_at": 1444087505,
+                    "ip": "1.2.3.48",
+                    "last_at": 1444087505,
+                    "location": "Mukilteo, Washington"
+                  }
+                ]
+              }
+            }
+          },
+          "schema": {
+            "properties": {
+              "result": {
+                "description": "An array containing the IPs that recently attempted to access your account.",
+                "items": {
+                  "properties": {
+                    "allowed": {
+                      "description": "Indicates if the IP address was granted access to the account.",
+                      "type": "boolean"
+                    },
+                    "auth_method": {
+                      "description": "The authentication method used when attempting access.",
+                      "type": "string"
+                    },
+                    "first_at": {
+                      "description": "A Unix timestamp indicating when the first access attempt was made.",
+                      "type": "integer"
+                    },
+                    "ip": {
+                      "description": "The IP addressed used during the access attempt.",
+                      "type": "string"
+                    },
+                    "last_at": {
+                      "description": "A Unix timestamp indicating when the most recent access attempt was made",
+                      "type": "integer"
+                    },
+                    "location": {
+                      "description": "The geographic location from which the access attempt originated.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "allowed",
+                    "auth_method",
+                    "first_at",
+                    "ip",
+                    "last_at",
+                    "location"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "result"
+            ],
+            "type": "object"
+          }
+        }
+      },
+      "description": ""
+    },
+    "401": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "example": {
+              "errors": [
+                {
+                  "field": "field_name",
+                  "message": "error message"
+                }
+              ]
+            },
+            "properties": {
+              "errors": {
+                "items": {
+                  "properties": {
+                    "field": {
+                      "description": "the field that generated the error",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "help": {
+                      "description": "helper text or docs for troubleshooting",
+                      "type": "object"
+                    },
+                    "message": {
+                      "description": "the error message",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "id": {
+                "type": "string"
+              }
+            },
+            "title": "Global Error Response Schema",
+            "type": "object"
+          }
+        }
+      },
+      "description": ""
+    },
+    "403": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "example": {
+              "errors": [
+                {
+                  "field": "field_name",
+                  "message": "error message"
+                }
+              ]
+            },
+            "properties": {
+              "errors": {
+                "items": {
+                  "properties": {
+                    "field": {
+                      "description": "the field that generated the error",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "help": {
+                      "description": "helper text or docs for troubleshooting",
+                      "type": "object"
+                    },
+                    "message": {
+                      "description": "the error message",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "id": {
+                "type": "string"
+              }
+            },
+            "title": "Global Error Response Schema",
+            "type": "object"
+          }
+        }
+      },
+      "description": ""
+    },
+    "404": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "example": {
+              "errors": [
+                {
+                  "field": "field_name",
+                  "message": "error message"
+                }
+              ]
+            },
+            "properties": {
+              "errors": {
+                "items": {
+                  "properties": {
+                    "field": {
+                      "description": "the field that generated the error",
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "help": {
+                      "description": "helper text or docs for troubleshooting",
+                      "type": "object"
+                    },
+                    "message": {
+                      "description": "the error message",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "id": {
+                "type": "string"
+              }
+            },
+            "title": "Global Error Response Schema",
+            "type": "object"
+          }
+        }
+      },
+      "description": ""
+    },
+    "500": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "properties": {
+              "errors": {
+                "items": {
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          }
+        }
+      },
+      "description": ""
+    }
+  },
+  "security": [
+    {
+      "Authorization": []
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "description": "**This endpoint allows you to retrieve a list of all of the IP addresses that recently attempted to access your account either through the User Interface or the API.**",
+    "endpointId": "GET_access_settings-activity",
+    "method": "get",
+    "operationId": "GET_access_settings-activity",
+    "parameters": [
+      {
+        "description": "Limits the number of IPs to return.",
+        "explode": undefined,
+        "in": "query",
+        "name": "limit",
+        "required": false,
+        "schema": {
+          "default": 20,
+          "type": "integer",
+        },
+        "style": undefined,
+      },
+      {
+        "description": undefined,
+        "explode": undefined,
+        "in": "header",
+        "name": "on-behalf-of",
+        "required": false,
+        "schema": {
+          "default": "The subuser's username. This header generates the API call as if the subuser account was making the call.",
+          "type": "string",
+        },
+        "style": undefined,
+      },
+    ],
+    "path": "/access_settings/activity",
+    "requestBody": {
+      "contentTypes": [],
+      "required": false,
+    },
+    "responses": {
+      "200": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "response": {
+                "value": {
+                  "result": [
+                    {
+                      "allowed": false,
+                      "auth_method": "Web",
+                      "first_at": 1444087966,
+                      "ip": "1.1.1.1",
+                      "last_at": 1444406672,
+                      "location": "Australia",
+                    },
+                    {
+                      "allowed": false,
+                      "auth_method": "Web",
+                      "first_at": 1444087505,
+                      "ip": "1.2.3.48",
+                      "last_at": 1444087505,
+                      "location": "Mukilteo, Washington",
+                    },
+                  ],
+                },
+              },
+            },
+            "schema": {
+              "properties": {
+                "result": {
+                  "description": "An array containing the IPs that recently attempted to access your account.",
+                  "items": {
+                    "properties": {
+                      "allowed": {
+                        "description": "Indicates if the IP address was granted access to the account.",
+                        "type": "boolean",
+                      },
+                      "auth_method": {
+                        "description": "The authentication method used when attempting access.",
+                        "type": "string",
+                      },
+                      "first_at": {
+                        "description": "A Unix timestamp indicating when the first access attempt was made.",
+                        "type": "integer",
+                      },
+                      "ip": {
+                        "description": "The IP addressed used during the access attempt.",
+                        "type": "string",
+                      },
+                      "last_at": {
+                        "description": "A Unix timestamp indicating when the most recent access attempt was made",
+                        "type": "integer",
+                      },
+                      "location": {
+                        "description": "The geographic location from which the access attempt originated.",
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "allowed",
+                      "auth_method",
+                      "first_at",
+                      "ip",
+                      "last_at",
+                      "location",
+                    ],
+                    "type": "object",
+                  },
+                  "type": "array",
+                },
+              },
+              "required": [
+                "result",
+              ],
+              "type": "object",
+            },
+          },
+        },
+        "description": "",
+      },
+      "401": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "example": {
+                "errors": [
+                  {
+                    "field": "field_name",
+                    "message": "error message",
+                  },
+                ],
+              },
+              "properties": {
+                "errors": {
+                  "items": {
+                    "properties": {
+                      "field": {
+                        "description": "the field that generated the error",
+                        "nullable": true,
+                        "type": "string",
+                      },
+                      "help": {
+                        "description": "helper text or docs for troubleshooting",
+                        "type": "object",
+                      },
+                      "message": {
+                        "description": "the error message",
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "message",
+                    ],
+                    "type": "object",
+                  },
+                  "type": "array",
+                },
+                "id": {
+                  "type": "string",
+                },
+              },
+              "title": "Global Error Response Schema",
+              "type": "object",
+            },
+          },
+        },
+        "description": "",
+      },
+      "403": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "example": {
+                "errors": [
+                  {
+                    "field": "field_name",
+                    "message": "error message",
+                  },
+                ],
+              },
+              "properties": {
+                "errors": {
+                  "items": {
+                    "properties": {
+                      "field": {
+                        "description": "the field that generated the error",
+                        "nullable": true,
+                        "type": "string",
+                      },
+                      "help": {
+                        "description": "helper text or docs for troubleshooting",
+                        "type": "object",
+                      },
+                      "message": {
+                        "description": "the error message",
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "message",
+                    ],
+                    "type": "object",
+                  },
+                  "type": "array",
+                },
+                "id": {
+                  "type": "string",
+                },
+              },
+              "title": "Global Error Response Schema",
+              "type": "object",
+            },
+          },
+        },
+        "description": "",
+      },
+      "404": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "example": {
+                "errors": [
+                  {
+                    "field": "field_name",
+                    "message": "error message",
+                  },
+                ],
+              },
+              "properties": {
+                "errors": {
+                  "items": {
+                    "properties": {
+                      "field": {
+                        "description": "the field that generated the error",
+                        "nullable": true,
+                        "type": "string",
+                      },
+                      "help": {
+                        "description": "helper text or docs for troubleshooting",
+                        "type": "object",
+                      },
+                      "message": {
+                        "description": "the error message",
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "message",
+                    ],
+                    "type": "object",
+                  },
+                  "type": "array",
+                },
+                "id": {
+                  "type": "string",
+                },
+              },
+              "title": "Global Error Response Schema",
+              "type": "object",
+            },
+          },
+        },
+        "description": "",
+      },
+      "500": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "errors": {
+                  "items": {
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                      },
+                    },
+                    "type": "object",
+                  },
+                  "type": "array",
+                },
+              },
+              "type": "object",
+            },
+          },
+        },
+        "description": "",
+      },
+    },
+    "security": [
+      {
+        "Authorization": [],
+      },
+    ],
+    "summary": "Retrieve all recent access attempts",
+    "tags": [
+      "IP Access Management",
+    ],
+  },
+}
+`;
+
+exports[`sendgrid public API tests > gets API schema 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apiName": "sendgrid",
+  "pointer": "/info/title",
+  "schema": "Email Activity (beta)"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apiName": "sendgrid",
+    "pointer": "/info/title",
+    "schema": "Email Activity (beta)",
+  },
+}
+`;
+
+exports[`sendgrid public API tests > lists api endpoints 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpoints": [
+    {
+      "endpointId": "GET_access_settings-activity",
+      "method": "get",
+      "path": "/access_settings/activity",
+      "operationId": "GET_access_settings-activity",
+      "summary": "Retrieve all recent access attempts",
+      "tags": [
+        "IP Access Management"
+      ]
+    },
+    {
+      "endpointId": "DELETE_access_settings-whitelist",
+      "method": "delete",
+      "path": "/access_settings/whitelist",
+      "operationId": "DELETE_access_settings-whitelist",
+      "summary": "Remove one or more IPs from the allow list",
+      "tags": [
+        "IP Access Management"
+      ]
+    },
+    {
+      "endpointId": "GET_access_settings-whitelist",
+      "method": "get",
+      "path": "/access_settings/whitelist",
+      "operationId": "GET_access_settings-whitelist",
+      "summary": "Retrieve a list of currently allowed IPs",
+      "tags": [
+        "IP Access Management"
+      ]
+    }
+  ],
+  "nextCursor": "3"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "endpoints": [
+      {
+        "endpointId": "GET_access_settings-activity",
+        "method": "get",
+        "operationId": "GET_access_settings-activity",
+        "path": "/access_settings/activity",
+        "summary": "Retrieve all recent access attempts",
+        "tags": [
+          "IP Access Management",
+        ],
+      },
+      {
+        "endpointId": "DELETE_access_settings-whitelist",
+        "method": "delete",
+        "operationId": "DELETE_access_settings-whitelist",
+        "path": "/access_settings/whitelist",
+        "summary": "Remove one or more IPs from the allow list",
+        "tags": [
+          "IP Access Management",
+        ],
+      },
+      {
+        "endpointId": "GET_access_settings-whitelist",
+        "method": "get",
+        "operationId": "GET_access_settings-whitelist",
+        "path": "/access_settings/whitelist",
+        "summary": "Retrieve a list of currently allowed IPs",
+        "tags": [
+          "IP Access Management",
+        ],
+      },
+    ],
+    "nextCursor": "3",
+  },
+}
+`;
+
+exports[`sendgrid public API tests > lists the API 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apis": [
+    {
+      "name": "sendgrid",
+      "title": "Email Activity (beta)",
+      "version": "1.0.0",
+      "baseUrl": "http://api.sendgrid.com/v3",
+      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/sendgrid.yaml",
+      "authSchemes": [
+        "Authorization"
+      ]
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apis": [
+      {
+        "authSchemes": [
+          "Authorization",
+        ],
+        "baseUrl": "http://api.sendgrid.com/v3",
+        "name": "sendgrid",
+        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/sendgrid.yaml",
+        "title": "Email Activity (beta)",
+        "version": "1.0.0",
+      },
+    ],
+  },
+}
+`;
+
+exports[`sendgrid public API tests > makes endpoint request 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "request": {
+    "url": "http://api.sendgrid.com/v3/access_settings/activity",
+    "method": "GET",
+    "headersRedacted": {
+      "Authorization": "<redacted>"
+    },
+    "endpointId": "GET_access_settings-activity"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "bodyType": "json",
+    "bodyJson": {
+      "success": true
+    }
+  },
+  "timingMs": "<timing>",
+  "authUsed": [
+    "Authorization"
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "authUsed": [
+      "Authorization",
+    ],
+    "request": {
+      "endpointId": "GET_access_settings-activity",
+      "headersRedacted": {
+        "Authorization": "<redacted>",
+      },
+      "method": "GET",
+      "url": "http://api.sendgrid.com/v3/access_settings/activity",
+    },
+    "response": {
+      "bodyJson": {
+        "success": true,
+      },
+      "bodyType": "json",
+      "headers": {
+        "content-type": "application/json",
+      },
+      "status": 200,
+    },
+    "timingMs": "<timing>",
+  },
+}
+`;

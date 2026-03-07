@@ -10,6 +10,7 @@ afterEach(() => {
 });
 
 const fixturesDir = path.resolve('test/fixtures');
+const publicFixturesDir = path.resolve('test/public-apis/fixtures');
 
 describe('OpenAPI loading/index', () => {
   it('loads schema and indexes endpoints', async () => {
@@ -67,6 +68,44 @@ describe('OpenAPI loading/index', () => {
     expect(api?.endpoints.length).toBeGreaterThan(0);
     expect(api?.schema.openapi.startsWith('3.0')).toBe(true);
   });
+
+  it('converts Swagger 2.0 specs that use YAML merge keys', async () => {
+    const config: RootConfig = {
+      version: 1,
+      apis: [
+        {
+          name: 'launchdarkly',
+          specPath: path.join(publicFixturesDir, 'launchdarkly.yaml'),
+        },
+      ],
+    };
+
+    const registry = await loadApiRegistry(config, {});
+    const api = registry.byName.get('launchdarkly');
+
+    expect(api).toBeDefined();
+    expect(api?.schema.openapi.startsWith('3.0')).toBe(true);
+    expect(api?.endpoints.length).toBeGreaterThan(0);
+  });
+
+  it('prefers an absolute server URL when the first server is relative', async () => {
+    const config: RootConfig = {
+      version: 1,
+      apis: [
+        {
+          name: 'docker-engine',
+          specPath: path.join(publicFixturesDir, 'docker-engine.yaml'),
+        },
+      ],
+    };
+
+    const registry = await loadApiRegistry(config, {});
+    const api = registry.byName.get('docker-engine');
+
+    expect(api).toBeDefined();
+    expect(api?.baseUrl).toBe('https://docker.com/1.33');
+  });
+
   it('throws on unsupported OpenAPI version', async () => {
     const config: RootConfig = {
       version: 1,

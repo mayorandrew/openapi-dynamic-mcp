@@ -1,0 +1,424 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`slack public API tests > gets API endpoint details 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpointId": "admin_apps_approve",
+  "method": "post",
+  "path": "/admin.apps.approve",
+  "operationId": "admin_apps_approve",
+  "description": "Approve an app for installation on a workspace.",
+  "tags": [
+    "admin.apps",
+    "admin"
+  ],
+  "parameters": [
+    {
+      "name": "token",
+      "in": "header",
+      "required": true,
+      "description": "Authentication token. Requires scope: \`admin.apps:write\`",
+      "schema": {
+        "type": "string"
+      }
+    }
+  ],
+  "requestBody": {
+    "required": false,
+    "contentTypes": [
+      "application/x-www-form-urlencoded"
+    ]
+  },
+  "responses": {
+    "200": {
+      "content": {
+        "application/json": {
+          "examples": {
+            "response": {
+              "value": {
+                "ok": true
+              }
+            }
+          },
+          "schema": {
+            "additionalProperties": true,
+            "description": "This method either only returns a brief _OK_ response or a verbose schema is not available for this method.",
+            "properties": {
+              "ok": {
+                "enum": [
+                  true
+                ],
+                "title": "default success response",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "ok"
+            ],
+            "title": "Default success template",
+            "type": "object"
+          }
+        }
+      },
+      "description": "Typical success response"
+    },
+    "default": {
+      "content": {
+        "application/json": {
+          "examples": {
+            "response": {
+              "value": {
+                "error": "invalid_auth",
+                "ok": false
+              }
+            }
+          },
+          "schema": {
+            "additionalProperties": true,
+            "description": "This method either only returns a brief _not OK_ response or a verbose schema is not available for this method.",
+            "properties": {
+              "ok": {
+                "enum": [
+                  false
+                ],
+                "title": "default failure response",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "ok"
+            ],
+            "title": "Default error template",
+            "type": "object"
+          }
+        }
+      },
+      "description": "Typical error response"
+    }
+  },
+  "security": [
+    {
+      "slackAuth": [
+        "admin.apps:write"
+      ]
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "description": "Approve an app for installation on a workspace.",
+    "endpointId": "admin_apps_approve",
+    "method": "post",
+    "operationId": "admin_apps_approve",
+    "parameters": [
+      {
+        "description": "Authentication token. Requires scope: \`admin.apps:write\`",
+        "explode": undefined,
+        "in": "header",
+        "name": "token",
+        "required": true,
+        "schema": {
+          "type": "string",
+        },
+        "style": undefined,
+      },
+    ],
+    "path": "/admin.apps.approve",
+    "requestBody": {
+      "contentTypes": [
+        "application/x-www-form-urlencoded",
+      ],
+      "required": false,
+    },
+    "responses": {
+      "200": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "response": {
+                "value": {
+                  "ok": true,
+                },
+              },
+            },
+            "schema": {
+              "additionalProperties": true,
+              "description": "This method either only returns a brief _OK_ response or a verbose schema is not available for this method.",
+              "properties": {
+                "ok": {
+                  "enum": [
+                    true,
+                  ],
+                  "title": "default success response",
+                  "type": "boolean",
+                },
+              },
+              "required": [
+                "ok",
+              ],
+              "title": "Default success template",
+              "type": "object",
+            },
+          },
+        },
+        "description": "Typical success response",
+      },
+      "default": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "response": {
+                "value": {
+                  "error": "invalid_auth",
+                  "ok": false,
+                },
+              },
+            },
+            "schema": {
+              "additionalProperties": true,
+              "description": "This method either only returns a brief _not OK_ response or a verbose schema is not available for this method.",
+              "properties": {
+                "ok": {
+                  "enum": [
+                    false,
+                  ],
+                  "title": "default failure response",
+                  "type": "boolean",
+                },
+              },
+              "required": [
+                "ok",
+              ],
+              "title": "Default error template",
+              "type": "object",
+            },
+          },
+        },
+        "description": "Typical error response",
+      },
+    },
+    "security": [
+      {
+        "slackAuth": [
+          "admin.apps:write",
+        ],
+      },
+    ],
+    "summary": undefined,
+    "tags": [
+      "admin.apps",
+      "admin",
+    ],
+  },
+}
+`;
+
+exports[`slack public API tests > gets API schema 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apiName": "slack",
+  "pointer": "/info/title",
+  "schema": "Slack Web API"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apiName": "slack",
+    "pointer": "/info/title",
+    "schema": "Slack Web API",
+  },
+}
+`;
+
+exports[`slack public API tests > lists api endpoints 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpoints": [
+    {
+      "endpointId": "admin_apps_approve",
+      "method": "post",
+      "path": "/admin.apps.approve",
+      "operationId": "admin_apps_approve",
+      "tags": [
+        "admin.apps",
+        "admin"
+      ]
+    },
+    {
+      "endpointId": "admin_apps_approved_list",
+      "method": "get",
+      "path": "/admin.apps.approved.list",
+      "operationId": "admin_apps_approved_list",
+      "tags": [
+        "admin.apps.approved",
+        "admin"
+      ]
+    },
+    {
+      "endpointId": "admin_apps_requests_list",
+      "method": "get",
+      "path": "/admin.apps.requests.list",
+      "operationId": "admin_apps_requests_list",
+      "tags": [
+        "admin.apps.requests",
+        "admin"
+      ]
+    }
+  ],
+  "nextCursor": "3"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "endpoints": [
+      {
+        "endpointId": "admin_apps_approve",
+        "method": "post",
+        "operationId": "admin_apps_approve",
+        "path": "/admin.apps.approve",
+        "summary": undefined,
+        "tags": [
+          "admin.apps",
+          "admin",
+        ],
+      },
+      {
+        "endpointId": "admin_apps_approved_list",
+        "method": "get",
+        "operationId": "admin_apps_approved_list",
+        "path": "/admin.apps.approved.list",
+        "summary": undefined,
+        "tags": [
+          "admin.apps.approved",
+          "admin",
+        ],
+      },
+      {
+        "endpointId": "admin_apps_requests_list",
+        "method": "get",
+        "operationId": "admin_apps_requests_list",
+        "path": "/admin.apps.requests.list",
+        "summary": undefined,
+        "tags": [
+          "admin.apps.requests",
+          "admin",
+        ],
+      },
+    ],
+    "nextCursor": "3",
+  },
+}
+`;
+
+exports[`slack public API tests > lists the API 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apis": [
+    {
+      "name": "slack",
+      "title": "Slack Web API",
+      "version": "1.7.0",
+      "baseUrl": "https://slack.com/api",
+      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/slack.yaml",
+      "authSchemes": [
+        "slackAuth"
+      ]
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apis": [
+      {
+        "authSchemes": [
+          "slackAuth",
+        ],
+        "baseUrl": "https://slack.com/api",
+        "name": "slack",
+        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/slack.yaml",
+        "title": "Slack Web API",
+        "version": "1.7.0",
+      },
+    ],
+  },
+}
+`;
+
+exports[`slack public API tests > makes endpoint request 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "request": {
+    "url": "https://slack.com/api/admin.conversations.restrictAccess.addGroup",
+    "method": "POST",
+    "headersRedacted": {
+      "authorization": "<redacted>",
+      "content-type": "application/x-www-form-urlencoded"
+    },
+    "endpointId": "admin_conversations_restrictAccess_addGroup"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "bodyType": "json",
+    "bodyJson": {
+      "success": true
+    }
+  },
+  "timingMs": "<timing>",
+  "authUsed": [
+    "slackAuth"
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "authUsed": [
+      "slackAuth",
+    ],
+    "request": {
+      "endpointId": "admin_conversations_restrictAccess_addGroup",
+      "headersRedacted": {
+        "authorization": "<redacted>",
+        "content-type": "application/x-www-form-urlencoded",
+      },
+      "method": "POST",
+      "url": "https://slack.com/api/admin.conversations.restrictAccess.addGroup",
+    },
+    "response": {
+      "bodyJson": {
+        "success": true,
+      },
+      "bodyType": "json",
+      "headers": {
+        "content-type": "application/json",
+      },
+      "status": 200,
+    },
+    "timingMs": "<timing>",
+  },
+}
+`;

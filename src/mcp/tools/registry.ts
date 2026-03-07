@@ -7,15 +7,16 @@ import {
   makeEndpointRequestToolDefinition,
 } from './index.js';
 
-export const toolDefinitions: ToolDefinition<{ fields?: string[] }, unknown>[] =
-  [
-    listApisToolDefinition,
-    listApiEndpointsToolDefinition,
-    getApiEndpointToolDefinition,
-    getApiSchemaToolDefinition,
-    makeEndpointRequestToolDefinition,
-  ];
+type AnyToolDefinition = ToolDefinition<any, unknown>;
 
-export function getToolDefinition(name: string) {
+export const toolDefinitions: AnyToolDefinition[] = [
+  listApisToolDefinition,
+  listApiEndpointsToolDefinition,
+  getApiEndpointToolDefinition,
+  getApiSchemaToolDefinition,
+  makeEndpointRequestToolDefinition,
+];
+
+export function getToolDefinition(name: string): AnyToolDefinition | undefined {
   return toolDefinitions.find((tool) => tool.name === name);
 }

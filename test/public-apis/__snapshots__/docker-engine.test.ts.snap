@@ -1,0 +1,336 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`docker-engine public API tests > gets API endpoint details 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpointId": "SystemPing",
+  "method": "get",
+  "path": "/_ping",
+  "operationId": "SystemPing",
+  "summary": "Ping",
+  "description": "This is a dummy endpoint you can use to test if the server is accessible.",
+  "tags": [
+    "System"
+  ],
+  "parameters": [],
+  "requestBody": {
+    "required": false,
+    "contentTypes": []
+  },
+  "responses": {
+    "200": {
+      "content": {
+        "text/plain": {
+          "schema": {
+            "example": "OK",
+            "type": "string"
+          }
+        }
+      },
+      "description": "no error",
+      "headers": {
+        "API-Version": {
+          "description": "Max API Version the server supports",
+          "schema": {
+            "type": "string"
+          }
+        },
+        "Docker-Experimental": {
+          "description": "If the server is running with experimental mode enabled",
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "500": {
+      "content": {
+        "text/plain": {
+          "schema": {
+            "description": "Represents an error.",
+            "example": {
+              "message": "Something went wrong."
+            },
+            "properties": {
+              "message": {
+                "description": "The error message.",
+                "nullable": false,
+                "type": "string"
+              }
+            },
+            "required": [
+              "message"
+            ],
+            "type": "object"
+          }
+        }
+      },
+      "description": "server error"
+    }
+  },
+  "security": []
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "description": "This is a dummy endpoint you can use to test if the server is accessible.",
+    "endpointId": "SystemPing",
+    "method": "get",
+    "operationId": "SystemPing",
+    "parameters": [],
+    "path": "/_ping",
+    "requestBody": {
+      "contentTypes": [],
+      "required": false,
+    },
+    "responses": {
+      "200": {
+        "content": {
+          "text/plain": {
+            "schema": {
+              "example": "OK",
+              "type": "string",
+            },
+          },
+        },
+        "description": "no error",
+        "headers": {
+          "API-Version": {
+            "description": "Max API Version the server supports",
+            "schema": {
+              "type": "string",
+            },
+          },
+          "Docker-Experimental": {
+            "description": "If the server is running with experimental mode enabled",
+            "schema": {
+              "type": "boolean",
+            },
+          },
+        },
+      },
+      "500": {
+        "content": {
+          "text/plain": {
+            "schema": {
+              "description": "Represents an error.",
+              "example": {
+                "message": "Something went wrong.",
+              },
+              "properties": {
+                "message": {
+                  "description": "The error message.",
+                  "nullable": false,
+                  "type": "string",
+                },
+              },
+              "required": [
+                "message",
+              ],
+              "type": "object",
+            },
+          },
+        },
+        "description": "server error",
+      },
+    },
+    "security": [],
+    "summary": "Ping",
+    "tags": [
+      "System",
+    ],
+  },
+}
+`;
+
+exports[`docker-engine public API tests > gets API schema 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apiName": "docker-engine",
+  "pointer": "/info/title",
+  "schema": "Docker Engine API"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apiName": "docker-engine",
+    "pointer": "/info/title",
+    "schema": "Docker Engine API",
+  },
+}
+`;
+
+exports[`docker-engine public API tests > lists api endpoints 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpoints": [
+    {
+      "endpointId": "SystemPing",
+      "method": "get",
+      "path": "/_ping",
+      "operationId": "SystemPing",
+      "summary": "Ping",
+      "tags": [
+        "System"
+      ]
+    },
+    {
+      "endpointId": "SystemAuth",
+      "method": "post",
+      "path": "/auth",
+      "operationId": "SystemAuth",
+      "summary": "Check auth configuration",
+      "tags": [
+        "System"
+      ]
+    },
+    {
+      "endpointId": "ImageBuild",
+      "method": "post",
+      "path": "/build",
+      "operationId": "ImageBuild",
+      "summary": "Build an image",
+      "tags": [
+        "Image"
+      ]
+    }
+  ],
+  "nextCursor": "3"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "endpoints": [
+      {
+        "endpointId": "SystemPing",
+        "method": "get",
+        "operationId": "SystemPing",
+        "path": "/_ping",
+        "summary": "Ping",
+        "tags": [
+          "System",
+        ],
+      },
+      {
+        "endpointId": "SystemAuth",
+        "method": "post",
+        "operationId": "SystemAuth",
+        "path": "/auth",
+        "summary": "Check auth configuration",
+        "tags": [
+          "System",
+        ],
+      },
+      {
+        "endpointId": "ImageBuild",
+        "method": "post",
+        "operationId": "ImageBuild",
+        "path": "/build",
+        "summary": "Build an image",
+        "tags": [
+          "Image",
+        ],
+      },
+    ],
+    "nextCursor": "3",
+  },
+}
+`;
+
+exports[`docker-engine public API tests > lists the API 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apis": [
+    {
+      "name": "docker-engine",
+      "title": "Docker Engine API",
+      "version": "1.33",
+      "baseUrl": "https://docker.com/1.33",
+      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/docker-engine.yaml",
+      "authSchemes": []
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apis": [
+      {
+        "authSchemes": [],
+        "baseUrl": "https://docker.com/1.33",
+        "name": "docker-engine",
+        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/docker-engine.yaml",
+        "title": "Docker Engine API",
+        "version": "1.33",
+      },
+    ],
+  },
+}
+`;
+
+exports[`docker-engine public API tests > makes endpoint request 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "request": {
+    "url": "https://docker.com/1.33/_ping",
+    "method": "GET",
+    "headersRedacted": {},
+    "endpointId": "SystemPing"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "bodyType": "json",
+    "bodyJson": {
+      "success": true
+    }
+  },
+  "timingMs": "<timing>",
+  "authUsed": []
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "authUsed": [],
+    "request": {
+      "endpointId": "SystemPing",
+      "headersRedacted": {},
+      "method": "GET",
+      "url": "https://docker.com/1.33/_ping",
+    },
+    "response": {
+      "bodyJson": {
+        "success": true,
+      },
+      "bodyType": "json",
+      "headers": {
+        "content-type": "application/json",
+      },
+      "status": 200,
+    },
+    "timingMs": "<timing>",
+  },
+}
+`;

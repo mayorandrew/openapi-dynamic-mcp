@@ -1,0 +1,400 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`onepassevents public API tests > gets API endpoint details 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpointId": "getAuthIntrospect",
+  "method": "get",
+  "path": "/api/auth/introspect",
+  "operationId": "getAuthIntrospect",
+  "summary": "Performs introspection of the provided Bearer JWT token",
+  "tags": [
+    "auth"
+  ],
+  "parameters": [],
+  "requestBody": {
+    "required": false,
+    "contentTypes": []
+  },
+  "responses": {
+    "200": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "properties": {
+              "Features": {
+                "example": [
+                  "itemusages",
+                  "signinattempts"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "IssuedAt": {
+                "example": "2020-06-11T16:32:50-03:00",
+                "format": "date-time",
+                "type": "string"
+              },
+              "UUID": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        }
+      },
+      "description": "Introspection object"
+    },
+    "401": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "properties": {
+              "Error": {
+                "properties": {
+                  "Message": {
+                    "description": "The error message.",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        }
+      },
+      "description": "Unauthorized"
+    },
+    "default": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "properties": {
+              "Error": {
+                "properties": {
+                  "Message": {
+                    "description": "The error message.",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            },
+            "type": "object"
+          }
+        }
+      },
+      "description": "Generic error"
+    }
+  },
+  "security": [
+    {
+      "jwtsa": []
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "description": undefined,
+    "endpointId": "getAuthIntrospect",
+    "method": "get",
+    "operationId": "getAuthIntrospect",
+    "parameters": [],
+    "path": "/api/auth/introspect",
+    "requestBody": {
+      "contentTypes": [],
+      "required": false,
+    },
+    "responses": {
+      "200": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "Features": {
+                  "example": [
+                    "itemusages",
+                    "signinattempts",
+                  ],
+                  "items": {
+                    "type": "string",
+                  },
+                  "type": "array",
+                },
+                "IssuedAt": {
+                  "example": "2020-06-11T16:32:50-03:00",
+                  "format": "date-time",
+                  "type": "string",
+                },
+                "UUID": {
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+          },
+        },
+        "description": "Introspection object",
+      },
+      "401": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "Error": {
+                  "properties": {
+                    "Message": {
+                      "description": "The error message.",
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+              },
+              "type": "object",
+            },
+          },
+        },
+        "description": "Unauthorized",
+      },
+      "default": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "Error": {
+                  "properties": {
+                    "Message": {
+                      "description": "The error message.",
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+              },
+              "type": "object",
+            },
+          },
+        },
+        "description": "Generic error",
+      },
+    },
+    "security": [
+      {
+        "jwtsa": [],
+      },
+    ],
+    "summary": "Performs introspection of the provided Bearer JWT token",
+    "tags": [
+      "auth",
+    ],
+  },
+}
+`;
+
+exports[`onepassevents public API tests > gets API schema 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apiName": "onepassevents",
+  "pointer": "/info/title",
+  "schema": "Events API"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apiName": "onepassevents",
+    "pointer": "/info/title",
+    "schema": "Events API",
+  },
+}
+`;
+
+exports[`onepassevents public API tests > lists api endpoints 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpoints": [
+    {
+      "endpointId": "getAuthIntrospect",
+      "method": "get",
+      "path": "/api/auth/introspect",
+      "operationId": "getAuthIntrospect",
+      "summary": "Performs introspection of the provided Bearer JWT token",
+      "tags": [
+        "auth"
+      ]
+    },
+    {
+      "endpointId": "getItemUsages",
+      "method": "post",
+      "path": "/api/v1/itemusages",
+      "operationId": "getItemUsages",
+      "summary": "Retrieves item usages",
+      "tags": [
+        "api-v1"
+      ]
+    },
+    {
+      "endpointId": "getSignInAttempts",
+      "method": "post",
+      "path": "/api/v1/signinattempts",
+      "operationId": "getSignInAttempts",
+      "summary": "Retrieves sign-in attempts",
+      "tags": [
+        "api-v1"
+      ]
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "endpoints": [
+      {
+        "endpointId": "getAuthIntrospect",
+        "method": "get",
+        "operationId": "getAuthIntrospect",
+        "path": "/api/auth/introspect",
+        "summary": "Performs introspection of the provided Bearer JWT token",
+        "tags": [
+          "auth",
+        ],
+      },
+      {
+        "endpointId": "getItemUsages",
+        "method": "post",
+        "operationId": "getItemUsages",
+        "path": "/api/v1/itemusages",
+        "summary": "Retrieves item usages",
+        "tags": [
+          "api-v1",
+        ],
+      },
+      {
+        "endpointId": "getSignInAttempts",
+        "method": "post",
+        "operationId": "getSignInAttempts",
+        "path": "/api/v1/signinattempts",
+        "summary": "Retrieves sign-in attempts",
+        "tags": [
+          "api-v1",
+        ],
+      },
+    ],
+    "nextCursor": undefined,
+  },
+}
+`;
+
+exports[`onepassevents public API tests > lists the API 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apis": [
+    {
+      "name": "onepassevents",
+      "title": "Events API",
+      "version": "1.0.0",
+      "baseUrl": "https://events.1password.com",
+      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/onepassevents.yaml",
+      "authSchemes": [
+        "jwtsa"
+      ]
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apis": [
+      {
+        "authSchemes": [
+          "jwtsa",
+        ],
+        "baseUrl": "https://events.1password.com",
+        "name": "onepassevents",
+        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/onepassevents.yaml",
+        "title": "Events API",
+        "version": "1.0.0",
+      },
+    ],
+  },
+}
+`;
+
+exports[`onepassevents public API tests > makes endpoint request 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "request": {
+    "url": "https://events.1password.com/api/auth/introspect",
+    "method": "GET",
+    "headersRedacted": {
+      "authorization": "<redacted>"
+    },
+    "endpointId": "getAuthIntrospect"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "bodyType": "json",
+    "bodyJson": {
+      "success": true
+    }
+  },
+  "timingMs": "<timing>",
+  "authUsed": [
+    "jwtsa"
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "authUsed": [
+      "jwtsa",
+    ],
+    "request": {
+      "endpointId": "getAuthIntrospect",
+      "headersRedacted": {
+        "authorization": "<redacted>",
+      },
+      "method": "GET",
+      "url": "https://events.1password.com/api/auth/introspect",
+    },
+    "response": {
+      "bodyJson": {
+        "success": true,
+      },
+      "bodyType": "json",
+      "headers": {
+        "content-type": "application/json",
+      },
+      "status": 200,
+    },
+    "timingMs": "<timing>",
+  },
+}
+`;

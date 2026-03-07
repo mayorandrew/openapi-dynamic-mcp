@@ -1,0 +1,621 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`authentiqio public API tests > gets API endpoint details 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpointId": "key_retrieve",
+  "method": "get",
+  "path": "/key/{PK}",
+  "operationId": "key_retrieve",
+  "description": "Get public details of an Authentiq ID.\\n",
+  "tags": [
+    "key",
+    "get"
+  ],
+  "parameters": [
+    {
+      "name": "PK",
+      "in": "path",
+      "required": true,
+      "description": "Public Signing Key - Authentiq ID (43 chars)",
+      "schema": {
+        "type": "string"
+      }
+    }
+  ],
+  "requestBody": {
+    "required": false,
+    "contentTypes": []
+  },
+  "responses": {
+    "200": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "properties": {
+              "since": {
+                "format": "date-time",
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "sub": {
+                "description": "base64safe encoded public signing key",
+                "type": "string"
+              }
+            },
+            "title": "JWT",
+            "type": "object"
+          }
+        }
+      },
+      "description": "Successfully retrieved"
+    },
+    "404": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "properties": {
+              "detail": {
+                "type": "string"
+              },
+              "error": {
+                "type": "integer"
+              },
+              "title": {
+                "type": "string"
+              },
+              "type": {
+                "description": "unique uri for this error",
+                "type": "string"
+              }
+            },
+            "required": [
+              "error"
+            ]
+          }
+        }
+      },
+      "description": "Unknown key \`unknown-key\`"
+    },
+    "410": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "properties": {
+              "detail": {
+                "type": "string"
+              },
+              "error": {
+                "type": "integer"
+              },
+              "title": {
+                "type": "string"
+              },
+              "type": {
+                "description": "unique uri for this error",
+                "type": "string"
+              }
+            },
+            "required": [
+              "error"
+            ]
+          }
+        }
+      },
+      "description": "Key is revoked (gone). \`revoked-key\`"
+    },
+    "default": {
+      "content": {
+        "*/*": {
+          "schema": {
+            "properties": {
+              "detail": {
+                "type": "string"
+              },
+              "error": {
+                "type": "integer"
+              },
+              "title": {
+                "type": "string"
+              },
+              "type": {
+                "description": "unique uri for this error",
+                "type": "string"
+              }
+            },
+            "required": [
+              "error"
+            ]
+          }
+        }
+      },
+      "description": "Error response"
+    }
+  },
+  "security": []
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "description": "Get public details of an Authentiq ID.
+",
+    "endpointId": "key_retrieve",
+    "method": "get",
+    "operationId": "key_retrieve",
+    "parameters": [
+      {
+        "description": "Public Signing Key - Authentiq ID (43 chars)",
+        "explode": undefined,
+        "in": "path",
+        "name": "PK",
+        "required": true,
+        "schema": {
+          "type": "string",
+        },
+        "style": undefined,
+      },
+    ],
+    "path": "/key/{PK}",
+    "requestBody": {
+      "contentTypes": [],
+      "required": false,
+    },
+    "responses": {
+      "200": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "since": {
+                  "format": "date-time",
+                  "type": "string",
+                },
+                "status": {
+                  "type": "string",
+                },
+                "sub": {
+                  "description": "base64safe encoded public signing key",
+                  "type": "string",
+                },
+              },
+              "title": "JWT",
+              "type": "object",
+            },
+          },
+        },
+        "description": "Successfully retrieved",
+      },
+      "404": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "detail": {
+                  "type": "string",
+                },
+                "error": {
+                  "type": "integer",
+                },
+                "title": {
+                  "type": "string",
+                },
+                "type": {
+                  "description": "unique uri for this error",
+                  "type": "string",
+                },
+              },
+              "required": [
+                "error",
+              ],
+            },
+          },
+        },
+        "description": "Unknown key \`unknown-key\`",
+      },
+      "410": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "detail": {
+                  "type": "string",
+                },
+                "error": {
+                  "type": "integer",
+                },
+                "title": {
+                  "type": "string",
+                },
+                "type": {
+                  "description": "unique uri for this error",
+                  "type": "string",
+                },
+              },
+              "required": [
+                "error",
+              ],
+            },
+          },
+        },
+        "description": "Key is revoked (gone). \`revoked-key\`",
+      },
+      "default": {
+        "content": {
+          "*/*": {
+            "schema": {
+              "properties": {
+                "detail": {
+                  "type": "string",
+                },
+                "error": {
+                  "type": "integer",
+                },
+                "title": {
+                  "type": "string",
+                },
+                "type": {
+                  "description": "unique uri for this error",
+                  "type": "string",
+                },
+              },
+              "required": [
+                "error",
+              ],
+            },
+          },
+        },
+        "description": "Error response",
+      },
+    },
+    "security": [],
+    "summary": undefined,
+    "tags": [
+      "key",
+      "get",
+    ],
+  },
+}
+`;
+
+exports[`authentiqio public API tests > gets API schema 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apiName": "authentiqio",
+  "pointer": "/info/title",
+  "schema": "Authentiq API"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apiName": "authentiqio",
+    "pointer": "/info/title",
+    "schema": "Authentiq API",
+  },
+}
+`;
+
+exports[`authentiqio public API tests > lists api endpoints 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "endpoints": [
+    {
+      "endpointId": "key_revoke_nosecret",
+      "method": "delete",
+      "path": "/key",
+      "operationId": "key_revoke_nosecret",
+      "tags": [
+        "key",
+        "delete"
+      ]
+    },
+    {
+      "endpointId": "key_register",
+      "method": "post",
+      "path": "/key",
+      "operationId": "key_register",
+      "tags": [
+        "key",
+        "post"
+      ]
+    },
+    {
+      "endpointId": "key_revoke",
+      "method": "delete",
+      "path": "/key/{PK}",
+      "operationId": "key_revoke",
+      "tags": [
+        "key",
+        "delete"
+      ]
+    },
+    {
+      "endpointId": "key_retrieve",
+      "method": "get",
+      "path": "/key/{PK}",
+      "operationId": "key_retrieve",
+      "tags": [
+        "key",
+        "get"
+      ]
+    },
+    {
+      "endpointId": "HEAD /key/{PK}",
+      "method": "head",
+      "path": "/key/{PK}",
+      "tags": [
+        "key",
+        "head"
+      ]
+    },
+    {
+      "endpointId": "key_update",
+      "method": "post",
+      "path": "/key/{PK}",
+      "operationId": "key_update",
+      "tags": [
+        "key",
+        "post"
+      ]
+    },
+    {
+      "endpointId": "key_bind",
+      "method": "put",
+      "path": "/key/{PK}",
+      "operationId": "key_bind",
+      "tags": [
+        "key",
+        "put"
+      ]
+    },
+    {
+      "endpointId": "push_login_request",
+      "method": "post",
+      "path": "/login",
+      "operationId": "push_login_request",
+      "tags": [
+        "login",
+        "post"
+      ]
+    },
+    {
+      "endpointId": "sign_request",
+      "method": "post",
+      "path": "/scope",
+      "operationId": "sign_request",
+      "tags": [
+        "scope",
+        "post"
+      ]
+    },
+    {
+      "endpointId": "sign_delete",
+      "method": "delete",
+      "path": "/scope/{job}",
+      "operationId": "sign_delete",
+      "tags": [
+        "scope",
+        "delete"
+      ]
+    }
+  ],
+  "nextCursor": "10"
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "endpoints": [
+      {
+        "endpointId": "key_revoke_nosecret",
+        "method": "delete",
+        "operationId": "key_revoke_nosecret",
+        "path": "/key",
+        "summary": undefined,
+        "tags": [
+          "key",
+          "delete",
+        ],
+      },
+      {
+        "endpointId": "key_register",
+        "method": "post",
+        "operationId": "key_register",
+        "path": "/key",
+        "summary": undefined,
+        "tags": [
+          "key",
+          "post",
+        ],
+      },
+      {
+        "endpointId": "key_revoke",
+        "method": "delete",
+        "operationId": "key_revoke",
+        "path": "/key/{PK}",
+        "summary": undefined,
+        "tags": [
+          "key",
+          "delete",
+        ],
+      },
+      {
+        "endpointId": "key_retrieve",
+        "method": "get",
+        "operationId": "key_retrieve",
+        "path": "/key/{PK}",
+        "summary": undefined,
+        "tags": [
+          "key",
+          "get",
+        ],
+      },
+      {
+        "endpointId": "HEAD /key/{PK}",
+        "method": "head",
+        "operationId": undefined,
+        "path": "/key/{PK}",
+        "summary": undefined,
+        "tags": [
+          "key",
+          "head",
+        ],
+      },
+      {
+        "endpointId": "key_update",
+        "method": "post",
+        "operationId": "key_update",
+        "path": "/key/{PK}",
+        "summary": undefined,
+        "tags": [
+          "key",
+          "post",
+        ],
+      },
+      {
+        "endpointId": "key_bind",
+        "method": "put",
+        "operationId": "key_bind",
+        "path": "/key/{PK}",
+        "summary": undefined,
+        "tags": [
+          "key",
+          "put",
+        ],
+      },
+      {
+        "endpointId": "push_login_request",
+        "method": "post",
+        "operationId": "push_login_request",
+        "path": "/login",
+        "summary": undefined,
+        "tags": [
+          "login",
+          "post",
+        ],
+      },
+      {
+        "endpointId": "sign_request",
+        "method": "post",
+        "operationId": "sign_request",
+        "path": "/scope",
+        "summary": undefined,
+        "tags": [
+          "scope",
+          "post",
+        ],
+      },
+      {
+        "endpointId": "sign_delete",
+        "method": "delete",
+        "operationId": "sign_delete",
+        "path": "/scope/{job}",
+        "summary": undefined,
+        "tags": [
+          "scope",
+          "delete",
+        ],
+      },
+    ],
+    "nextCursor": "10",
+  },
+}
+`;
+
+exports[`authentiqio public API tests > lists the API 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "apis": [
+    {
+      "name": "authentiqio",
+      "title": "Authentiq API",
+      "version": "6",
+      "baseUrl": "https://6-dot-authentiqio.appspot.com",
+      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/authentiqio.yaml",
+      "authSchemes": []
+    }
+  ]
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "apis": [
+      {
+        "authSchemes": [],
+        "baseUrl": "https://6-dot-authentiqio.appspot.com",
+        "name": "authentiqio",
+        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/authentiqio.yaml",
+        "title": "Authentiq API",
+        "version": "6",
+      },
+    ],
+  },
+}
+`;
+
+exports[`authentiqio public API tests > makes endpoint request 1`] = `
+{
+  "content": [
+    {
+      "text": "{
+  "request": {
+    "url": "https://6-dot-authentiqio.appspot.com/key/test_val",
+    "method": "GET",
+    "headersRedacted": {},
+    "endpointId": "key_retrieve"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json"
+    },
+    "bodyType": "json",
+    "bodyJson": {
+      "success": true
+    }
+  },
+  "timingMs": "<timing>",
+  "authUsed": []
+}",
+      "type": "text",
+    },
+  ],
+  "isError": undefined,
+  "structuredContent": {
+    "authUsed": [],
+    "request": {
+      "endpointId": "key_retrieve",
+      "headersRedacted": {},
+      "method": "GET",
+      "url": "https://6-dot-authentiqio.appspot.com/key/test_val",
+    },
+    "response": {
+      "bodyJson": {
+        "success": true,
+      },
+      "bodyType": "json",
+      "headers": {
+        "content-type": "application/json",
+      },
+      "status": 200,
+    },
+    "timingMs": "<timing>",
+  },
+}
+`;
