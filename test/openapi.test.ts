@@ -111,6 +111,27 @@ describe('OpenAPI loading/index', () => {
     );
   });
 
+  it('loads OpenAPI 3.1 spec with 3.1-specific features', async () => {
+    const config: RootConfig = {
+      version: 1,
+      apis: [
+        {
+          name: 'api31',
+          specPath: path.join(fixturesDir, 'openapi-3.1.yaml'),
+        },
+      ],
+    };
+
+    const registry = await loadApiRegistry(config, {});
+    const api = registry.byName.get('api31');
+    expect(api).toBeDefined();
+    expect(api?.schema.openapi).toBe('3.1.0');
+    expect(api?.endpoints.length).toBe(2);
+    expect(api?.endpointById.has('listItems')).toBe(true);
+    expect(api?.endpointById.has('getItem')).toBe(true);
+    expect(api?.baseUrl).toBe('https://api31.example.com');
+  });
+
   it('gives friendly error for unreachable specUrl', async () => {
     nock('https://unreachable.example.com')
       .get('/spec.yaml')
