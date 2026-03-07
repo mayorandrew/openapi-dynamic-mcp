@@ -1,8 +1,8 @@
 <div align="center">
   <h1>openapi-dynamic-mcp</h1>
-  
+
   <p>
-    <strong>A TypeScript MCP stdio server that seamlessly loads multiple OpenAPI 2.x and 3.x specifications and exposes powerful, generic tools for AI agents.</strong>
+    <strong>A TypeScript MCP stdio server that seamlessly loads multiple OpenAPI 2.x, 3.0, and 3.1 specifications and exposes powerful, generic tools for AI agents.</strong>
   </p>
 
   <p>
@@ -12,39 +12,42 @@
   </p>
 </div>
 
-## 📖 Table of Contents
+## Table of Contents
 
-- [What It Does](#-what-it-does)
-- [Requirements](#-requirements)
-- [Quick Start](#-quick-start)
-- [Client Configuration](#-client-configuration)
+- [What It Does](#what-it-does)
+- [Requirements](#requirements)
+- [Quick Start](#quick-start)
+- [CLI Usage](#cli-usage)
+- [Client Configuration](#client-configuration)
   - [Claude Desktop / Claude Code](#claude-desktop--claude-code)
   - [Cursor](#cursor)
-- [Configuration](#-configuration)
-  - [Environment Variables](#-environment-variables)
-- [Advanced Features](#-advanced-features)
+- [Configuration](#configuration)
+  - [Per-Scheme OAuth2 Configuration](#per-scheme-oauth2-configuration)
+- [Environment Variables](#environment-variables)
+  - [OAuth2 Flows](#oauth2-flows)
+- [Advanced Features](#advanced-features)
   - [File Uploads and Binary Data](#file-uploads-and-binary-data)
-- [Available MCP Tools](#-available-mcp-tools)
-- [Development](#-development)
-- [License](#-license)
+- [Available MCP Tools](#available-mcp-tools)
+- [Development](#development)
+- [License](#license)
 
-## ✨ What It Does
+## What It Does
 
 `openapi-dynamic-mcp` runs as a single Model Context Protocol (MCP) server over `stdio` for multiple APIs. It acts as a bridge between your LLMs and your API, taking care of parsing, request execution, authentication, and error handling.
 
-- 🔄 **Multi-API Support**: Run a single server for any number of APIs simultaneously.
-- 📄 **Specification Compatibility**: Seamlessly supports both OpenAPI `3.x` and Swagger `2.0` specifications.
-- 🔌 **Dynamic Resolution**: Supports local spec files via `specPath` or remote URL specs via `specUrl`.
-- 🔐 **Robust Authentication**: Handles API Keys, HTTP `bearer`/`basic`, and OAuth2 client credentials out-of-the-box. Supports complex OpenAPI security requirements (AND/OR logic).
-- 🌍 **Environment Overrides**: Easily override base URLs, tokens, and extra headers per API.
-- 🔁 **Resilience**: Configurable exponential retries on `429 Too Many Requests` responses.
-- ✅ **Tested**: Continuously tested against real-world APIs.
+- **Multi-API Support**: Run a single server for any number of APIs simultaneously.
+- **Specification Compatibility**: Supports OpenAPI `3.0`, `3.1`, and Swagger `2.0` specifications.
+- **Dynamic Resolution**: Supports local spec files via `specPath` or remote URL specs via `specUrl`.
+- **Robust Authentication**: Handles API Keys, HTTP `bearer`/`basic`, and OAuth2 (client credentials, password, device code, authorization code with PKCE). Supports complex OpenAPI security requirements (AND/OR logic).
+- **Environment Overrides**: Easily override base URLs, tokens, and extra headers per API.
+- **Resilience**: Configurable exponential retries on `429 Too Many Requests` responses.
+- **Tested**: Continuously tested against real-world APIs.
 
-## 🚀 Requirements
+## Requirements
 
 - Node.js `20+`
 
-## 🏃 Quick Start
+## Quick Start
 
 Run the server directly using `npx`:
 
@@ -52,7 +55,18 @@ Run the server directly using `npx`:
 npx -y openapi-dynamic-mcp@latest --config ./config.yaml
 ```
 
-## 🔌 Client Configuration
+## CLI Usage
+
+```
+openapi-dynamic-mcp --config <path>
+
+Options:
+  --config, -c    Path to YAML configuration file (required)
+  --help, -h      Show help
+  --version, -v   Show version number
+```
+
+## Client Configuration
 
 To use this with your favorite MCP-compatible client, add it to their respective config files.
 
@@ -105,7 +119,7 @@ Add to your MCP servers in Cursor settings:
 }
 ```
 
-## ⚙️ Configuration
+## Configuration
 
 Create a YAML configuration file to define your APIs.
 
@@ -139,26 +153,51 @@ apis:
       jitterRatio: 0.2
       # Respect Retry-After header
       respectRetryAfter: true
-    # OAuth2 client credentials configuration
-    oauth2:
-      # Optional token URL override
-      tokenUrlOverride: https://auth.example.com/oauth2/token
-      # Scopes to request
-      scopes: [read:pets, write:pets]
-      # How to pass Client Credentials to the token endpoint:
-      # Via HTTP Basic Authorization header: "client_secret_basic"
-      # Via POST body: "client_secret_post"
-      tokenEndpointAuthMethod: client_secret_basic
+    # Per-scheme OAuth2 configuration (see below)
+    oauth2Schemes:
+      MyOAuth:
+        tokenUrl: https://auth.example.com/oauth2/token
+        scopes: [read:pets, write:pets]
+        tokenEndpointAuthMethod: client_secret_basic
 ```
 
 ### Validation Rules
 
 - `apis[].name` must be unique (case-insensitive after normalization).
 - Exactly one of `apis[].specPath` (local file) or `apis[].specUrl` (remote URL) must be provided.
-- Supported specifications: OpenAPI `3.x` and Swagger `2.0`.
-- Base URL resolution order: env -> config -> `openapi.servers[0].url`.
+- Supported specifications: OpenAPI `3.0`, `3.1`, and Swagger `2.0`.
+- Base URL resolution order: env > config > `openapi.servers[0].url`.
 
-## 🔐 Environment Variables
+### Per-Scheme OAuth2 Configuration
+
+> **Breaking change in v1.0.0:** The `oauth2` config key has been replaced by `oauth2Schemes`, which is keyed by security scheme name instead of being a flat per-API object.
+
+The `oauth2Schemes` config key allows fine-grained configuration per OAuth2 security scheme defined in your OpenAPI spec:
+
+```yaml
+oauth2Schemes:
+  # Key must match the security scheme name in the OpenAPI spec
+  MyOAuth:
+    # Override the token endpoint URL
+    tokenUrl: https://auth.example.com/oauth2/token
+    # Scopes to request
+    scopes: [read, write]
+    # How to send client credentials: client_secret_basic (default) or client_secret_post
+    tokenEndpointAuthMethod: client_secret_basic
+    # For authorizationCode flows: device_code or authorization_code
+    authMethod: device_code
+    # Device authorization endpoint (required for device_code method)
+    deviceAuthorizationEndpoint: https://auth.example.com/device
+    # Enable/disable PKCE for authorization_code method (default: true)
+    pkce: true
+  AnotherOAuth:
+    tokenUrl: https://other.example.com/token
+    authMethod: authorization_code
+```
+
+All fields are optional. Values from env vars take precedence over config values, which take precedence over values from the OpenAPI spec.
+
+## Environment Variables
 
 Environment variables allow specifying sensitive or environment-specific configuration for APIs. Variables are defined for each API separately.
 
@@ -193,22 +232,65 @@ _Examples:_
 - `<API>_<SCHEME>_USERNAME` - Basic auth username.
 - `<API>_<SCHEME>_PASSWORD` - Basic auth password.
 
-**OAuth2 Client Credentials**
+**OAuth2 (all flows)**
 
+- `<API>_<SCHEME>_ACCESS_TOKEN` - Pre-obtained access token. When set, skips all grant flows entirely. Works for any OAuth2 flow type.
 - `<API>_<SCHEME>_CLIENT_ID` - Client ID.
 - `<API>_<SCHEME>_CLIENT_SECRET` - Client secret.
-- `<API>_<SCHEME>_TOKEN_URL` - Token endpoint URL.
-- `<API>_<SCHEME>_SCOPES` (space-delimited) - Scopes required for the OAuth2 token.
+- `<API>_<SCHEME>_TOKEN_URL` - Token endpoint URL override.
+- `<API>_<SCHEME>_SCOPES` (space-delimited) - Scopes to request.
 - `<API>_<SCHEME>_TOKEN_AUTH_METHOD` (`client_secret_basic` or `client_secret_post`) - Auth method for the token endpoint.
+
+**OAuth2 Password (ROPC) flow** (additional)
+
+- `<API>_<SCHEME>_USERNAME` - Resource owner username.
+- `<API>_<SCHEME>_PASSWORD` - Resource owner password.
+
+**OAuth2 Interactive flows** (additional)
+
+- `<API>_<SCHEME>_AUTH_METHOD` (`device_code` or `authorization_code`) - Choose the interactive method. Auto-detected if not set.
+- `<API>_<SCHEME>_DEVICE_AUTHORIZATION_ENDPOINT` - Device authorization endpoint URL (required for `device_code`).
+- `<API>_<SCHEME>_REDIRECT_PORT` - Pin the local callback port for `authorization_code` flow.
+- `<API>_<SCHEME>_PKCE` (`true` or `false`) - Enable/disable PKCE for `authorization_code` (default: `true`).
 
 _Precedence Rules:_
 
 - **Base URL:** env > config > OpenAPI servers.
 - **OAuth token URL:** scheme env > config override > OpenAPI flow `tokenUrl`.
 - **OAuth scopes:** scheme env > config scopes > OpenAPI flow scopes.
+- **OAuth auth method:** env `_AUTH_METHOD` > config `authMethod` > auto-detect.
 - **Headers:** config headers + env headers + tool-request headers (later wins), then auth is applied.
 
-## 🛠️ Advanced Features
+### OAuth2 Flows
+
+| Flow               | Method               | How it works                                                                              | Required env vars                                                |
+| ------------------ | -------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Client Credentials | Automatic            | Server-to-server token exchange                                                           | `_CLIENT_ID`, `_CLIENT_SECRET`                                   |
+| Password (ROPC)    | Automatic            | Username/password grant                                                                   | `_CLIENT_ID`, `_CLIENT_SECRET`, `_USERNAME`, `_PASSWORD`         |
+| Authorization Code | `device_code`        | Returns verification URL + user code for the agent to present to the user. Poll on retry. | `_CLIENT_ID`, `_CLIENT_SECRET`, `_DEVICE_AUTHORIZATION_ENDPOINT` |
+| Authorization Code | `authorization_code` | Returns authorization URL. Starts local callback server. Poll on retry.                   | `_CLIENT_ID`, `_CLIENT_SECRET`                                   |
+| Implicit           | N/A                  | Not supported server-side. Use `_ACCESS_TOKEN` bypass.                                    | `_ACCESS_TOKEN`                                                  |
+
+**Interactive flow UX (device code and authorization code):**
+
+When an endpoint requires an interactive OAuth2 flow, `make_endpoint_request` returns a structured response instead of an error:
+
+```json
+{
+  "status": "authorization_required",
+  "method": "device_code",
+  "message": "User authorization required. Ask the user to visit the URL and enter the code.",
+  "verificationUri": "https://auth.example.com/device",
+  "userCode": "ABCD-1234",
+  "instruction": "After the user confirms, call this endpoint again."
+}
+```
+
+The same information is also printed to stderr for direct CLI users. Call the endpoint again after the user authorizes to complete the flow and get the API response.
+
+**Tip:** Set `<API>_<SCHEME>_ACCESS_TOKEN` to skip all interactive flows. This is useful for CI/CD or when you already have a token from another source.
+
+## Advanced Features
 
 ### File Uploads and Binary Data
 
@@ -265,7 +347,7 @@ Each key in the `files` object maps to a form field name. You must provide exact
 }
 ```
 
-## 🧰 Available MCP Tools
+## Available MCP Tools
 
 These tools are exposed to your MCP client:
 
@@ -277,7 +359,9 @@ These tools are exposed to your MCP client:
 | `get_api_schema`        | Detailed API schema object specification                        | `apiName`, `pointer` (JSON Pointer, optional)                                                                                       |
 | `make_endpoint_request` | Executes the actual API endpoint request                        | `apiName`, `endpointId`, `pathParams`, `query`, `headers`, `cookies`, `body`, `contentType`, `accept`, `timeoutMs`, `maxRetries429` |
 
-## 💻 Development
+`get_api_schema` includes a `_sizeWarning` advisory field when the response exceeds 200KB, suggesting a more specific JSON pointer.
+
+## Development
 
 Install dependencies and run tests:
 
@@ -287,6 +371,6 @@ npm test
 npm run build
 ```
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License.
