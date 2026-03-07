@@ -1,6 +1,7 @@
 import { describe, expect, it, beforeAll, afterAll } from 'vitest';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import { version } from '../src/mcp/server.js';
 
 describe('E2E MCP Server Test', () => {
   let client: Client;
@@ -86,6 +87,12 @@ describe('E2E MCP Server Test', () => {
         text: expect.stringContaining('/pets'),
       },
     ]);
+  });
+
+  it('server version matches package.json', () => {
+    const serverInfo = client.getServerVersion();
+    expect(serverInfo?.version).toBe(version);
+    expect(serverInfo?.name).toBe('openapi-mcp');
   });
 
   it('can execute get_api_schema tool', async () => {

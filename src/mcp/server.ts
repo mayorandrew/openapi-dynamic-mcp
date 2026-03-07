@@ -1,3 +1,4 @@
+import { createRequire } from 'node:module';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
@@ -13,6 +14,11 @@ import {
   makeEndpointRequestTool,
 } from './tools/index.js';
 import { fail } from './tools/common.js';
+
+const require = createRequire(import.meta.url);
+export const { version } = require('../../package.json') as {
+  version: string;
+};
 
 const TOOLS = [
   {
@@ -134,7 +140,7 @@ export async function startMcpServer(context: ToolContext): Promise<void> {
   const server = new Server(
     {
       name: 'openapi-mcp',
-      version: '0.1.0',
+      version,
     },
     {
       capabilities: {
