@@ -197,6 +197,43 @@ describe('MCP tools', () => {
     expect(scope.isDone()).toBe(true);
   });
 
+  it('adds _sizeWarning when schema exceeds 200KB', async () => {
+    // Inject a large component into the schema to trigger size warning
+    const api = context.registry.byName.get('pet-api')!;
+    const originalComponents = api.schema.components;
+    api.schema.components = {
+      ...api.schema.components,
+      schemas: {
+        ...api.schema.components?.schemas,
+        LargeSchema: {
+          type: 'object',
+          properties: Object.fromEntries(
+            Array.from({ length: 5000 }, (_, i) => [
+              `field_${i}`,
+              {
+                type: 'string',
+                description: 'A'.repeat(50),
+              },
+            ]),
+          ),
+        },
+      },
+    };
+
+    try {
+      const result = await getApiSchemaTool(context, {
+        apiName: 'pet-api',
+      });
+      const payload = result.structuredContent as {
+        _sizeWarning?: string;
+      };
+      expect(payload._sizeWarning).toBeDefined();
+      expect(payload._sizeWarning).toContain('bytes');
+    } finally {
+      api.schema.components = originalComponents;
+    }
+  });
+
   it('validates maxRetries429 override shape', async () => {
     const result = await makeEndpointRequestTool(context, {
       apiName: 'pet-api',

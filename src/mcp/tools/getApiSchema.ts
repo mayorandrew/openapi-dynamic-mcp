@@ -22,11 +22,18 @@ export async function getApiSchemaTool(
     const api = requireApi(context, apiName);
     const schema = getByJsonPointer(api.schema, pointer);
 
-    return ok({
+    const SIZE_WARNING_THRESHOLD = 200_000;
+    const serialized = JSON.stringify(schema);
+    const result: Record<string, unknown> = {
       apiName: api.config.name,
       pointer: pointer ?? '',
       schema,
-    });
+    };
+    if (serialized.length > SIZE_WARNING_THRESHOLD) {
+      result._sizeWarning = `Response is ${serialized.length} bytes. Consider using a more specific JSON pointer to reduce payload size.`;
+    }
+
+    return ok(result);
   } catch (error) {
     return fail(error);
   }
