@@ -709,7 +709,7 @@ exports[`sendgrid public API tests > lists the API 1`] = `
       "title": "Email Activity (beta)",
       "version": "1.0.0",
       "baseUrl": "http://api.sendgrid.com/v3",
-      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/sendgrid.yaml",
+      "specPath": "test/public-apis/fixtures/sendgrid.yaml",
       "authSchemes": [
         "Authorization"
       ]
@@ -728,7 +728,7 @@ exports[`sendgrid public API tests > lists the API 1`] = `
         ],
         "baseUrl": "http://api.sendgrid.com/v3",
         "name": "sendgrid",
-        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/sendgrid.yaml",
+        "specPath": "test/public-apis/fixtures/sendgrid.yaml",
         "title": "Email Activity (beta)",
         "version": "1.0.0",
       },

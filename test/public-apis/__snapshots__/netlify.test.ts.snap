@@ -350,7 +350,7 @@ exports[`netlify public API tests > lists the API 1`] = `
       "title": "Netlify's API documentation",
       "version": "2.15.0",
       "baseUrl": "https://api.netlify.com/api/v1",
-      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/netlify.yaml",
+      "specPath": "test/public-apis/fixtures/netlify.yaml",
       "authSchemes": [
         "netlifyAuth"
       ]
@@ -369,7 +369,7 @@ exports[`netlify public API tests > lists the API 1`] = `
         ],
         "baseUrl": "https://api.netlify.com/api/v1",
         "name": "netlify",
-        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/netlify.yaml",
+        "specPath": "test/public-apis/fixtures/netlify.yaml",
         "title": "Netlify's API documentation",
         "version": "2.15.0",
       },

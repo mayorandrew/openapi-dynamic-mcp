@@ -371,7 +371,7 @@ exports[`circleci public API tests > lists the API 1`] = `
       "title": "CircleCI REST API",
       "version": "v1",
       "baseUrl": "https://circleci.com/api/v1",
-      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/circleci.yaml",
+      "specPath": "test/public-apis/fixtures/circleci.yaml",
       "authSchemes": [
         "apikey"
       ]
@@ -390,7 +390,7 @@ exports[`circleci public API tests > lists the API 1`] = `
         ],
         "baseUrl": "https://circleci.com/api/v1",
         "name": "circleci",
-        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/circleci.yaml",
+        "specPath": "test/public-apis/fixtures/circleci.yaml",
         "title": "CircleCI REST API",
         "version": "v1",
       },

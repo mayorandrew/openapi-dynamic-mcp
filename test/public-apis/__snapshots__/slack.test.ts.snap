@@ -334,7 +334,7 @@ exports[`slack public API tests > lists the API 1`] = `
       "title": "Slack Web API",
       "version": "1.7.0",
       "baseUrl": "https://slack.com/api",
-      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/slack.yaml",
+      "specPath": "test/public-apis/fixtures/slack.yaml",
       "authSchemes": [
         "slackAuth"
       ]
@@ -353,7 +353,7 @@ exports[`slack public API tests > lists the API 1`] = `
         ],
         "baseUrl": "https://slack.com/api",
         "name": "slack",
-        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/slack.yaml",
+        "specPath": "test/public-apis/fixtures/slack.yaml",
         "title": "Slack Web API",
         "version": "1.7.0",
       },

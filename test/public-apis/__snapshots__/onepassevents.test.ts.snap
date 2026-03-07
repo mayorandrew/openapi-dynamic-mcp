@@ -312,7 +312,7 @@ exports[`onepassevents public API tests > lists the API 1`] = `
       "title": "Events API",
       "version": "1.0.0",
       "baseUrl": "https://events.1password.com",
-      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/onepassevents.yaml",
+      "specPath": "test/public-apis/fixtures/onepassevents.yaml",
       "authSchemes": [
         "jwtsa"
       ]
@@ -331,7 +331,7 @@ exports[`onepassevents public API tests > lists the API 1`] = `
         ],
         "baseUrl": "https://events.1password.com",
         "name": "onepassevents",
-        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/onepassevents.yaml",
+        "specPath": "test/public-apis/fixtures/onepassevents.yaml",
         "title": "Events API",
         "version": "1.0.0",
       },

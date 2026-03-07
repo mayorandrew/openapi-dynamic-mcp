@@ -425,7 +425,7 @@ exports[`onepassconnect public API tests > lists the API 1`] = `
       "title": "1Password Connect",
       "version": "1.5.7",
       "baseUrl": "http://1password.local",
-      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/onepassconnect.yaml",
+      "specPath": "test/public-apis/fixtures/onepassconnect.yaml",
       "authSchemes": [
         "ConnectToken"
       ]
@@ -444,7 +444,7 @@ exports[`onepassconnect public API tests > lists the API 1`] = `
         ],
         "baseUrl": "http://1password.local",
         "name": "onepassconnect",
-        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/onepassconnect.yaml",
+        "specPath": "test/public-apis/fixtures/onepassconnect.yaml",
         "title": "1Password Connect",
         "version": "1.5.7",
       },

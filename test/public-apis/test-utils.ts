@@ -3,7 +3,9 @@ import { OAuthClient } from '../../src/auth/oauthClient.js';
 import { loadApiRegistry } from '../../src/openapi/loadSpec.js';
 import type { RootConfig } from '../../src/types.js';
 import type { ToolContext } from '../../src/mcp/context.js';
-export const fixturesDir = path.resolve('test/public-apis/fixtures');
+
+export const fixturesDir = path.join('test', 'public-apis', 'fixtures');
+
 export async function createTestContext(
   apiName: string,
   specFileName: string,

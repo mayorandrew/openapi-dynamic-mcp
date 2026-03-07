@@ -545,7 +545,7 @@ exports[`authentiqio public API tests > lists the API 1`] = `
       "title": "Authentiq API",
       "version": "6",
       "baseUrl": "https://6-dot-authentiqio.appspot.com",
-      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/authentiqio.yaml",
+      "specPath": "test/public-apis/fixtures/authentiqio.yaml",
       "authSchemes": []
     }
   ]
@@ -560,7 +560,7 @@ exports[`authentiqio public API tests > lists the API 1`] = `
         "authSchemes": [],
         "baseUrl": "https://6-dot-authentiqio.appspot.com",
         "name": "authentiqio",
-        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/authentiqio.yaml",
+        "specPath": "test/public-apis/fixtures/authentiqio.yaml",
         "title": "Authentiq API",
         "version": "6",
       },

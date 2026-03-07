@@ -480,7 +480,7 @@ exports[`docker-hub public API tests > lists the API 1`] = `
       "title": "Docker HUB API",
       "version": "beta",
       "baseUrl": "https://hub.docker.com/",
-      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/docker-hub.yaml",
+      "specPath": "test/public-apis/fixtures/docker-hub.yaml",
       "authSchemes": []
     }
   ]
@@ -495,7 +495,7 @@ exports[`docker-hub public API tests > lists the API 1`] = `
         "authSchemes": [],
         "baseUrl": "https://hub.docker.com/",
         "name": "docker-hub",
-        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/docker-hub.yaml",
+        "specPath": "test/public-apis/fixtures/docker-hub.yaml",
         "title": "Docker HUB API",
         "version": "beta",
       },

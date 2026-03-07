@@ -850,7 +850,7 @@ exports[`notion public API tests > lists the API 1`] = `
       "title": "Notion API",
       "version": "1.0.0",
       "baseUrl": "https://api.notion.com",
-      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/notion.yaml",
+      "specPath": "test/public-apis/fixtures/notion.yaml",
       "authSchemes": []
     }
   ]
@@ -865,7 +865,7 @@ exports[`notion public API tests > lists the API 1`] = `
         "authSchemes": [],
         "baseUrl": "https://api.notion.com",
         "name": "notion",
-        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/notion.yaml",
+        "specPath": "test/public-apis/fixtures/notion.yaml",
         "title": "Notion API",
         "version": "1.0.0",
       },

@@ -156,7 +156,7 @@ exports[`oneforge public API tests > lists the API 1`] = `
       "title": "1Forge Finance APIs",
       "version": "0.0.1",
       "baseUrl": "https://1forge.com/forex-quotes",
-      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/oneforge.yaml",
+      "specPath": "test/public-apis/fixtures/oneforge.yaml",
       "authSchemes": []
     }
   ]
@@ -171,7 +171,7 @@ exports[`oneforge public API tests > lists the API 1`] = `
         "authSchemes": [],
         "baseUrl": "https://1forge.com/forex-quotes",
         "name": "oneforge",
-        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/oneforge.yaml",
+        "specPath": "test/public-apis/fixtures/oneforge.yaml",
         "title": "1Forge Finance APIs",
         "version": "0.0.1",
       },

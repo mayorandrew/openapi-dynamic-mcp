@@ -818,7 +818,7 @@ exports[`digitalocean public API tests > lists the API 1`] = `
       "title": "DigitalOcean API",
       "version": "2.0",
       "baseUrl": "https://api.digitalocean.com",
-      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/digitalocean.yaml",
+      "specPath": "test/public-apis/fixtures/digitalocean.yaml",
       "authSchemes": [
         "bearer_auth"
       ]
@@ -837,7 +837,7 @@ exports[`digitalocean public API tests > lists the API 1`] = `
         ],
         "baseUrl": "https://api.digitalocean.com",
         "name": "digitalocean",
-        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/digitalocean.yaml",
+        "specPath": "test/public-apis/fixtures/digitalocean.yaml",
         "title": "DigitalOcean API",
         "version": "2.0",
       },

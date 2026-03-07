@@ -440,7 +440,7 @@ exports[`google-calendar public API tests > lists the API 1`] = `
       "title": "Calendar API",
       "version": "v3",
       "baseUrl": "https://www.googleapis.com/calendar/v3",
-      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/google-calendar.yaml",
+      "specPath": "test/public-apis/fixtures/google-calendar.yaml",
       "authSchemes": [
         "Oauth2",
         "Oauth2c"
@@ -461,7 +461,7 @@ exports[`google-calendar public API tests > lists the API 1`] = `
         ],
         "baseUrl": "https://www.googleapis.com/calendar/v3",
         "name": "google-calendar",
-        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/google-calendar.yaml",
+        "specPath": "test/public-apis/fixtures/google-calendar.yaml",
         "title": "Calendar API",
         "version": "v3",
       },

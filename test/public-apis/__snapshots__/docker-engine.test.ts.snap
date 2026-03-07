@@ -260,7 +260,7 @@ exports[`docker-engine public API tests > lists the API 1`] = `
       "title": "Docker Engine API",
       "version": "1.33",
       "baseUrl": "https://docker.com/1.33",
-      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/docker-engine.yaml",
+      "specPath": "test/public-apis/fixtures/docker-engine.yaml",
       "authSchemes": []
     }
   ]
@@ -275,7 +275,7 @@ exports[`docker-engine public API tests > lists the API 1`] = `
         "authSchemes": [],
         "baseUrl": "https://docker.com/1.33",
         "name": "docker-engine",
-        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/docker-engine.yaml",
+        "specPath": "test/public-apis/fixtures/docker-engine.yaml",
         "title": "Docker Engine API",
         "version": "1.33",
       },

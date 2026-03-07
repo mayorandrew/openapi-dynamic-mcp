@@ -946,7 +946,7 @@ exports[`cloudmersive-ocr public API tests > lists the API 1`] = `
       "title": "ocrapi",
       "version": "v1",
       "baseUrl": "https://api.cloudmersive.com",
-      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/cloudmersive-ocr.yaml",
+      "specPath": "test/public-apis/fixtures/cloudmersive-ocr.yaml",
       "authSchemes": [
         "Apikey"
       ]
@@ -965,7 +965,7 @@ exports[`cloudmersive-ocr public API tests > lists the API 1`] = `
         ],
         "baseUrl": "https://api.cloudmersive.com",
         "name": "cloudmersive-ocr",
-        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/cloudmersive-ocr.yaml",
+        "specPath": "test/public-apis/fixtures/cloudmersive-ocr.yaml",
         "title": "ocrapi",
         "version": "v1",
       },

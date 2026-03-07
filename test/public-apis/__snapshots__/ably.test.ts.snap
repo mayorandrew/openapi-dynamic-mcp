@@ -995,7 +995,7 @@ exports[`ably public API tests > lists the API 1`] = `
       "title": "Platform API",
       "version": "1.1.0",
       "baseUrl": "https://rest.ably.io",
-      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/ably.yaml",
+      "specPath": "test/public-apis/fixtures/ably.yaml",
       "authSchemes": [
         "basicAuth",
         "bearerAuth"
@@ -1016,7 +1016,7 @@ exports[`ably public API tests > lists the API 1`] = `
         ],
         "baseUrl": "https://rest.ably.io",
         "name": "ably",
-        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/ably.yaml",
+        "specPath": "test/public-apis/fixtures/ably.yaml",
         "title": "Platform API",
         "version": "1.1.0",
       },

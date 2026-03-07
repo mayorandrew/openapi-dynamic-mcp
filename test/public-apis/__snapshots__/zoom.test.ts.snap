@@ -679,7 +679,7 @@ exports[`zoom public API tests > lists the API 1`] = `
       "title": "Zoom API",
       "version": "2.0.0",
       "baseUrl": "https://api.zoom.us/v2",
-      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/zoom.yaml",
+      "specPath": "test/public-apis/fixtures/zoom.yaml",
       "authSchemes": [
         "Bearer",
         "Client_Credentials",
@@ -702,7 +702,7 @@ exports[`zoom public API tests > lists the API 1`] = `
         ],
         "baseUrl": "https://api.zoom.us/v2",
         "name": "zoom",
-        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/zoom.yaml",
+        "specPath": "test/public-apis/fixtures/zoom.yaml",
         "title": "Zoom API",
         "version": "2.0.0",
       },

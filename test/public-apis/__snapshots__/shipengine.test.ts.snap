@@ -1594,7 +1594,7 @@ exports[`shipengine public API tests > lists the API 1`] = `
       "title": "ShipEngine API",
       "version": "1.1.202303022103",
       "baseUrl": "https://api.shipengine.com",
-      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/shipengine.yaml",
+      "specPath": "test/public-apis/fixtures/shipengine.yaml",
       "authSchemes": [
         "api_key"
       ]
@@ -1613,7 +1613,7 @@ exports[`shipengine public API tests > lists the API 1`] = `
         ],
         "baseUrl": "https://api.shipengine.com",
         "name": "shipengine",
-        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/shipengine.yaml",
+        "specPath": "test/public-apis/fixtures/shipengine.yaml",
         "title": "ShipEngine API",
         "version": "1.1.202303022103",
       },

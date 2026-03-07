@@ -376,7 +376,7 @@ exports[`gitlab public API tests > lists the API 1`] = `
       "title": "Gitlab",
       "version": "v3",
       "baseUrl": "https://gitlab.com/api",
-      "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/gitlab.yaml",
+      "specPath": "test/public-apis/fixtures/gitlab.yaml",
       "authSchemes": [
         "private_token_header",
         "private_token_query"
@@ -397,7 +397,7 @@ exports[`gitlab public API tests > lists the API 1`] = `
         ],
         "baseUrl": "https://gitlab.com/api",
         "name": "gitlab",
-        "specPath": "/Users/andrey.starostin/work/Experiments/openapi-mcp/test/public-apis/fixtures/gitlab.yaml",
+        "specPath": "test/public-apis/fixtures/gitlab.yaml",
         "title": "Gitlab",
         "version": "v3",
       },
