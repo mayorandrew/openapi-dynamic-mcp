@@ -192,9 +192,9 @@ describe('Serve subcommand', () => {
 describe('CLI flags', () => {
   it('--help exits 0 with usage text', async () => {
     const { stdout } = await runCli(['--help']);
-    expect(stdout).toContain('--config');
-    expect(stdout).toContain('--help');
-    expect(stdout).toContain('--version');
+    expect(stdout).toMatch(
+      /openapi-dynamic-mcp <subcommand>[\s\S]*serve - MCP stdio server for OpenAPI APIs[\s\S]*auth - Authenticate one API security scheme and persist its token to the auth store\.[\s\S]*list_apis - List configured APIs loaded from the YAML configuration\./,
+    );
   });
 
   it('--version prints the package version', async () => {

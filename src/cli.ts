@@ -300,6 +300,7 @@ const serveCommand = command({
 
 const root = subcommands({
   name: 'openapi-dynamic-mcp',
+  description: 'OpenAPI-backed MCP server and CLI commands.',
   cmds: {
     serve: serveCommand,
     auth: authCommand,
@@ -318,6 +319,11 @@ async function main(argv: string[]): Promise<void> {
     ...toolDefinitions.map((tool) => tool.name),
   ]);
   const first = argv[0];
+  if (first === '--help' || first === '-h') {
+    await run(root, argv);
+    return;
+  }
+
   if (first && subcommands.has(first)) {
     await run(root, argv);
     return;
