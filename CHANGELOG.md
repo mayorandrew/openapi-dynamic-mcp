@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-04-14
+
+### Fixed
+
+- Top-level `openapi-dynamic-mcp --help` now shows the root CLI command list with descriptions for `serve`, `auth`, and the tool subcommands instead of only the `serve` help output
+
 ## [0.3.1] - 2026-03-07
 
 ### Fixed
