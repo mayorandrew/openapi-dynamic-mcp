@@ -1,0 +1,14 @@
+version: 1
+apis:
+  - name: xquik
+    specUrl: https://xquik.com/openapi.json
+    timeoutMs: 30000
+    retry429:
+      maxRetries: 2
+      baseDelayMs: 250
+      maxDelayMs: 5000
+      jitterRatio: 0.2
+      respectRetryAfter: true
+
+# For protected requests, set:
+# export XQUIK_HEADERS='{"x-api-key":"<your API key>"}'
